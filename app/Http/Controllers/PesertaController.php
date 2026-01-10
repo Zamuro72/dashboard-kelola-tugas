@@ -1,0 +1,177 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Peserta;
+use Illuminate\Http\Request;
+use App\Exports\PesertaExport;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Maatwebsite\Excel\Facades\Excel;
+
+class PesertaController extends Controller
+{
+    public function index(Request $request){
+        $tahunTerpilih = $request->get('tahun', date('Y'));
+        
+        // Ambil daftar tahun yang tersedia
+        $daftarTahun = Peserta::select('tahun')
+                              ->distinct()
+                              ->orderBy('tahun', 'desc')
+                              ->pluck('tahun');
+        
+        // Hitung notifikasi
+        $jumlahAkanExpired = Peserta::akanExpired()->count();
+        $jumlahSudahExpired = Peserta::sudahExpired()->count();
+        
+        $data = array(
+            'title'                => 'Data Peserta',
+            'menuAdminPeserta'     => 'active',
+            'peserta'              => Peserta::where('tahun', $tahunTerpilih)
+                                             ->orderBy('nama','asc')
+                                             ->get(),
+            'daftarTahun'          => $daftarTahun,
+            'tahunTerpilih'        => $tahunTerpilih,
+            'jumlahAkanExpired'    => $jumlahAkanExpired,
+            'jumlahSudahExpired'   => $jumlahSudahExpired,
+        );
+        return view('admin/peserta/index', $data);
+    }
+
+    public function notifikasi(){
+        $pesertaAkanExpired = Peserta::akanExpired()->orderBy('tanggal_sertifikat_diterima')->get();
+        $pesertaSudahExpired = Peserta::sudahExpired()->orderBy('tanggal_sertifikat_diterima')->get();
+        
+        $data = array(
+            'title'                 => 'Notifikasi Sertifikat',
+            'menuAdminPeserta'      => 'active',
+            'pesertaAkanExpired'    => $pesertaAkanExpired,
+            'pesertaSudahExpired'   => $pesertaSudahExpired,
+        );
+        return view('admin/peserta/notifikasi', $data);
+    }
+
+    public function create(){
+        $data = array(
+            'title'              => 'Tambah Data Peserta',
+            'menuAdminPeserta'   => 'active',  
+        );
+        return view('admin/peserta/create', $data);
+    }
+
+    public function store(Request $request){
+        $request->validate([
+            'tahun'                        => 'required|digits:4',
+            'nama'                         => 'required',
+            'nama_perusahaan'              => 'required',
+            'no_whatsapp'                  => 'required',
+            'tanggal_lahir'                => 'required|date',
+            'skema'                        => 'required',
+            'tanggal_sertifikat_diterima'  => 'required|date',
+        ],[
+            'tahun.required'                        => 'Tahun tidak boleh kosong',
+            'tahun.digits'                          => 'Tahun harus 4 digit',
+            'nama.required'                         => 'Nama tidak boleh kosong',
+            'nama_perusahaan.required'              => 'Nama perusahaan tidak boleh kosong',
+            'no_whatsapp.required'                  => 'No WhatsApp tidak boleh kosong',
+            'tanggal_lahir.required'                => 'Tanggal lahir tidak boleh kosong',
+            'tanggal_lahir.date'                    => 'Format tanggal lahir tidak valid',
+            'skema.required'                        => 'Skema tidak boleh kosong',
+            'tanggal_sertifikat_diterima.required'  => 'Tanggal sertifikat diterima tidak boleh kosong',
+            'tanggal_sertifikat_diterima.date'      => 'Format tanggal tidak valid',
+        ]);
+
+        $peserta = new Peserta;
+        $peserta->tahun                        = $request->tahun;
+        $peserta->nama                         = $request->nama;
+        $peserta->nama_perusahaan              = $request->nama_perusahaan;
+        $peserta->no_whatsapp                  = $request->no_whatsapp;
+        $peserta->tanggal_lahir                = $request->tanggal_lahir;
+        $peserta->skema                        = $request->skema;
+        $peserta->tanggal_sertifikat_diterima  = $request->tanggal_sertifikat_diterima;
+        $peserta->suka_telat_bayar             = $request->has('suka_telat_bayar');
+        $peserta->save();
+
+        return redirect()->route('peserta')->with('success', 'Data berhasil ditambahkan');
+    }
+    
+    public function edit($id){
+        $data = array(
+            'title'              => 'Edit Data Peserta',
+            'menuAdminPeserta'   => 'active',
+            'peserta'            => Peserta::findOrFail($id),  
+        );
+        return view('admin/peserta/edit', $data);
+    }
+
+    public function update(Request $request, $id){
+        $request->validate([
+            'tahun'                        => 'required|digits:4',
+            'nama'                         => 'required',
+            'nama_perusahaan'              => 'required',
+            'no_whatsapp'                  => 'required',
+            'tanggal_lahir'                => 'required|date',
+            'skema'                        => 'required',
+            'tanggal_sertifikat_diterima'  => 'required|date',
+        ],[
+            'tahun.required'                        => 'Tahun tidak boleh kosong',
+            'tahun.digits'                          => 'Tahun harus 4 digit',
+            'nama.required'                         => 'Nama tidak boleh kosong',
+            'nama_perusahaan.required'              => 'Nama perusahaan tidak boleh kosong',
+            'no_whatsapp.required'                  => 'No WhatsApp tidak boleh kosong',
+            'tanggal_lahir.required'                => 'Tanggal lahir tidak boleh kosong',
+            'tanggal_lahir.date'                    => 'Format tanggal lahir tidak valid',
+            'skema.required'                        => 'Skema tidak boleh kosong',
+            'tanggal_sertifikat_diterima.required'  => 'Tanggal sertifikat diterima tidak boleh kosong',
+            'tanggal_sertifikat_diterima.date'      => 'Format tanggal tidak valid',
+        ]);
+
+        $peserta = Peserta::findOrFail($id);
+        $peserta->tahun                        = $request->tahun;
+        $peserta->nama                         = $request->nama;
+        $peserta->nama_perusahaan              = $request->nama_perusahaan;
+        $peserta->no_whatsapp                  = $request->no_whatsapp;
+        $peserta->tanggal_lahir                = $request->tanggal_lahir;
+        $peserta->skema                        = $request->skema;
+        $peserta->tanggal_sertifikat_diterima  = $request->tanggal_sertifikat_diterima;
+        $peserta->suka_telat_bayar             = $request->has('suka_telat_bayar');
+        $peserta->save();
+
+        return redirect()->route('peserta')->with('success', 'Data berhasil diupdate');
+    }
+
+    public function destroy($id){
+        $peserta = Peserta::findOrFail($id);
+        $peserta->delete();
+
+        return redirect()->route('peserta')->with('success', 'Data berhasil dihapus');
+    }
+
+    public function toggleTelatBayar($id){
+        $peserta = Peserta::findOrFail($id);
+        $peserta->suka_telat_bayar = !$peserta->suka_telat_bayar;
+        $peserta->save();
+
+        $status = $peserta->suka_telat_bayar ? 'ditandai suka telat bayar' : 'ditandai tidak telat bayar';
+        return redirect()->back()->with('success', 'Peserta berhasil ' . $status);
+    }
+
+    public function excel(Request $request){
+        $tahun = $request->get('tahun', date('Y'));
+        $filename = now()->format('d-m-y_H.i.s');
+        return Excel::download(new PesertaExport($tahun), 'DataPeserta_'.$tahun.'_'.$filename.'.xlsx');
+    }
+
+    public function pdf(Request $request){
+        $tahun = $request->get('tahun', date('Y'));
+        $filename = now()->format('d-m-y_H.i.s');
+        $data = array(
+            'peserta'  => Peserta::where('tahun', $tahun)->orderBy('nama','asc')->get(),
+            'tahun'    => $tahun,
+            'tanggal'  => now()->format('d-m-y'),
+            'jam'      => now()->format('H.i.s'),
+        );
+        
+        $pdf = Pdf::loadView('admin/peserta/pdf', $data);
+        return $pdf->setPaper('a4', 'landscape')->stream('DataPeserta_'.$tahun.'_'.$filename.'.pdf');
+    }
+}

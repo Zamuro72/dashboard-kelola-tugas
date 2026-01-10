@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TugasController;
+use App\Http\Controllers\PesertaController;
 use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
@@ -46,6 +47,18 @@ Route::get('tugas/edit/{id}', [TugasController::class, 'edit'])->name('tugasEdit
 Route::post('tugas/update/{id}', [TugasController::class, 'update'])->name('tugasUpdate');
 Route::delete('tugas/destroy/{id}', [TugasController::class, 'destroy'])->name('tugasDestroy');
 Route::get('tugas/excel', [TugasController::class, 'excel'])->name('tugasExcel');
+
+// Peserta
+Route::get('peserta', [PesertaController::class, 'index'])->name('peserta');
+Route::get('peserta/notifikasi', [PesertaController::class, 'notifikasi'])->name('pesertaNotifikasi');
+Route::get('peserta/create', [PesertaController::class, 'create'])->name('pesertaCreate');
+Route::post('peserta/store', [PesertaController::class, 'store'])->name('pesertaStore');
+Route::get('peserta/edit/{id}', [PesertaController::class, 'edit'])->name('pesertaEdit');
+Route::post('peserta/update/{id}', [PesertaController::class, 'update'])->name('pesertaUpdate');
+Route::delete('peserta/destroy/{id}', [PesertaController::class, 'destroy'])->name('pesertaDestroy');
+Route::post('peserta/toggle-telat-bayar/{id}', [PesertaController::class, 'toggleTelatBayar'])->name('pesertaToggleTelatBayar');
+Route::get('peserta/excel', [PesertaController::class, 'excel'])->name('pesertaExcel');
+Route::get('peserta/pdf', [PesertaController::class, 'pdf'])->name('pesertaPdf');
 
 });
 

@@ -6,7 +6,7 @@
                 <div class="sidebar-brand-icon">
                     <i class="fas fa-tasks"></i>
                 </div>
-                <div class="sidebar-brand-text mx-3">Manajemen Tugas </div>
+                <div class="sidebar-brand-text mx-3">Manajemen Kandel </div>
             </a>
 
             <!-- Divider -->
@@ -40,6 +40,14 @@
                 <a class="nav-link" href="{{ route('tugas') }}">
                     <i class="fas fa-tasks"></i>
                     <span>Data Tugas</span></a>
+            </li>
+
+            <!-- Nav Item - Peserta -->
+            <li class="nav-item {{$menuAdminPeserta ?? ''}}">
+                <a class="nav-link" href="{{ route('peserta') }}">
+                    <i class="fas fa-users"></i>
+                    <span>Data Peserta</span>
+                </a>
             </li>
               
             @else
