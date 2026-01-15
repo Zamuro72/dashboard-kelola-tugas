@@ -53,6 +53,8 @@ Route::get('peserta', [PesertaController::class, 'index'])->name('peserta');
 Route::get('peserta/notifikasi', [PesertaController::class, 'notifikasi'])->name('pesertaNotifikasi');
 Route::get('peserta/create', [PesertaController::class, 'create'])->name('pesertaCreate');
 Route::post('peserta/store', [PesertaController::class, 'store'])->name('pesertaStore');
+Route::get('peserta/import', [PesertaController::class, 'importForm'])->name('pesertaImportForm');
+Route::post('peserta/import', [PesertaController::class, 'import'])->name('pesertaImport');
 Route::get('peserta/edit/{id}', [PesertaController::class, 'edit'])->name('pesertaEdit');
 Route::post('peserta/update/{id}', [PesertaController::class, 'update'])->name('pesertaUpdate');
 Route::delete('peserta/destroy/{id}', [PesertaController::class, 'destroy'])->name('pesertaDestroy');

@@ -45,6 +45,10 @@
                 <i class="fas fa-plus mr-2"></i>
                 Tambah Data
             </a>
+            <a href="{{ route('pesertaImportForm') }}" class="btn btn-sm btn-success">
+                <i class="fas fa-upload mr-2"></i>
+                Import Excel
+            </a>
             <a href="{{ route('pesertaNotifikasi') }}" class="btn btn-sm btn-info">
                 <i class="fas fa-bell mr-2"></i>
                 Notifikasi
@@ -57,10 +61,20 @@
         <div class="mb-2">
             <form action="{{ route('peserta') }}" method="GET" class="form-inline">
                 <label class="mr-2">Filter Tahun:</label>
-                <select name="tahun" class="form-control form-control-sm mr-2" onchange="this.form.submit()">
+                <select name="tahun" class="form-control form-control-sm mr-3" onchange="this.form.submit()">
                     @foreach($daftarTahun as $tahun)
                     <option value="{{ $tahun }}" {{ $tahunTerpilih == $tahun ? 'selected' : '' }}>
                         {{ $tahun }}
+                    </option>
+                    @endforeach
+                </select>
+                
+                <label class="mr-2">Filter Skema:</label>
+                <select name="skema" class="form-control form-control-sm mr-2" onchange="this.form.submit()">
+                    <option value="">-- Semua Skema --</option>
+                    @foreach($daftarSkema as $skema)
+                    <option value="{{ $skema }}" {{ $skemaTerpilih == $skema ? 'selected' : '' }}>
+                        {{ $skema }}
                     </option>
                     @endforeach
                 </select>
@@ -68,11 +82,11 @@
         </div>
         
         <div class="mb-2">
-            <a href="{{ route('pesertaExcel', ['tahun' => $tahunTerpilih]) }}" class="btn btn-sm btn-success">
+            <a href="{{ route('pesertaExcel', ['tahun' => $tahunTerpilih, 'skema' => $skemaTerpilih]) }}" class="btn btn-sm btn-success">
                 <i class="fas fa-file-excel mr-2"></i>
                 Excel
             </a>
-            <a href="{{ route('pesertaPdf', ['tahun' => $tahunTerpilih]) }}" class="btn btn-sm btn-danger" target='__blank'>
+            <a href="{{ route('pesertaPdf', ['tahun' => $tahunTerpilih, 'skema' => $skemaTerpilih]) }}" class="btn btn-sm btn-danger" target='__blank'>
                 <i class="fas fa-file-pdf mr-2"></i>
                 PDF
             </a>
@@ -80,8 +94,8 @@
     </div>
     
     <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+        <div style="overflow-x: auto; width: 100%; border: 1px solid #ddd;">
+            <table class="table table-bordered table-hover" id="dataTable" style="width: 1500px;" cellspacing="0">
                 <thead class="bg-primary text-white">
                     <tr class="text-center">
                         <th>No</th>
@@ -105,17 +119,13 @@
                         <td>{{ $item->nama }}</td>
                         <td>{{ $item->nama_perusahaan }}</td>
                         <td class="text-center">
-                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $item->no_whatsapp) }}" 
-                               target="_blank" class="btn btn-sm btn-success">
-                                <i class="fab fa-whatsapp"></i> {{ $item->no_whatsapp }}
-                            </a>
+                            {{ preg_replace('/[^0-9]/', '', $item->no_whatsapp) }}
                         </td>
                         <td class="text-center">{{ $item->tanggal_lahir->format('d-m-Y') }}</td>
                         <td>{{ $item->skema }}</td>
                         <td class="text-center">{{ $item->tanggal_sertifikat_diterima->format('d-m-Y') }}</td>
                         <td class="text-center">
                             <small>{{ $item->tanggal_expired->format('d-m-Y') }}</small><br>
-                            <small class="text-muted">({{ $item->getSisaHariExpired() }})</small>
                         </td>
                         <td class="text-center">
                             {!! $item->getStatusSertifikatBadge() !!}
@@ -124,10 +134,10 @@
                             @endif
                         </td>
                         <td class="text-center">
-                            <button class="btn btn-sm btn-info" data-toggle="modal" data-target="#modalShow{{ $item->id }}">
+                            <button class="btn btn-sm btn-info mr-2" data-toggle="modal" data-target="#modalShow{{ $item->id }}">
                                 <i class="fas fa-eye"></i>
                             </button>
-                            <a href="{{ route('pesertaEdit', $item->id) }}" class="btn btn-sm btn-warning">
+                            <a href="{{ route('pesertaEdit', $item->id) }}" class="btn btn-sm btn-warning mr-2">
                                 <i class="fas fa-edit"></i>
                             </a>
                             <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modalDelete{{ $item->id }}">

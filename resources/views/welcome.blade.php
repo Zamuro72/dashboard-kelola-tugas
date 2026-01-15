@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Manajemen Tugas</title>
+  <title>Manajemen Kandel</title>
   <meta name="description" content="">
   <meta name="keywords" content="">
 
@@ -42,9 +42,8 @@
     <div class="container-fluid container-xl position-relative d-flex align-items-center">
 
       <a href="#" class="logo d-flex align-items-center me-auto">
-        <!-- Uncomment the line below if you also wish to use an image logo -->
-        <!-- <img src="assets/img/logo.png" alt=""> -->
-        <h1 class="sitename">Manajemen Tugas</h1>
+        <img src="{{ asset('enno/assets/img/logo.png') }}">
+        <h1 class="sitename">Sistem Manajemen Kandel</h1>
       </a>
 
       <nav id="navmenu" class="navmenu">
@@ -75,8 +74,8 @@
       <div class="container">
         <div class="row gy-4">
           <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center" data-aos="fade-up">
-            <h1>Manajemen Tugas</h1>
-            <p>Aplikasi Manajemen Tugas By Zamuro</p>
+            <h1>Sistem Kandel</h1>
+            <p>Aplikasi Untuk Mengelola Pekerjaan</p>
             <div class="d-flex">
               @auth
               <a href="{{ route('dashboard') }}" class="btn-get-started">Dashboard</a>
@@ -101,7 +100,13 @@
       <div class="container section-title" data-aos="fade-up">
         <span>Tentang Kami<br></span>
         <h2>Tentang Kami</h2>
-        <p>Kami adalah Web Developer terbaik di KSB</p>
+        <p style= "text-align: justify;">Kami adalah perusahaan yang bergerak dalam pengembangan sumber daya manusia (SDM) melalui pelatihan dan sertifikasi Keselamatan, 
+          Kesehatan Kerja, dan Lingkungan (K3L) serta Sistem Manajemen Mutu, 
+          yang dirancang untuk menjawab kebutuhan industri masa kini dan masa depan. 
+          Dengan semangat untuk berkontribusi terhadap kemajuan dunia usaha dan peningkatan kualitas tenaga kerja, kami berkomitmen untuk mendampingi perusahaan dalam membangun budaya K3L yang kuat, 
+          mendukung pertumbuhan SDM yang berkelanjutan, serta mendorong efisiensi melalui sistem manajemen yang terukur dan berstandar. 
+          Didukung oleh tenaga ahli profesional, modul pelatihan yang aplikatif, serta pendekatan konsultatif yang disesuaikan dengan kebutuhan klien, 
+          kami menawarkan berbagai layanan unggulan mulai dari pelatihan dasar hingga sertifikasi spesialis di berbagai sektor industri.</p>
       </div><!-- End Section Title -->
 
       <div class="container">
@@ -149,28 +154,30 @@
               <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="200">
                 <i class="bi bi-geo-alt flex-shrink-0"></i>
                 <div>
-                  <h3>Address</h3>
-                  <p>KSB Blok E</p>
+                  <h3>Alamat</h3>
+                  <p>Ruko Kawasan Niaga Citra Grand Cibubur, Jl. Alternatif Cibubur No.10 Blok R12, 
+                    RT.002/RW.008, Jatisampurna, 
+                    Kec. Jatisampurna, Kota Bekasi, Jawa Barat 17435</p>
                 </div>
               </div><!-- End Info Item -->
 
               <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="300">
                 <i class="bi bi-telephone flex-shrink-0"></i>
                 <div>
-                  <h3>Call Us</h3>
-                  <p>08696969</p>
+                  <h3>Kontak</h3>
+                  <p>+62 812-3484-6680</p>
                 </div>
               </div><!-- End Info Item -->
 
               <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="400">
                 <i class="bi bi-envelope flex-shrink-0"></i>
                 <div>
-                  <h3>Email Us</h3>
-                  <p>zamuro@gmail.com</p>
+                  <h3>Email</h3>
+                  <p>kandelsekeco@gmail.com</p>
                 </div>
               </div><!-- End Info Item -->
 
-              <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d48389.78314118045!2d-74.006138!3d40.710059!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25a22a3bda30d%3A0xb89d1fe6bc499443!2sDowntown%20Conference%20Center!5e0!3m2!1sen!2sus!4v1676961268712!5m2!1sen!2sus" frameborder="0" style="border:0; width: 100%; height: 270px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+              <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3965.09822001035!2d106.926903!3d-6.3813222!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69c02692084e13%3A0x7019642eb1230aad!2sPT%20Kandel%20Sekeco%20Internasional!5e0!3m2!1sid!2sid!4v1768465338062!5m2!1sid!2sid" frameborder="0" style="border:0; width: 100%; height: 270px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
           </div>
 

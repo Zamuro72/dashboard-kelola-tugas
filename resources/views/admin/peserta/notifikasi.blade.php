@@ -40,30 +40,30 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($pesertaSudahExpired as $item)
-                    <tr>
-                        <td class="text-center">{{ $loop->iteration }}</td>
-                        <td>{{ $item->nama }}</td>
-                        <td>{{ $item->nama_perusahaan }}</td>
-                        <td class="text-center">
-                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $item->no_whatsapp) }}" 
-                               target="_blank" class="btn btn-sm btn-success">
-                                <i class="fab fa-whatsapp"></i> {{ $item->no_whatsapp }}
-                            </a>
-                        </td>
-                        <td>{{ $item->skema }}</td>
-                        <td class="text-center">{{ $item->tanggal_sertifikat_diterima->format('d-m-Y') }}</td>
-                        <td class="text-center">{{ $item->tanggal_expired->format('d-m-Y') }}</td>
-                        <td class="text-center">
-                            <span class="badge badge-danger">{{ $item->getSisaHariExpired() }}</span>
-                        </td>
-                        <td class="text-center">
-                            <a href="{{ route('pesertaEdit', $item->id) }}" class="btn btn-sm btn-warning">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    @endforeach
+                @foreach($pesertaSudahExpired as $item)
+                <tr>
+                    <td class="text-center">{{ $loop->iteration }}</td>
+                    <td>{{ $item->nama }}</td>
+                    <td>{{ $item->nama_perusahaan }}</td>
+                    <td class="text-center">
+                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $item->no_whatsapp) }}" 
+                            target="_blank" class="btn btn-sm btn-success">
+                            <i class="fab fa-whatsapp"></i> {{ $item->no_whatsapp }}
+                        </a>
+                    </td>
+                    <td>{{ $item->skema }}</td>
+                    <td class="text-center">{{ $item->tanggal_sertifikat_diterima->format('d-m-Y') }}</td>
+                    <td class="text-center">{{ $item->tanggal_expired->format('d-m-Y') }}</td>
+                    <td class="text-center">
+                        <span class="badge badge-danger">Sudah expired sejak {{ intval(abs(now()->diffInDays($item->tanggal_expired))) }} hari yang lalu</span>
+                    </td>
+                    <td class="text-center">
+                        <a href="{{ route('pesertaEdit', $item->id) }}" class="btn btn-sm btn-warning">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                    </td>
+                </tr>
+                @endforeach
                 </tbody>
             </table>
         </div>
@@ -117,7 +117,7 @@
                         <td class="text-center">{{ $item->tanggal_sertifikat_diterima->format('d-m-Y') }}</td>
                         <td class="text-center">{{ $item->tanggal_expired->format('d-m-Y') }}</td>
                         <td class="text-center">
-                            <span class="badge badge-warning">{{ $item->getSisaHariExpired() }}</span>
+                            <span class="badge badge-warning">{{ intval(now()->diffInDays($item->tanggal_expired)) }} hari lagi</span>
                         </td>
                         <td class="text-center">
                             <a href="{{ route('pesertaEdit', $item->id) }}" class="btn btn-sm btn-warning">

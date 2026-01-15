@@ -12,6 +12,7 @@ class PesertaController extends Controller
 {
     public function index(Request $request){
         $tahunTerpilih = $request->get('tahun', date('Y'));
+        $skemaTerpilih = $request->get('skema', '');
         
         // Ambil daftar tahun yang tersedia
         $daftarTahun = Peserta::select('tahun')
@@ -19,18 +20,27 @@ class PesertaController extends Controller
                               ->orderBy('tahun', 'desc')
                               ->pluck('tahun');
         
+        // Daftar skema yang tersedia (hardcoded)
+        $daftarSkema = ['BNSP', 'Kemnaker RI'];
+        
         // Hitung notifikasi
-        $jumlahAkanExpired = Peserta::akanExpired()->count();
+        $jumlahAkanExpired  = Peserta::akanExpired()->count();
         $jumlahSudahExpired = Peserta::sudahExpired()->count();
+        
+        // Query dengan filter tahun dan skema
+        $query = Peserta::where('tahun', $tahunTerpilih);
+        if($skemaTerpilih) {
+            $query->where('skema', 'like', '%'.$skemaTerpilih.'%');
+        }
         
         $data = array(
             'title'                => 'Data Peserta',
             'menuAdminPeserta'     => 'active',
-            'peserta'              => Peserta::where('tahun', $tahunTerpilih)
-                                             ->orderBy('nama','asc')
-                                             ->get(),
+            'peserta'              => $query->orderBy('nama','asc')->get(),
             'daftarTahun'          => $daftarTahun,
+            'daftarSkema'          => $daftarSkema,
             'tahunTerpilih'        => $tahunTerpilih,
+            'skemaTerpilih'        => $skemaTerpilih,
             'jumlahAkanExpired'    => $jumlahAkanExpired,
             'jumlahSudahExpired'   => $jumlahSudahExpired,
         );
@@ -157,21 +167,73 @@ class PesertaController extends Controller
 
     public function excel(Request $request){
         $tahun = $request->get('tahun', date('Y'));
+        $skema = $request->get('skema', '');
         $filename = now()->format('d-m-y_H.i.s');
-        return Excel::download(new PesertaExport($tahun), 'DataPeserta_'.$tahun.'_'.$filename.'.xlsx');
+        return Excel::download(new PesertaExport($tahun, $skema), 'DataPeserta_'.$tahun.'_'.$filename.'.xlsx');
     }
 
     public function pdf(Request $request){
         $tahun = $request->get('tahun', date('Y'));
+        $skema = $request->get('skema', '');
         $filename = now()->format('d-m-y_H.i.s');
+        
+        $query = Peserta::where('tahun', $tahun);
+        if($skema) {
+            $query->where('skema', 'like', '%'.$skema.'%');
+        }
+        
         $data = array(
-            'peserta'  => Peserta::where('tahun', $tahun)->orderBy('nama','asc')->get(),
+            'peserta'  => $query->orderBy('nama','asc')->get(),
             'tahun'    => $tahun,
+            'skema'    => $skema,
             'tanggal'  => now()->format('d-m-y'),
             'jam'      => now()->format('H.i.s'),
         );
         
         $pdf = Pdf::loadView('admin/peserta/pdf', $data);
         return $pdf->setPaper('a4', 'landscape')->stream('DataPeserta_'.$tahun.'_'.$filename.'.pdf');
+    }
+
+    public function importForm(){
+        $data = array(
+            'title'              => 'Import Data Peserta',
+            'menuAdminPeserta'   => 'active',  
+        );
+        return view('admin/peserta/import', $data);
+    }
+
+    public function import(Request $request){
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,xls,csv|max:5120'
+        ], [
+            'file.required' => 'File harus dipilih',
+            'file.mimes' => 'File harus bertipe Excel (.xlsx, .xls, .csv)',
+            'file.max' => 'Ukuran file maksimal 5MB'
+        ]);
+
+        try {
+            // Extract tahun dari nama file
+            $filename = $request->file('file')->getClientOriginalName();
+            $tahunFromFilename = $this->extractTahunFromFilename($filename);
+            
+            Excel::import(new \App\Imports\PesertaImport($tahunFromFilename), $request->file('file'));
+            return redirect()->route('peserta')->with('success', 'Data peserta berhasil diimport');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal mengimport file: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Extract tahun dari nama file
+     * Contoh: "data peserta 2025.xlsx" -> 2025
+     */
+    private function extractTahunFromFilename($filename)
+    {
+        // Cari angka 4 digit (tahun) dalam nama file
+        if (preg_match('/\b(19|20)\d{2}\b/', $filename, $matches)) {
+            return $matches[0];
+        }
+        // Jika tidak ada tahun di nama file, return null (akan ambil dari row)
+        return null;
     }
 }
