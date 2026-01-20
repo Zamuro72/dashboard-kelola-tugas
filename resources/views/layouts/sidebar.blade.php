@@ -53,7 +53,7 @@
             @else
              <!-- Heading -->
             <div class="sidebar-heading">
-                Menu Karyawan
+                Menu {{ auth()->user()->jabatan }}
             </div>
 
 
@@ -62,6 +62,20 @@
                 <a class="nav-link" href="{{ route('tugas') }}">
                     <i class="fas fa-tasks"></i>
                     <span>Data Tugas</span></a>
+            </li>
+
+            <!-- Nav Item - Pengajuan Lembur -->
+            <li class="nav-item {{$menuKaryawanLembur ?? ''}}">
+                <a class="nav-link" href="{{ route('lembur') }}">
+                    <i class="fas fa-clock"></i>
+                    <span>Pengajuan Lembur</span></a>
+            </li>
+
+            <!-- Nav Item - Perjalanan Dinas -->
+            <li class="nav-item {{$menuKaryawanPerdin ?? ''}}">
+                <a class="nav-link" href="{{ route('perdin') }}">
+                    <i class="fas fa-plane"></i>
+                    <span>Perjalanan Dinas</span></a>
             </li>               
             @endif
 
