@@ -50,23 +50,23 @@ class LemburController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'departemen' => 'required|string|max:255',
-            'tanggal_pelaksanaan' => 'required|date',
-            'jam_kerja_mulai' => 'required',
-            'jam_kerja_selesai' => 'required',
-            'jam_lembur_mulai' => 'required',
-            'jam_lembur_selesai' => 'required',
-            'lokasi' => 'required|string|max:255',
-            'uraian_pekerjaan' => 'required|string',
+            'departemen'            => 'required|string|max:255',
+            'tanggal_pelaksanaan'   => 'required|date',
+            'jam_kerja_mulai'       => 'required',
+            'jam_kerja_selesai'     => 'required',
+            'jam_lembur_mulai'      => 'required',
+            'jam_lembur_selesai'    => 'required',
+            'lokasi'                => 'required|string|max:255',
+            'uraian_pekerjaan'      => 'required|string',
         ], [
-            'departemen.required' => 'Departemen/Divisi tidak boleh kosong',
-            'tanggal_pelaksanaan.required' => 'Tanggal pelaksanaan tidak boleh kosong',
-            'jam_kerja_mulai.required' => 'Jam kerja mulai tidak boleh kosong',
-            'jam_kerja_selesai.required' => 'Jam kerja selesai tidak boleh kosong',
-            'jam_lembur_mulai.required' => 'Jam lembur mulai tidak boleh kosong',
-            'jam_lembur_selesai.required' => 'Jam lembur selesai tidak boleh kosong',
-            'lokasi.required' => 'Lokasi tidak boleh kosong',
-            'uraian_pekerjaan.required' => 'Uraian pekerjaan tidak boleh kosong',
+            'departemen.required'               => 'Departemen/Divisi tidak boleh kosong',
+            'tanggal_pelaksanaan.required'      => 'Tanggal pelaksanaan tidak boleh kosong',
+            'jam_kerja_mulai.required'          => 'Jam kerja mulai tidak boleh kosong',
+            'jam_kerja_selesai.required'        => 'Jam kerja selesai tidak boleh kosong',
+            'jam_lembur_mulai.required'         => 'Jam lembur mulai tidak boleh kosong',
+            'jam_lembur_selesai.required'       => 'Jam lembur selesai tidak boleh kosong',
+            'lokasi.required'                   => 'Lokasi tidak boleh kosong',
+            'uraian_pekerjaan.required'         => 'Uraian pekerjaan tidak boleh kosong',
         ]);
 
         $user = Auth::user();
@@ -138,23 +138,23 @@ class LemburController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'departemen' => 'required|string|max:255',
-            'tanggal_pelaksanaan' => 'required|date',
-            'jam_kerja_mulai' => 'required',
-            'jam_kerja_selesai' => 'required',
-            'jam_lembur_mulai' => 'required',
-            'jam_lembur_selesai' => 'required',
-            'lokasi' => 'required|string|max:255',
-            'uraian_pekerjaan' => 'required|string',
+            'departemen'            => 'required|string|max:255',
+            'tanggal_pelaksanaan'   => 'required|date',
+            'jam_kerja_mulai'       => 'required',
+            'jam_kerja_selesai'     => 'required',
+            'jam_lembur_mulai'      => 'required',
+            'jam_lembur_selesai'    => 'required',
+            'lokasi'                => 'required|string|max:255',
+            'uraian_pekerjaan'      => 'required|string',
         ], [
-            'departemen.required' => 'Departemen/Divisi tidak boleh kosong',
-            'tanggal_pelaksanaan.required' => 'Tanggal pelaksanaan tidak boleh kosong',
-            'jam_kerja_mulai.required' => 'Jam kerja mulai tidak boleh kosong',
-            'jam_kerja_selesai.required' => 'Jam kerja selesai tidak boleh kosong',
-            'jam_lembur_mulai.required' => 'Jam lembur mulai tidak boleh kosong',
-            'jam_lembur_selesai.required' => 'Jam lembur selesai tidak boleh kosong',
-            'lokasi.required' => 'Lokasi tidak boleh kosong',
-            'uraian_pekerjaan.required' => 'Uraian pekerjaan tidak boleh kosong',
+            'departemen.required'               => 'Departemen/Divisi tidak boleh kosong',
+            'tanggal_pelaksanaan.required'      => 'Tanggal pelaksanaan tidak boleh kosong',
+            'jam_kerja_mulai.required'          => 'Jam kerja mulai tidak boleh kosong',
+            'jam_kerja_selesai.required'        => 'Jam kerja selesai tidak boleh kosong',
+            'jam_lembur_mulai.required'         => 'Jam lembur mulai tidak boleh kosong',
+            'jam_lembur_selesai.required'       => 'Jam lembur selesai tidak boleh kosong',
+            'lokasi.required'                   => 'Lokasi tidak boleh kosong',
+            'uraian_pekerjaan.required'         => 'Uraian pekerjaan tidak boleh kosong',
         ]);
 
         $user = Auth::user();
