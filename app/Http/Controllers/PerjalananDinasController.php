@@ -67,14 +67,14 @@ class PerjalananDinasController extends Controller
 
         $user = Auth::user();
 
-        $perdin = new PerjalananDinas();
-        $perdin->user_id = $user->id;
-        $perdin->tujuan_perjalanan = $request->tujuan_perjalanan;
-        $perdin->lokasi = $request->lokasi;
-        $perdin->tanggal_berangkat = $request->tanggal_berangkat;
-        $perdin->tanggal_kembali = $request->tanggal_kembali;
-        $perdin->transportasi = $request->transportasi;
-        $perdin->uang_muka = $request->uang_muka ?? 0;
+        $perdin                           = new PerjalananDinas();
+        $perdin->user_id                  = $user->id;
+        $perdin->tujuan_perjalanan        = $request->tujuan_perjalanan;
+        $perdin->lokasi                   = $request->lokasi;
+        $perdin->tanggal_berangkat        = $request->tanggal_berangkat;
+        $perdin->tanggal_kembali          = $request->tanggal_kembali;
+        $perdin->transportasi             = $request->transportasi;
+        $perdin->uang_muka                = $request->uang_muka ?? 0;
         $perdin->save();
 
         return redirect()->route('perdin')->with('success', 'Perjalanan dinas berhasil dibuat');
