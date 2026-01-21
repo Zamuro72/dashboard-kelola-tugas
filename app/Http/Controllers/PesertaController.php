@@ -249,8 +249,8 @@ class PesertaController extends Controller
             'file' => 'required|file|mimes:xlsx,xls,csv|max:5120'
         ], [
             'file.required' => 'File harus dipilih',
-            'file.mimes' => 'File harus bertipe Excel (.xlsx, .xls, .csv)',
-            'file.max' => 'Ukuran file maksimal 5MB'
+            'file.mimes'    => 'File harus bertipe Excel (.xlsx, .xls, .csv)',
+            'file.max'      => 'Ukuran file maksimal 5MB'
         ]);
 
         try {
