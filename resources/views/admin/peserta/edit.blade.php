@@ -9,7 +9,7 @@
 
 <div class="card">
     <div class="card-header bg-warning">
-        <a href="{{ route('peserta') }}" class="btn btn-sm btn-success">
+        <a href="{{ route('peserta', ['tahun' => $peserta->tahun]) }}" class="btn btn-sm btn-success">
             <i class="fas fa-arrow-left mr-2"></i>
             Kembali
         </a>
@@ -72,7 +72,7 @@
                         <span class="text-danger">*</span> Tanggal Lahir:
                     </label>
                     <input type="date" name="tanggal_lahir" class="form-control @error('tanggal_lahir') is-invalid @enderror" 
-                           value="{{ old('tanggal_lahir', $peserta->tanggal_lahir->format('Y-m-d')) }}">
+                           value="{{ old('tanggal_lahir', $peserta->tanggal_lahir ? $peserta->tanggal_lahir->format('Y-m-d') : '') }}">
                     @error('tanggal_lahir')
                     <small class="text-danger">{{ $message }}</small>
                     @enderror
@@ -97,11 +97,11 @@
                     </label>
                     <input type="date" name="tanggal_sertifikat_diterima" 
                            class="form-control @error('tanggal_sertifikat_diterima') is-invalid @enderror" 
-                           value="{{ old('tanggal_sertifikat_diterima', $peserta->tanggal_sertifikat_diterima->format('Y-m-d')) }}">
+                           value="{{ old('tanggal_sertifikat_diterima', $peserta->tanggal_sertifikat_diterima ? $peserta->tanggal_sertifikat_diterima->format('Y-m-d') : '') }}">
                     @error('tanggal_sertifikat_diterima')
                     <small class="text-danger">{{ $message }}</small>
                     @enderror
-                    <small class="text-muted">Akan expired: {{ $peserta->tanggal_expired->format('d-m-Y') }}</small>
+                    <small class="text-muted">Akan expired: {{ $peserta->tanggal_expired ? $peserta->tanggal_expired->format('d-m-Y') : '-' }}</small>
                 </div>
                 
                 <div class="col-md-6">
@@ -122,7 +122,7 @@
                     <i class="fas fa-save mr-2"></i>
                     Update
                 </button>
-                <a href="{{ route('peserta') }}" class="btn btn-secondary">
+                <a href="{{ route('peserta', ['tahun' => $peserta->tahun]) }}" class="btn btn-secondary">
                     <i class="fas fa-times mr-2"></i>
                     Batal
                 </a>

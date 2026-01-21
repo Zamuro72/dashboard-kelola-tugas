@@ -90,6 +90,43 @@
                 <i class="fas fa-file-pdf mr-2"></i>
                 PDF
             </a>
+            <!-- Button Delete All By Year -->
+            @if($peserta->count() > 0)
+            <button class="btn btn-sm btn-danger ml-2" data-toggle="modal" data-target="#modalDeleteYear">
+                <i class="fas fa-trash-alt mr-2"></i>
+                Hapus Data {{ $tahunTerpilih }}
+            </button>
+            @endif
+        </div>
+    </div>
+    
+    <!-- Modal Delete Year -->
+    <div class="modal fade" id="modalDeleteYear" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Hapus Semua Data {{ $tahunTerpilih }}?</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0">Apakah Anda yakin ingin menghapus <strong>SEMUA</strong> data peserta untuk tahun <strong>{{ $tahunTerpilih }}</strong>?</p>
+                    <p class="text-danger small mt-2">*Tindakan ini tidak dapat dibatalkan.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        <i class="fas fa-times"></i> Batal
+                    </button>
+                    <form action="{{ route('pesertaDestroyByTahun', $tahunTerpilih) }}" method="post" class="d-inline">
+                        @csrf
+                        @method('delete')
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash-alt"></i> Ya, Hapus Semua
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
     
@@ -102,12 +139,12 @@
                         <th>Nama</th>
                         <th>Perusahaan</th>
                         <th>No WhatsApp</th>
-                        <th>Tgl Lahir</th>
+                        <th style="min-width: 120px;">Tgl Lahir</th>
                         <th>Skema</th>
-                        <th>Tgl Sertifikat</th>
-                        <th>Expired</th>
+                        <th style="min-width: 120px;">Tgl Sertifikat</th>
+                        <th style="min-width: 120px;">Expired</th>
                         <th>Status</th>
-                        <th>
+                        <th style="min-width: 150px;">
                             <i class="fas fa-cog"></i>
                         </th>
                     </tr>
@@ -121,11 +158,15 @@
                         <td class="text-center">
                             {{ preg_replace('/[^0-9]/', '', $item->no_whatsapp) }}
                         </td>
-                        <td class="text-center">{{ $item->tanggal_lahir->format('d-m-Y') }}</td>
+                        <td class="text-center">{{ $item->tanggal_lahir ? $item->tanggal_lahir->format('d-m-Y') : '-' }}</td>
                         <td>{{ $item->skema }}</td>
-                        <td class="text-center">{{ $item->tanggal_sertifikat_diterima->format('d-m-Y') }}</td>
+                        <td class="text-center">{{ $item->tanggal_sertifikat_diterima ? $item->tanggal_sertifikat_diterima->format('d-m-Y') : '-' }}</td>
                         <td class="text-center">
+                            @if($item->tanggal_expired)
                             <small>{{ $item->tanggal_expired->format('d-m-Y') }}</small><br>
+                            @else
+                            -
+                            @endif
                         </td>
                         <td class="text-center">
                             {!! $item->getStatusSertifikatBadge() !!}

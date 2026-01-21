@@ -32,7 +32,7 @@
                 </div>
                 <div class="row mb-2">
                     <div class="col-md-4 font-weight-bold">Tanggal Lahir</div>
-                    <div class="col-md-8">: {{ $item->tanggal_lahir->format('d F Y') }}</div>
+                    <div class="col-md-8">: {{ $item->tanggal_lahir ? $item->tanggal_lahir->format('d F Y') : '-' }}</div>
                 </div>
                 <div class="row mb-2">
                     <div class="col-md-4 font-weight-bold">Skema</div>
@@ -40,12 +40,12 @@
                 </div>
                 <div class="row mb-2">
                     <div class="col-md-4 font-weight-bold">Tanggal Sertifikat Diterima</div>
-                    <div class="col-md-8">: {{ $item->tanggal_sertifikat_diterima->format('d F Y') }}</div>
+                    <div class="col-md-8">: {{ $item->tanggal_sertifikat_diterima ? $item->tanggal_sertifikat_diterima->format('d F Y') : '-' }}</div>
                 </div>
                 <div class="row mb-2">
                     <div class="col-md-4 font-weight-bold">Tanggal Expired</div>
                     <div class="col-md-8">
-                        : {{ $item->tanggal_expired->format('d F Y') }}
+                        : {{ $item->tanggal_expired ? $item->tanggal_expired->format('d F Y') : '-' }}
                         <br><small class="text-muted">({{ $item->getSisaHariExpired() }})</small>
                     </div>
                 </div>

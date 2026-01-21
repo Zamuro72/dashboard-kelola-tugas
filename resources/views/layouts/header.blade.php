@@ -9,6 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
+    <link href="{{asset('enno/assets/img/favicon.png')}}" rel="icon">
     <title>M Tugas | {{$title}}</title>
 
     <!-- Custom fonts for this template-->

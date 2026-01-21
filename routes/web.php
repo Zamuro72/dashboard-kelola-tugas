@@ -80,6 +80,7 @@ route::middleware('checkLogin')->group(function () {
         Route::get('peserta/edit/{id}', [PesertaController::class, 'edit'])->name('pesertaEdit');
         Route::post('peserta/update/{id}', [PesertaController::class, 'update'])->name('pesertaUpdate');
         Route::delete('peserta/destroy/{id}', [PesertaController::class, 'destroy'])->name('pesertaDestroy');
+        Route::delete('peserta/delete-year/{tahun}', [PesertaController::class, 'destroyByTahun'])->name('pesertaDestroyByTahun');
         Route::post('peserta/toggle-telat-bayar/{id}', [PesertaController::class, 'toggleTelatBayar'])->name('pesertaToggleTelatBayar');
         Route::get('peserta/excel', [PesertaController::class, 'excel'])->name('pesertaExcel');
         Route::get('peserta/pdf', [PesertaController::class, 'pdf'])->name('pesertaPdf');
