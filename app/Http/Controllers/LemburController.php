@@ -81,17 +81,17 @@ class LemburController extends Controller
         $totalJamLembur = $jamLemburSelesai->diffInMinutes($jamLemburMulai) / 60;
 
         $lembur = new PengajuanLembur();
-        $lembur->user_id = $user->id;
-        $lembur->departemen = $request->departemen;
-        $lembur->tanggal_pelaksanaan = $request->tanggal_pelaksanaan;
-        $lembur->hari = $hari;
-        $lembur->jam_kerja_mulai = $request->jam_kerja_mulai;
-        $lembur->jam_kerja_selesai = $request->jam_kerja_selesai;
-        $lembur->jam_lembur_mulai = $request->jam_lembur_mulai;
-        $lembur->jam_lembur_selesai = $request->jam_lembur_selesai;
-        $lembur->total_jam_lembur = $totalJamLembur;
-        $lembur->lokasi = $request->lokasi;
-        $lembur->uraian_pekerjaan = $request->uraian_pekerjaan;
+        $lembur->user_id =               $user->id;
+        $lembur->departemen =            $request->departemen;
+        $lembur->tanggal_pelaksanaan =   $request->tanggal_pelaksanaan;
+        $lembur->hari =                  $hari;
+        $lembur->jam_kerja_mulai =       $request->jam_kerja_mulai;
+        $lembur->jam_kerja_selesai =     $request->jam_kerja_selesai;
+        $lembur->jam_lembur_mulai =      $request->jam_lembur_mulai;
+        $lembur->jam_lembur_selesai =    $request->jam_lembur_selesai;
+        $lembur->total_jam_lembur =      $totalJamLembur;
+        $lembur->lokasi =                $request->lokasi;
+        $lembur->uraian_pekerjaan =      $request->uraian_pekerjaan;
         $lembur->save();
 
         return redirect()->route('lembur')->with('success', 'Pengajuan lembur berhasil dibuat');
