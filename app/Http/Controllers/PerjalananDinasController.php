@@ -128,23 +128,23 @@ class PerjalananDinasController extends Controller
             'transportasi'          => 'required|string|max:255',
             'uang_muka'             => 'nullable|numeric|min:0',
         ], [
-            'tujuan_perjalanan.required'    => 'Tujuan perjalanan tidak boleh kosong',
-            'lokasi.required'               => 'Lokasi tidak boleh kosong',
-            'tanggal_berangkat.required'    => 'Tanggal berangkat tidak boleh kosong',
-            'tanggal_kembali.required'      => 'Tanggal kembali tidak boleh kosong',
+            'tujuan_perjalanan.required'     => 'Tujuan perjalanan tidak boleh kosong',
+            'lokasi.required'                => 'Lokasi tidak boleh kosong',
+            'tanggal_berangkat.required'     => 'Tanggal berangkat tidak boleh kosong',
+            'tanggal_kembali.required'       => 'Tanggal kembali tidak boleh kosong',
             'tanggal_kembali.after_or_equal' => 'Tanggal kembali harus setelah atau sama dengan tanggal berangkat',
-            'transportasi.required'         => 'Transportasi tidak boleh kosong',
+            'transportasi.required'          => 'Transportasi tidak boleh kosong',
         ]);
 
         $user = Auth::user();
         $perdin = PerjalananDinas::where('user_id', $user->id)->findOrFail($id);
 
-        $perdin->tujuan_perjalanan =   $request->tujuan_perjalanan;
-        $perdin->lokasi =              $request->lokasi;
-        $perdin->tanggal_berangkat =   $request->tanggal_berangkat;
-        $perdin->tanggal_kembali =     $request->tanggal_kembali;
-        $perdin->transportasi =        $request->transportasi;
-        $perdin->uang_muka =           $request->uang_muka ?? 0;
+        $perdin->tujuan_perjalanan =              $request->tujuan_perjalanan;
+        $perdin->lokasi            =              $request->lokasi;
+        $perdin->tanggal_berangkat =              $request->tanggal_berangkat;
+        $perdin->tanggal_kembali   =              $request->tanggal_kembali;
+        $perdin->transportasi      =              $request->transportasi;
+        $perdin->uang_muka         =              $request->uang_muka ?? 0;
         $perdin->save();
 
         return redirect()->route('perdin')->with('success', 'Perjalanan dinas berhasil diupdate');
