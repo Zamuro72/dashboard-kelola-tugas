@@ -125,6 +125,7 @@ class PesertaImport implements ToModel, WithHeadingRow, WithValidation, WithMapp
             'tahun'                        => $tahunValue,
             'nama'                         => $row['nama'],
             'nama_perusahaan'              => $row['nama_perusahaan'],
+            'email'                        => $row['email'] ?? null,
             'no_whatsapp'                  => $row['no_whatsapp'],
             'tanggal_lahir'                => $tanggalLahir,
             'skema'                        => $row['skema'],
@@ -140,6 +141,7 @@ class PesertaImport implements ToModel, WithHeadingRow, WithValidation, WithMapp
             '*.tahun'                        => 'nullable',
             '*.nama'                         => 'nullable|string',
             '*.nama_perusahaan'              => 'nullable|string',
+            '*.email'                        => 'nullable|email',
             '*.no_whatsapp'                  => 'nullable|string',
             // Relax date validation because we are parsing it manually. 
             // 'date' rule might fail for weird formats like "Friday, ..." before we parse it.

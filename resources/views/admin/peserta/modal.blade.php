@@ -22,6 +22,10 @@
                     <div class="col-md-8">: {{ $item->nama_perusahaan }}</div>
                 </div>
                 <div class="row mb-2">
+                    <div class="col-md-4 font-weight-bold">Email</div>
+                    <div class="col-md-8">: {{ $item->email ?? '-' }}</div>
+                </div>
+                <div class="row mb-2">
                     <div class="col-md-4 font-weight-bold">No WhatsApp</div>
                     <div class="col-md-8">
                         : <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $item->no_whatsapp) }}" 

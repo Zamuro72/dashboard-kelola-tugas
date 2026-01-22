@@ -31,6 +31,7 @@
                         <th>No</th>
                         <th>Nama</th>
                         <th>Perusahaan</th>
+                        <th>Email</th>
                         <th>No WhatsApp</th>
                         <th>Skema</th>
                         <th>Tgl Sertifikat</th>
@@ -45,6 +46,7 @@
                     <td class="text-center">{{ $loop->iteration }}</td>
                     <td>{{ $item->nama }}</td>
                     <td>{{ $item->nama_perusahaan }}</td>
+                    <td>{{ $item->email ?? '-' }}</td>
                     <td class="text-center">
                         <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $item->no_whatsapp) }}" 
                             target="_blank" class="btn btn-sm btn-success">
@@ -93,6 +95,7 @@
                         <th>No</th>
                         <th>Nama</th>
                         <th>Perusahaan</th>
+                        <th>Email</th>
                         <th>No WhatsApp</th>
                         <th>Skema</th>
                         <th>Tgl Sertifikat</th>

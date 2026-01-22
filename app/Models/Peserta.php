@@ -11,6 +11,7 @@ class Peserta extends Model
         'tahun',
         'nama',
         'nama_perusahaan',
+        'email',
         'no_whatsapp',
         'tanggal_lahir',
         'skema',
@@ -29,8 +30,8 @@ class Peserta extends Model
      */
     public function getTanggalExpiredAttribute()
     {
-        return $this->tanggal_sertifikat_diterima ? 
-               Carbon::parse($this->tanggal_sertifikat_diterima)->addYears(3) : null;
+        return $this->tanggal_sertifikat_diterima ?
+            Carbon::parse($this->tanggal_sertifikat_diterima)->addYears(3) : null;
     }
 
     /**
@@ -41,7 +42,7 @@ class Peserta extends Model
         if (!$this->tanggal_sertifikat_diterima) {
             return false;
         }
-        
+
         return Carbon::now()->greaterThan($this->tanggal_expired);
     }
 
@@ -53,12 +54,12 @@ class Peserta extends Model
         if (!$this->tanggal_sertifikat_diterima) {
             return false;
         }
-        
+
         $tigaBulanKedepan = Carbon::now()->addMonths(3);
-        
-        return !$this->isSertifikatExpired() && 
-               Carbon::now()->lessThan($this->tanggal_expired) &&
-               $tigaBulanKedepan->greaterThanOrEqualTo($this->tanggal_expired);
+
+        return !$this->isSertifikatExpired() &&
+            Carbon::now()->lessThan($this->tanggal_expired) &&
+            $tigaBulanKedepan->greaterThanOrEqualTo($this->tanggal_expired);
     }
 
     /**
@@ -83,14 +84,14 @@ class Peserta extends Model
         if (!$this->tanggal_sertifikat_diterima) {
             return null;
         }
-        
+
         $now = Carbon::now();
         $expired = $this->tanggal_expired;
-        
+
         if ($now->greaterThan($expired)) {
             return 'Sudah expired sejak ' . $now->diffInDays($expired) . ' hari yang lalu';
         }
-        
+
         return $now->diffInDays($expired) . ' hari lagi';
     }
 
@@ -109,9 +110,11 @@ class Peserta extends Model
     {
         $tigaBulanKedepan = Carbon::now()->addMonths(3);
         $sekarang = Carbon::now();
-        
-        return $query->whereRaw('DATE_ADD(tanggal_sertifikat_diterima, INTERVAL 3 YEAR) BETWEEN ? AND ?', 
-                                [$sekarang, $tigaBulanKedepan]);
+
+        return $query->whereRaw(
+            'DATE_ADD(tanggal_sertifikat_diterima, INTERVAL 3 YEAR) BETWEEN ? AND ?',
+            [$sekarang, $tigaBulanKedepan]
+        );
     }
 
     /**
@@ -120,7 +123,7 @@ class Peserta extends Model
     public function scopeSudahExpired($query)
     {
         $sekarang = Carbon::now();
-        
+
         return $query->whereRaw('DATE_ADD(tanggal_sertifikat_diterima, INTERVAL 3 YEAR) < ?', [$sekarang]);
     }
 }

@@ -138,6 +138,7 @@
                         <th>No</th>
                         <th>Nama</th>
                         <th>Perusahaan</th>
+                        <th>Email</th>
                         <th>No WhatsApp</th>
                         <th style="min-width: 120px;">Tgl Lahir</th>
                         <th>Skema</th>
@@ -155,6 +156,7 @@
                         <td class="text-center">{{ $loop->iteration }}</td>
                         <td>{{ $item->nama }}</td>
                         <td>{{ $item->nama_perusahaan }}</td>
+                        <td>{{ $item->email ?? '-' }}</td>
                         <td class="text-center">
                             {{ preg_replace('/[^0-9]/', '', $item->no_whatsapp) }}
                         </td>
