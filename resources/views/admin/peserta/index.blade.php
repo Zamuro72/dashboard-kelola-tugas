@@ -136,8 +136,8 @@
                 <thead class="bg-primary text-white">
                     <tr class="text-center">
                         <th>No</th>
-                        <th>Nama</th>
-                        <th>Perusahaan</th>
+                        <th style="min-width: 120px;">Nama</th>
+                        <th style="min-width: 120px;">Perusahaan</th>
                         <th style="min-width: 120px;">Email</th>
                         <th>No WhatsApp</th>
                         <th style="min-width: 120px;">Tgl Lahir</th>

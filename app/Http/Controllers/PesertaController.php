@@ -14,39 +14,30 @@ class PesertaController extends Controller
     {
         $currentYear = date('Y');
 
-
         if ($request->has('tahun')) {
             $tahunTerpilih = $request->get('tahun');
         } else {
-
-
             $existsCurrentYear = Peserta::where('tahun', $currentYear)->exists();
             if ($existsCurrentYear) {
                 $tahunTerpilih = $currentYear;
             } else {
-
                 $latestYear = Peserta::max('tahun');
-
                 $tahunTerpilih = $latestYear ?? $currentYear;
             }
         }
 
         $skemaTerpilih = $request->get('skema', '');
 
-        // Ambil daftar tahun yang tersedia
         $daftarTahun = Peserta::select('tahun')
             ->distinct()
             ->orderBy('tahun', 'desc')
             ->pluck('tahun');
 
-        // Daftar skema yang tersedia (hardcoded)
         $daftarSkema = ['BNSP', 'Kemnaker RI'];
 
-        // Hitung notifikasi
         $jumlahAkanExpired  = Peserta::akanExpired()->count();
         $jumlahSudahExpired = Peserta::sudahExpired()->count();
 
-        // Query dengan filter tahun dan skema
         $query = Peserta::where('tahun', $tahunTerpilih);
         if ($skemaTerpilih) {
             $query->where('skema', 'like', '%' . $skemaTerpilih . '%');
@@ -254,31 +245,24 @@ class PesertaController extends Controller
         ]);
 
         try {
-            // Extract tahun dari nama file
             $filename = $request->file('file')->getClientOriginalName();
             $tahunFromFilename = $this->extractTahunFromFilename($filename);
 
             Excel::import(new \App\Imports\PesertaImport($tahunFromFilename), $request->file('file'));
 
-            // Redirect to the index page with the imported year selected
             $redirectToYear = $tahunFromFilename ?? date('Y');
             return redirect()->route('peserta', ['tahun' => $redirectToYear])->with('success', 'Data peserta berhasil diimport');
+            
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Gagal mengimport file: ' . $e->getMessage());
         }
     }
 
-    /**
-     * Extract tahun dari nama file
-     * Contoh: "data peserta 2025.xlsx" -> 2025
-     */
     private function extractTahunFromFilename($filename)
     {
-        // Cari angka 4 digit (tahun) dalam nama file
         if (preg_match('/\b(19|20)\d{2}\b/', $filename, $matches)) {
             return $matches[0];
         }
-        // Jika tidak ada tahun di nama file, return null (akan ambil dari row)
         return null;
     }
 }
