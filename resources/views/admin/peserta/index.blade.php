@@ -138,10 +138,10 @@
                         <th>No</th>
                         <th>Nama</th>
                         <th>Perusahaan</th>
-                        <th>Email</th>
+                        <th style="min-width: 120px;">Email</th>
                         <th>No WhatsApp</th>
                         <th style="min-width: 120px;">Tgl Lahir</th>
-                        <th>Skema</th>
+                        <th style="min-width: 120px;">Skema</th>
                         <th style="min-width: 120px;">Tgl Sertifikat</th>
                         <th style="min-width: 120px;">Expired</th>
                         <th>Status</th>
