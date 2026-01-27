@@ -74,7 +74,7 @@
             <!-- Nav Item - Perjalanan Dinas -->
             <li class="nav-item {{$menuKaryawanPerdin ?? ''}}">
                 <a class="nav-link" href="{{ route('perdin') }}">
-                    <i class="fas fa-plane"></i>
+                    <i class="fas fa-road"></i>
                     <span>Perjalanan Dinas</span></a>
             </li>               
             @endif
