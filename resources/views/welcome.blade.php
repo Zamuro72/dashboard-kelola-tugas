@@ -75,7 +75,7 @@
         <div class="row gy-4">
           <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center" data-aos="fade-up">
             <h1>Sistem Kandel</h1>
-            <p>Aplikasi Untuk Mengelola Pekerjaan</p>
+            <p>Aplikasi Untuk Mengelola Kebutuhan Internal</p>
             <div class="d-flex">
               @auth
               <a href="{{ route('dashboard') }}" class="btn-get-started">Dashboard</a>
@@ -115,7 +115,7 @@
           <div class="col-lg-6 position-relative align-self-start" data-aos="fade-up" data-aos-delay="100">
           </div>
           <div class="col-xl-12 content" data-aos="fade-up" data-aos-delay="200">
-            <h3>Menggunakan Sistem CRUD</h3>
+            <h3>Sistem Pengelola</h3>
             <ul>
               <li><i class="bi bi-check2-all"></i> <span>Mengolah Data Karyawan</span></li>
               <li><i class="bi bi-check2-all"></i> <span>Monitor Tugas Karyawan</span></li>
@@ -155,7 +155,7 @@
                 <i class="bi bi-geo-alt flex-shrink-0"></i>
                 <div>
                   <h3>Alamat</h3>
-                  <p>Ruko Kawasan Niaga Citra Grand Cibubur, Jl. Alternatif Cibubur No.10 Blok R12, 
+                  <p>Kawasan Niaga Citra Grand Cibubur, Jl. Alternatif Cibubur No.10 Blok R12, 
                     RT.002/RW.008, Jatisampurna, 
                     Kec. Jatisampurna, Kota Bekasi, Jawa Barat 17435</p>
                 </div>
