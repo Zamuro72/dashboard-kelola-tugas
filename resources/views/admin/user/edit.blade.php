@@ -61,6 +61,7 @@
                     <option value="Karyawan" {{ $user->jabatan == 'Karyawan' ? 'selected' : '' }}>Karyawan</option>
                     <option value="Marketing" {{ $user->jabatan == 'Marketing' ? 'selected' : '' }}>Marketing</option>
                     <option value="Operator" {{ $user->jabatan == 'Operator' ? 'selected' : '' }}>Operator</option>
+                    <option value="Supporting" {{ $user->jabatan == 'Supporting' ? 'selected' : '' }}>Supporting</option>
                 </select>
                 @error('jabatan')
                 <small class="text-danger">

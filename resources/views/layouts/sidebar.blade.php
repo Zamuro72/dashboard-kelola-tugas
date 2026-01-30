@@ -72,6 +72,24 @@
                 Menu {{ auth()->user()->jabatan }}
             </div>
 
+            @if (auth()->user()->jabatan == 'Supporting')
+            <!-- Nav Item - Data Lembur (Supporting View) -->
+            <li class="nav-item {{$menuAdminLembur ?? ''}}">
+                <a class="nav-link" href="{{ route('adminLembur') }}">
+                    <i class="fas fa-clock"></i>
+                    <span>Review Lembur</span>
+                </a>
+            </li>
+
+            <!-- Nav Item - Data Perjalanan Dinas (Supporting View) -->
+            <li class="nav-item {{$menuAdminPerdin ?? ''}}">
+                <a class="nav-link" href="{{ route('adminPerdin') }}">
+                    <i class="fas fa-road"></i>
+                    <span>Review Perdin</span>
+                </a>
+            </li>
+            @endif
+
 
             <!-- Nav Item - Tables -->
             <li class="nav-item {{$menuKaryawanTugas ?? ''}}">

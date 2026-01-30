@@ -60,6 +60,7 @@
                     <option value="Karyawan">Karyawan</option>
                     <option value="Marketing">Marketing</option>
                     <option value="Operator">Operator</option>
+                    <option value="Supporting">Supporting</option>
                 </select>
                 @error('jabatan')
                 <small class="text-danger">
