@@ -42,18 +42,29 @@
             color: #666;
         }
 
-        .company-logo {
+        .logo-and-name {
             display: inline-block;
             vertical-align: middle;
-            width: 40px;
-            height: 40px;
+        }
+
+        .logo-container {
+            display: inline-block;
+            vertical-align: middle;
             margin-right: 10px;
         }
 
-        .company-name {
+        .company-logo {
+            width: 40px;
+            height: 40px;
+        }
+
+        .company-name-container {
             display: inline-block;
             vertical-align: middle;
-            font-size: 16pt;
+        }
+
+        .company-name {
+            font-size: 12pt;
             font-weight: bold;
             color: #8B7355;
         }
@@ -197,8 +208,14 @@
     <!-- Header -->
     <div class="header">
         <div class="header-left">
-            <img src="{{ public_path('sbadmin2/img/undraw_profile.svg') }}" class="company-logo" alt="Logo">
-            <span class="company-name">PT Kandel Sekeco Internasional</span>
+            <div class="logo-and-name">
+                <div class="logo-container">
+                    <img src="{{ public_path('sbadmin2/img/undraw_profile.svg') }}" class="company-logo" alt="Logo">
+                </div>
+                <div class="company-name-container">
+                    <span class="company-name">PT Kandel Sekeco Internasional</span>
+                </div>
+            </div>
         </div>
         <div class="header-right">
             Ruko Kawasan Niaga Citra Grand Cibubur<br>

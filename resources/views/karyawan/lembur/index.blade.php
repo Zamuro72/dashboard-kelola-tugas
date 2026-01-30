@@ -44,7 +44,7 @@
                         <td>{{ \Carbon\Carbon::parse($lembur->tanggal_pelaksanaan)->format('d-m-Y') }}</td>
                         <td>{{ $lembur->hari }}</td>
                         <td>{{ \Carbon\Carbon::parse($lembur->jam_lembur_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($lembur->jam_lembur_selesai)->format('H:i') }}</td>
-                        <td>{{ number_format($lembur->total_jam_lembur, 1) }} Jam</td>
+                        <td>{{ abs(intval($lembur->total_jam_lembur)) }} Jam</td>
                         <td>{{ $lembur->lokasi }}</td>
                         <td>
                             <a href="{{ route('lemburShow', $lembur->id) }}" class="btn btn-sm btn-info" title="Lihat">

@@ -42,10 +42,9 @@
             color: #666;
         }
 
-        .company-name {
-            font-size: 16pt;
-            font-weight: bold;
-            color: #8B7355;
+        .logo-and-name {
+            display: inline-block;
+            vertical-align: middle;
         }
 
         .logo-container {
@@ -57,6 +56,17 @@
         .logo {
             width: 40px;
             height: 40px;
+        }
+
+        .company-name-container {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .company-name {
+            font-size: 12pt;
+            font-weight: bold;
+            color: #8B7355;
         }
 
         /* Title */
@@ -210,8 +220,14 @@
     <!-- Header -->
     <div class="header">
         <div class="header-left">
-            <img src="{{ public_path('sbadmin2/img/undraw_profile.svg') }}" class="logo" alt="Logo">
-            <span class="company-name">PT Kandel Sekeco Internasional</span>
+            <div class="logo-and-name">
+                <div class="logo-container">
+                    <img src="{{ public_path('sbadmin2/img/undraw_profile.svg') }}" class="logo" alt="Logo">
+                </div>
+                <div class="company-name-container">
+                    <span class="company-name">PT Kandel Sekeco Internasional</span>
+                </div>
+            </div>
         </div>
         <div class="header-right">
             Ruko Kawasan Niaga Citra Grand Cibubur<br>
@@ -237,11 +253,6 @@
                 <span class="data-label">Jabatan</span>
                 <span class="data-separator">:</span>
                 <span class="data-value">{{ $lembur->user->jabatan }}</span>
-            </div>
-            <div class="data-row">
-                <span class="data-label">Departemen / Divisi</span>
-                <span class="data-separator">:</span>
-                <span class="data-value">{{ $lembur->departemen }}</span>
             </div>
         </div>
     </div>
@@ -273,7 +284,7 @@
             <div class="data-row">
                 <span class="data-label">Total Jam Lembur</span>
                 <span class="data-separator">:</span>
-                <span class="data-value">{{ number_format($lembur->total_jam_lembur, 1) }} Jam</span>
+                <span class="data-value">{{ abs(intval($lembur->total_jam_lembur)) }} Jam</span>
             </div>
             <div class="data-row">
                 <span class="data-label">Lokasi / Tempat Kerja</span>
@@ -320,11 +331,11 @@
                     <div class="signature-position">{{ $lembur->user->jabatan }}</div>
                 </td>
                 <td>
-                    <div class="signature-name">( ............................ )</div>
+                    <div class="signature-name">( Zian Amellia )</div>
                     <div class="signature-position">HRGA</div>
                 </td>
                 <td>
-                    <div class="signature-name">( ............................ )</div>
+                    <div class="signature-name">( Mustika )</div>
                     <div class="signature-position">Direktur</div>
                 </td>
             </tr>

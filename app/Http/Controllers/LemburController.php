@@ -50,7 +50,6 @@ class LemburController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'departemen'            => 'required|string|max:255',
             'tanggal_pelaksanaan'   => 'required|date',
             'jam_kerja_mulai'       => 'required',
             'jam_kerja_selesai'     => 'required',
@@ -59,7 +58,6 @@ class LemburController extends Controller
             'lokasi'                => 'required|string|max:255',
             'uraian_pekerjaan'      => 'required|string',
         ], [
-            'departemen.required'               => 'Departemen/Divisi tidak boleh kosong',
             'tanggal_pelaksanaan.required'      => 'Tanggal pelaksanaan tidak boleh kosong',
             'jam_kerja_mulai.required'          => 'Jam kerja mulai tidak boleh kosong',
             'jam_kerja_selesai.required'        => 'Jam kerja selesai tidak boleh kosong',
@@ -78,11 +76,10 @@ class LemburController extends Controller
         // Hitung total jam lembur
         $jamLemburMulai = Carbon::parse($request->jam_lembur_mulai);
         $jamLemburSelesai = Carbon::parse($request->jam_lembur_selesai);
-        $totalJamLembur = $jamLemburSelesai->diffInMinutes($jamLemburMulai) / 60;
+        $totalJamLembur = abs($jamLemburSelesai->diffInMinutes($jamLemburMulai) / 60);
 
         $lembur = new PengajuanLembur();
         $lembur->user_id =               $user->id;
-        $lembur->departemen =            $request->departemen;
         $lembur->tanggal_pelaksanaan =   $request->tanggal_pelaksanaan;
         $lembur->hari =                  $hari;
         $lembur->jam_kerja_mulai =       $request->jam_kerja_mulai;
@@ -138,7 +135,6 @@ class LemburController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'departemen'            => 'required|string|max:255',
             'tanggal_pelaksanaan'   => 'required|date',
             'jam_kerja_mulai'       => 'required',
             'jam_kerja_selesai'     => 'required',
@@ -147,7 +143,6 @@ class LemburController extends Controller
             'lokasi'                => 'required|string|max:255',
             'uraian_pekerjaan'      => 'required|string',
         ], [
-            'departemen.required'               => 'Departemen/Divisi tidak boleh kosong',
             'tanggal_pelaksanaan.required'      => 'Tanggal pelaksanaan tidak boleh kosong',
             'jam_kerja_mulai.required'          => 'Jam kerja mulai tidak boleh kosong',
             'jam_kerja_selesai.required'        => 'Jam kerja selesai tidak boleh kosong',
@@ -167,9 +162,8 @@ class LemburController extends Controller
         // Hitung total jam lembur
         $jamLemburMulai = Carbon::parse($request->jam_lembur_mulai);
         $jamLemburSelesai = Carbon::parse($request->jam_lembur_selesai);
-        $totalJamLembur = $jamLemburSelesai->diffInMinutes($jamLemburMulai) / 60;
+        $totalJamLembur = abs($jamLemburSelesai->diffInMinutes($jamLemburMulai) / 60);
 
-        $lembur->departemen = $request->departemen;
         $lembur->tanggal_pelaksanaan = $request->tanggal_pelaksanaan;
         $lembur->hari = $hari;
         $lembur->jam_kerja_mulai = $request->jam_kerja_mulai;

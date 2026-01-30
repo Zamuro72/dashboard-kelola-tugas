@@ -15,7 +15,7 @@
             <!-- Nav Item - Dashboard -->
             <li class="nav-item {{$menuDashboard ?? ''}}">
                 <a class="nav-link" href="{{ route('dashboard') }}">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <i class="fas fa-fw fa-th-large"></i>
                     <span>Dashboard</span></a>
             </li>
 

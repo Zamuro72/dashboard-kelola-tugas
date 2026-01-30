@@ -26,23 +26,13 @@
                 </div>
                 <div class="card-body">
                     <div class="row mb-2">
-                        <div class="col-md-4 mb-2">
+                        <div class="col-md-6 mb-2">
                             <label class="form-label"><strong>Nama Karyawan:</strong></label>
                             <input type="text" class="form-control" value="{{ $user->nama }}" readonly>
                         </div>
-                        <div class="col-md-4 mb-2">
+                        <div class="col-md-6 mb-2">
                             <label class="form-label"><strong>Jabatan:</strong></label>
                             <input type="text" class="form-control" value="{{ $user->jabatan }}" readonly>
-                        </div>
-                        <div class="col-md-4 mb-2">
-                            <label class="form-label">
-                                <span class="text-danger">*</span>
-                                <strong>Departemen/Divisi:</strong>
-                            </label>
-                            <input type="text" name="departemen" class="form-control @error('departemen') is-invalid @enderror" value="{{ old('departemen', $lembur->departemen) }}" placeholder="Masukkan Departemen/Divisi">
-                            @error('departemen')
-                            <small class="text-danger">{{ $message }}</small>
-                            @enderror
                         </div>
                     </div>
                 </div>
@@ -117,7 +107,7 @@
                         <div class="col-md-6 mb-2">
                             <label class="form-label"><strong>Total Jam Lembur:</strong></label>
                             <div class="input-group">
-                                <input type="text" id="total_jam_lembur" class="form-control" value="{{ number_format($lembur->total_jam_lembur, 1) }}" readonly>
+                                <input type="text" id="total_jam_lembur" class="form-control" value="{{ abs(intval($lembur->total_jam_lembur)) }}" readonly>
                                 <div class="input-group-append">
                                     <span class="input-group-text">Jam</span>
                                 </div>
@@ -176,7 +166,7 @@
             var selesai = new Date('2000-01-01 ' + jamSelesai);
             var diff = (selesai - mulai) / (1000 * 60 * 60);
             if (diff < 0) diff += 24; // Handle overnight
-            document.getElementById('total_jam_lembur').value = diff.toFixed(1);
+            document.getElementById('total_jam_lembur').value = Math.floor(Math.abs(diff));
         }
     }
 
