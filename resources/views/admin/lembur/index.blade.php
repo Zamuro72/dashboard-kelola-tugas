@@ -34,32 +34,26 @@
                         <th>Total Jam</th>
                         <th>Lokasi</th>
                         <th>Uraian</th>
-                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($lemburs as $index => $lembur)
-                    <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td>{{ $lembur->user->nama ?? '-' }}</td>
-                        <td>{{ \Carbon\Carbon::parse($lembur->tanggal_pelaksanaan)->format('d-m-Y') }}</td>
-                        <td>{{ $lembur->hari }}</td>
-                        <td>{{ $lembur->jam_kerja_mulai }} - {{ $lembur->jam_kerja_selesai }}</td>
-                        <td>{{ \Carbon\Carbon::parse($lembur->jam_lembur_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($lembur->jam_lembur_selesai)->format('H:i') }}</td>
-                        <td>{{ abs(intval($lembur->total_jam_lembur)) }} Jam</td>
-                        <td>{{ $lembur->lokasi }}</td>
-                        <td>{{ Str::limit($lembur->uraian_pekerjaan, 50) }}</td>
-                        <td>
-                            <a href="{{ route('lemburPdf', $lembur->id) }}" target="_blank" class="btn btn-sm btn-danger" title="PDF">
-                                <i class="fas fa-file-pdf"></i> PDF
-                            </a>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="10" class="text-center">Belum ada pengajuan lembur</td>
-                    </tr>
-                    @endforelse
+            @forelse ($lemburs as $index => $lembur)
+            <tr>
+                <td>{{ $index + 1 }}</td>
+                <td>{{ $lembur->user->nama ?? '-' }}</td>
+                <td>{{ \Carbon\Carbon::parse($lembur->tanggal_pelaksanaan)->format('d-m-Y') }}</td>
+                <td>{{ $lembur->hari }}</td>
+                <td>{{ $lembur->jam_kerja_mulai }} - {{ $lembur->jam_kerja_selesai }}</td>
+                <td>{{ \Carbon\Carbon::parse($lembur->jam_lembur_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($lembur->jam_lembur_selesai)->format('H:i') }}</td>
+                <td>{{ abs(intval($lembur->total_jam_lembur)) }} Jam</td>
+                <td>{{ $lembur->lokasi }}</td>
+                <td>{{ Str::limit($lembur->uraian_pekerjaan, 50) }}</td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="9" class="text-center">Belum ada pengajuan lembur</td>
+            </tr>
+            @endforelse
                 </tbody>
             </table>
         </div>

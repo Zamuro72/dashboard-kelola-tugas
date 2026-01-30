@@ -32,30 +32,24 @@
                         <th>Tanggal</th>
                         <th>Transportasi</th>
                         <th>Uang Muka</th>
-                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($perdins as $index => $perdin)
-                    <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td>{{ $perdin->user->nama ?? '-' }}</td>
-                        <td>{{ Str::limit($perdin->tujuan_perjalanan, 30) }}</td>
-                        <td>{{ $perdin->lokasi }}</td>
-                        <td>{{ \Carbon\Carbon::parse($perdin->tanggal_berangkat)->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($perdin->tanggal_kembali)->format('d/m/Y') }}</td>
-                        <td>{{ $perdin->transportasi }}</td>
-                        <td>Rp {{ number_format($perdin->uang_muka, 0, ',', '.') }}</td>
-                        <td>
-                            <a href="{{ route('perdinPdf', $perdin->id) }}" target="_blank" class="btn btn-sm btn-danger" title="PDF">
-                                <i class="fas fa-file-pdf"></i> PDF
-                            </a>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="8" class="text-center">Belum ada data perjalanan dinas</td>
-                    </tr>
-                    @endforelse
+            @forelse ($perdins as $index => $perdin)
+            <tr>
+                <td>{{ $index + 1 }}</td>
+                <td>{{ $perdin->user->nama ?? '-' }}</td>
+                <td>{{ Str::limit($perdin->tujuan_perjalanan, 30) }}</td>
+                <td>{{ $perdin->lokasi }}</td>
+                <td>{{ \Carbon\Carbon::parse($perdin->tanggal_berangkat)->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($perdin->tanggal_kembali)->format('d/m/Y') }}</td>
+                <td>{{ $perdin->transportasi }}</td>
+                <td>Rp {{ number_format($perdin->uang_muka, 0, ',', '.') }}</td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="7" class="text-center">Belum ada data perjalanan dinas</td>
+            </tr>
+            @endforelse
                 </tbody>
             </table>
         </div>
