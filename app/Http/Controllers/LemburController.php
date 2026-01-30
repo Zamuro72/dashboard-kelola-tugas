@@ -11,6 +11,22 @@ use Carbon\Carbon;
 class LemburController extends Controller
 {
     /**
+     * Menampilkan daftar pengajuan lembur untuk admin (Semua User)
+     */
+    public function adminIndex()
+    {
+        $data = array(
+            'title' => 'Data Lembur (Semua User)',
+            'menuAdminLembur' => 'active',
+            'lemburs' => PengajuanLembur::with('user')
+                ->orderBy('created_at', 'desc')
+                ->get(),
+        );
+
+        return view('admin/lembur/index', $data);
+    }
+
+    /**
      * Menampilkan daftar pengajuan lembur
      */
     public function index()

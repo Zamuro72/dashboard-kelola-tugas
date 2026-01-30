@@ -11,6 +11,22 @@ use Carbon\Carbon;
 class PerjalananDinasController extends Controller
 {
     /**
+     * Menampilkan daftar perjalanan dinas untuk admin (Semua User)
+     */
+    public function adminIndex()
+    {
+        $data = array(
+            'title' => 'Data Perjalanan Dinas (Semua User)',
+            'menuAdminPerdin' => 'active',
+            'perdins' => PerjalananDinas::with('user')
+                ->orderBy('created_at', 'desc')
+                ->get(),
+        );
+
+        return view('admin/perdin/index', $data);
+    }
+
+    /**
      * Menampilkan daftar perjalanan dinas
      */
     public function index()

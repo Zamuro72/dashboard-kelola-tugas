@@ -84,5 +84,11 @@ route::middleware('checkLogin')->group(function () {
         Route::post('peserta/toggle-telat-bayar/{id}', [PesertaController::class, 'toggleTelatBayar'])->name('pesertaToggleTelatBayar');
         Route::get('peserta/excel', [PesertaController::class, 'excel'])->name('pesertaExcel');
         Route::get('peserta/pdf', [PesertaController::class, 'pdf'])->name('pesertaPdf');
+
+        // Admin Lembur
+        Route::get('admin/lembur', [LemburController::class, 'adminIndex'])->name('adminLembur');
+
+        // Admin Perjalanan Dinas
+        Route::get('admin/perdin', [PerjalananDinasController::class, 'adminIndex'])->name('adminPerdin');
     });
 });

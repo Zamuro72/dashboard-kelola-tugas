@@ -49,6 +49,22 @@
                     <span>Data Peserta</span>
                 </a>
             </li>
+
+            <!-- Nav Item - Data Lembur (Admin) -->
+            <li class="nav-item {{$menuAdminLembur ?? ''}}">
+                <a class="nav-link" href="{{ route('adminLembur') }}">
+                    <i class="fas fa-clock"></i>
+                    <span>Data Lembur</span>
+                </a>
+            </li>
+
+            <!-- Nav Item - Data Perjalanan Dinas (Admin) -->
+            <li class="nav-item {{$menuAdminPerdin ?? ''}}">
+                <a class="nav-link" href="{{ route('adminPerdin') }}">
+                    <i class="fas fa-road"></i>
+                    <span>Data Perjalanan Dinas</span>
+                </a>
+            </li>
               
             @else
              <!-- Heading -->
