@@ -24,10 +24,10 @@
             <td>{{ $item->nama }}</td>
             <td>{{ $item->nama_perusahaan }}</td>
             <td align="center">{{ $item->no_whatsapp }}</td>
-            <td align="center">{{ $item->tanggal_lahir->format('d-m-Y') }}</td>
+            <td align="center">{{ $item->tanggal_lahir ? $item->tanggal_lahir->format('d-m-Y') : '-' }}</td>
             <td>{{ $item->skema }}</td>
-            <td align="center">{{ $item->tanggal_sertifikat_diterima->format('d-m-Y') }}</td>
-            <td align="center">{{ $item->tanggal_expired->format('d-m-Y') }}</td>
+            <td align="center">{{ $item->tanggal_sertifikat_diterima ? $item->tanggal_sertifikat_diterima->format('d-m-Y') : '-' }}</td>
+            <td align="center">{{ $item->tanggal_expired ? $item->tanggal_expired->format('d-m-Y') : '-' }}</td>
             <td align="center">
                 @if($item->isSertifikatExpired())
                     Sudah Expired

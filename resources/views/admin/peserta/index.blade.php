@@ -78,6 +78,11 @@
                     </option>
                     @endforeach
                 </select>
+
+                <input type="text" name="search" class="form-control form-control-sm" placeholder="Cari Nama, Perusahaan, WA, Skema..." value="{{ request('search') }}">
+                <button type="submit" class="btn btn-sm btn-primary ml-2">
+                    <i class="fas fa-search"></i>
+                </button>
             </form>
         </div>
         
@@ -132,7 +137,7 @@
     
     <div class="card-body">
         <div style="overflow-x: auto; width: 100%; border: 1px solid #ddd;">
-            <table class="table table-bordered table-hover" id="dataTable" style="width: 1500px;" cellspacing="0">
+            <table class="table table-bordered table-hover" id="tablePeserta" style="width: 1500px;" cellspacing="0">
                 <thead class="bg-primary text-white">
                     <tr class="text-center">
                         <th>No</th>
@@ -153,7 +158,7 @@
                 <tbody>
                     @forelse ($peserta as $item)
                     <tr>
-                        <td class="text-center">{{ $loop->iteration }}</td>
+                        <td class="text-center">{{ $peserta->firstItem() + $loop->index }}</td>
                         <td>{{ $item->nama }}</td>
                         <td>{{ $item->nama_perusahaan }}</td>
                         <td>{{ $item->email ?? '-' }}</td>
@@ -197,6 +202,24 @@
                 </tbody>
             </table>
         </div>
+        <div class="mt-3 d-flex justify-content-end">
+            {{ $peserta->links() }}
+        </div>
     </div>
 </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.querySelector('input[name="search"]');
+        if(searchInput) {
+            searchInput.addEventListener('input', function() {
+                if (this.value === '') {
+                    this.form.submit();
+                }
+            });
+        }
+    });
+</script>
 @endsection

@@ -33,20 +33,34 @@ class PesertaController extends Controller
             ->orderBy('tahun', 'desc')
             ->pluck('tahun');
 
-        $daftarSkema = ['BNSP', 'Kemnaker RI'];
+        $daftarSkema = ['BNSP', 'Kemnaker RI', 'ISO'];
 
         $jumlahAkanExpired  = Peserta::akanExpired()->count();
         $jumlahSudahExpired = Peserta::sudahExpired()->count();
 
         $query = Peserta::where('tahun', $tahunTerpilih);
         if ($skemaTerpilih) {
-            $query->where('skema', 'like', '%' . $skemaTerpilih . '%');
+            if ($skemaTerpilih == 'Kemnaker RI') {
+                $query->where('skema', 'like', '%Kemnaker%');
+            } else {
+                $query->where('skema', 'like', '%' . $skemaTerpilih . '%');
+            }
+        }
+
+        if ($request->has('search')) {
+            $search = $request->get('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('nama', 'like', '%' . $search . '%')
+                    ->orWhere('nama_perusahaan', 'like', '%' . $search . '%')
+                    ->orWhere('no_whatsapp', 'like', '%' . $search . '%')
+                    ->orWhere('skema', 'like', '%' . $search . '%');
+            });
         }
 
         $data = array(
             'title'                => 'Data Peserta',
             'menuAdminPeserta'     => 'active',
-            'peserta'              => $query->orderBy('nama', 'asc')->get(),
+            'peserta'              => $query->orderBy('nama', 'asc')->paginate(30)->withQueryString(),
             'daftarTahun'          => $daftarTahun,
             'daftarSkema'          => $daftarSkema,
             'tahunTerpilih'        => $tahunTerpilih,
@@ -252,7 +266,6 @@ class PesertaController extends Controller
 
             $redirectToYear = $tahunFromFilename ?? date('Y');
             return redirect()->route('peserta', ['tahun' => $redirectToYear])->with('success', 'Data peserta berhasil diimport');
-            
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Gagal mengimport file: ' . $e->getMessage());
         }

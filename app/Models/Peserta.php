@@ -89,10 +89,10 @@ class Peserta extends Model
         $expired = $this->tanggal_expired;
 
         if ($now->greaterThan($expired)) {
-            return 'Sudah expired sejak ' . $now->diffInDays($expired) . ' hari yang lalu';
+            return 'Sudah expired sejak ' . (int)$now->diffInDays($expired) . ' hari yang lalu';
         }
 
-        return $now->diffInDays($expired) . ' hari lagi';
+        return (int)$now->diffInDays($expired) . ' hari lagi';
     }
 
     /**
