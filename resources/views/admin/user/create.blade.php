@@ -55,12 +55,12 @@
                     <span class="text-danger">*</span>
                     Jabatan :</label>
                 <select name="jabatan" class="form-control @error('jabatan') is-invalid @enderror">
-                     <option selected disabled>--Pilih Jabatan--</option>
-                    <option value="Admin">Admin</option>
-                    <option value="Karyawan">Karyawan</option>
-                    <option value="Marketing">Marketing</option>
-                    <option value="Operator">Operator</option>
-                    <option value="Supporting">Supporting</option>
+                <option selected disabled>--Pilih Jabatan--</option>
+                <option value="Admin">Admin</option>
+                <option value="Karyawan">Karyawan</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Operasional">Operasional</option>
+                <option value="Supporting">Supporting</option>
                 </select>
                 @error('jabatan')
                 <small class="text-danger">

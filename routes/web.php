@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\TugasController;
 use App\Http\Controllers\LemburController;
 use App\Http\Controllers\PesertaController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PerjalananDinasController;
 
@@ -50,6 +51,31 @@ route::middleware('checkLogin')->group(function () {
     Route::post('perdin/update/{id}', [PerjalananDinasController::class, 'update'])->name('perdinUpdate');
     Route::delete('perdin/destroy/{id}', [PerjalananDinasController::class, 'destroy'])->name('perdinDestroy');
     Route::get('perdin/pdf/{id}', [PerjalananDinasController::class, 'pdf'])->name('perdinPdf');
+
+    // Marketing - Project Management
+route::middleware('isMarketing')->group(function () {
+    Route::get('marketing/project', [ProjectController::class, 'marketingIndex'])->name('marketing.project');
+    Route::get('marketing/project/create', [ProjectController::class, 'marketingCreate'])->name('marketing.project.create');
+    Route::post('marketing/project/store', [ProjectController::class, 'marketingStore'])->name('marketing.project.store');
+    Route::get('marketing/project/show/{id}', [ProjectController::class, 'marketingShow'])->name('marketing.project.show');
+    Route::get('marketing/project/edit/{id}', [ProjectController::class, 'marketingEdit'])->name('marketing.project.edit');
+    Route::post('marketing/project/update/{id}', [ProjectController::class, 'marketingUpdate'])->name('marketing.project.update');
+    Route::delete('marketing/project/destroy/{id}', [ProjectController::class, 'marketingDestroy'])->name('marketing.project.destroy');
+});
+
+// Operasional - Project Management
+route::middleware('isOperasional')->group(function () {
+    Route::get('operasional/project', [ProjectController::class, 'operasionalIndex'])->name('operasional.project');
+    Route::get('operasional/project/show/{id}', [ProjectController::class, 'operasionalShow'])->name('operasional.project.show');
+    Route::get('operasional/project/edit/{id}', [ProjectController::class, 'operasionalEdit'])->name('operasional.project.edit');
+    Route::post('operasional/project/update/{id}', [ProjectController::class, 'operasionalUpdate'])->name('operasional.project.update');
+});
+
+// Supporting - Project Management (tambahkan di dalam middleware isAdminOrSupporting yang sudah ada)
+Route::get('supporting/project', [ProjectController::class, 'supportingIndex'])->name('supporting.project');
+Route::get('supporting/project/show/{id}', [ProjectController::class, 'supportingShow'])->name('supporting.project.show');
+Route::get('supporting/project/edit/{id}', [ProjectController::class, 'supportingEdit'])->name('supporting.project.edit');
+Route::post('supporting/project/update/{id}', [ProjectController::class, 'supportingUpdate'])->name('supporting.project.update');
 
     route::middleware('isAdmin')->group(function () {
         // user

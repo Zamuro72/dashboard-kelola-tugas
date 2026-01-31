@@ -56,12 +56,12 @@
                     <span class="text-danger">*</span>
                     Jabatan :</label>
                 <select name="jabatan" class="form-control @error('jabatan') is-invalid @enderror">
-                     <option disabled>--Pilih Jabatan--</option>
-                    <option value="Admin" {{ $user->jabatan == 'Admin' ? 'selected' : '' }}>Admin</option>
-                    <option value="Karyawan" {{ $user->jabatan == 'Karyawan' ? 'selected' : '' }}>Karyawan</option>
-                    <option value="Marketing" {{ $user->jabatan == 'Marketing' ? 'selected' : '' }}>Marketing</option>
-                    <option value="Operator" {{ $user->jabatan == 'Operator' ? 'selected' : '' }}>Operator</option>
-                    <option value="Supporting" {{ $user->jabatan == 'Supporting' ? 'selected' : '' }}>Supporting</option>
+                <option disabled>--Pilih Jabatan--</option>
+                <option value="Admin" {{ $user->jabatan == 'Admin' ? 'selected' : '' }}>Admin</option>
+                <option value="Karyawan" {{ $user->jabatan == 'Karyawan' ? 'selected' : '' }}>Karyawan</option>
+                <option value="Marketing" {{ $user->jabatan == 'Marketing' ? 'selected' : '' }}>Marketing</option>
+                <option value="Operasional" {{ $user->jabatan == 'Operasional' ? 'selected' : '' }}>Operasional</option>
+                <option value="Supporting" {{ $user->jabatan == 'Supporting' ? 'selected' : '' }}>Supporting</option>
                 </select>
                 @error('jabatan')
                 <small class="text-danger">

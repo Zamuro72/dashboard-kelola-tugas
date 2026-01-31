@@ -88,6 +88,34 @@
                     <span>Review Perdin</span>
                 </a>
             </li>
+
+            <!-- Nav Item - Project -->
+            <li class="nav-item {{$menuSupportingProject ?? ''}}">
+                <a class="nav-link" href="{{ route('supporting.project') }}">
+                    <i class="fas fa-project-diagram"></i>
+                    <span>Project List</span>
+                </a>
+            </li>
+            @endif
+
+            @if (auth()->user()->jabatan == 'Marketing')
+            <!-- Nav Item - Project -->
+            <li class="nav-item {{$menuMarketingProject ?? ''}}">
+                <a class="nav-link" href="{{ route('marketing.project') }}">
+                    <i class="fas fa-project-diagram"></i>
+                    <span>Project Management</span>
+                </a>
+            </li>
+            @endif
+
+            @if (auth()->user()->jabatan == 'Operasional')
+            <!-- Nav Item - Project -->
+            <li class="nav-item {{$menuOperasionalProject ?? ''}}">
+                <a class="nav-link" href="{{ route('operasional.project') }}">
+                    <i class="fas fa-project-diagram"></i>
+                    <span>Project List</span>
+                </a>
+            </li>
             @endif
 
 
