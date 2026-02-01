@@ -69,13 +69,10 @@ route::middleware('isOperasional')->group(function () {
     Route::get('operasional/project/show/{id}', [ProjectController::class, 'operasionalShow'])->name('operasional.project.show');
     Route::get('operasional/project/edit/{id}', [ProjectController::class, 'operasionalEdit'])->name('operasional.project.edit');
     Route::post('operasional/project/update/{id}', [ProjectController::class, 'operasionalUpdate'])->name('operasional.project.update');
+    Route::get('operasional/project/download/{id}/{type}', [ProjectController::class, 'operasionalDownload'])->name('operasional.project.download');
 });
 
-// Supporting - Project Management (tambahkan di dalam middleware isAdminOrSupporting yang sudah ada)
-Route::get('supporting/project', [ProjectController::class, 'supportingIndex'])->name('supporting.project');
-Route::get('supporting/project/show/{id}', [ProjectController::class, 'supportingShow'])->name('supporting.project.show');
-Route::get('supporting/project/edit/{id}', [ProjectController::class, 'supportingEdit'])->name('supporting.project.edit');
-Route::post('supporting/project/update/{id}', [ProjectController::class, 'supportingUpdate'])->name('supporting.project.update');
+
 
     route::middleware('isAdmin')->group(function () {
         // user
@@ -118,5 +115,10 @@ Route::post('supporting/project/update/{id}', [ProjectController::class, 'suppor
 
         // Admin Perjalanan Dinas
         Route::get('admin/perdin', [PerjalananDinasController::class, 'adminIndex'])->name('adminPerdin');
+        // Supporting - Project Management (tambahkan di dalam middleware isAdminOrSupporting yang sudah ada)
+Route::get('supporting/project', [ProjectController::class, 'supportingIndex'])->name('supporting.project');
+Route::get('supporting/project/show/{id}', [ProjectController::class, 'supportingShow'])->name('supporting.project.show');
+Route::get('supporting/project/edit/{id}', [ProjectController::class, 'supportingEdit'])->name('supporting.project.edit');
+Route::post('supporting/project/update/{id}', [ProjectController::class, 'supportingUpdate'])->name('supporting.project.update');
     });
 });

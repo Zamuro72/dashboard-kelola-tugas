@@ -10,33 +10,35 @@ class Project extends Model
     use HasFactory;
 
     protected $fillable = [
-        'marketing_user_id',
-        'skema',
-        'tanggal',
-        'timeline',
-        'need_surat_tugas',
-        'need_invoice',
-        'need_jadwal_meeting',
-        'catatan_operasional',
-        'operasional_submitted_at',
-        'surat_tugas_file',
-        'invoice_file',
-        'jadwal_meeting_tanggal',
-        'jadwal_meeting_waktu',
-        'catatan_supporting',
-        'supporting_submitted_at',
-        'status',
-    ];
+    'marketing_user_id',
+    'skema',
+    'tanggal',
+    'timeline',
+    'need_surat_tugas',
+    'need_invoice',
+    'need_jadwal_meeting',
+    'catatan_operasional',
+    'operasional_submitted_at',
+    'surat_tugas_file',
+    'invoice_file',
+    'jadwal_meeting_tanggal',
+    'jadwal_meeting_waktu',
+    'catatan_supporting',
+    'supporting_submitted_at',
+    'operasional_notified',
+    'status',
+];
 
-    protected $casts = [
-        'tanggal' => 'date',
-        'jadwal_meeting_tanggal' => 'date',
-        'need_surat_tugas' => 'boolean',
-        'need_invoice' => 'boolean',
-        'need_jadwal_meeting' => 'boolean',
-        'operasional_submitted_at' => 'datetime',
-        'supporting_submitted_at' => 'datetime',
-    ];
+protected $casts = [
+    'tanggal' => 'date',
+    'jadwal_meeting_tanggal' => 'date',
+    'need_surat_tugas' => 'boolean',
+    'need_invoice' => 'boolean',
+    'need_jadwal_meeting' => 'boolean',
+    'operasional_notified' => 'boolean',
+    'operasional_submitted_at' => 'datetime',
+    'supporting_submitted_at' => 'datetime',
+];
 
     public function marketingUser()
     {

@@ -117,60 +117,85 @@ class ProjectController extends Controller
     }
 
     // ========== OPERASIONAL ==========
-    public function operasionalIndex()
-    {
-        $data = [
-            'title' => 'Project List - Operasional',
-            'menuOperasionalProject' => 'active',
-            'projects' => Project::with('marketingUser')
-                ->whereIn('status', ['waiting_operasional', 'waiting_supporting', 'completed'])
-                ->orderBy('created_at', 'desc')
-                ->get(),
-        ];
-        return view('operasional.project.index', $data);
+public function operasionalIndex()
+{
+    $completedUnread = Project::with('marketingUser')
+        ->where('status', 'completed')
+        ->where('operasional_notified', false)
+        ->count();
+
+    $data = [
+        'title' => 'Project List - Operasional',
+        'menuOperasionalProject' => 'active',
+        'projects' => Project::with('marketingUser')
+            ->whereIn('status', ['waiting_operasional', 'waiting_supporting', 'completed'])
+            ->orderBy('created_at', 'desc')
+            ->get(),
+        'completedUnread' => $completedUnread,
+    ];
+    return view('operasional.project.index', $data);
+}
+
+public function operasionalShow($id)
+{
+    $project = Project::with('marketingUser')->findOrFail($id);
+    
+    // Tandai sebagai sudah dibaca jika status completed
+    if ($project->status == 'completed' && !$project->operasional_notified) {
+        $project->update(['operasional_notified' => true]);
     }
+    
+    $data = [
+        'title' => 'Detail Project',
+        'menuOperasionalProject' => 'active',
+        'project' => $project,
+    ];
+    return view('operasional.project.show', $data);
+}
 
-    public function operasionalShow($id)
-    {
-        $project = Project::with('marketingUser')->findOrFail($id);
-        $data = [
-            'title' => 'Detail Project',
-            'menuOperasionalProject' => 'active',
-            'project' => $project,
-        ];
-        return view('operasional.project.show', $data);
+public function operasionalEdit($id)
+{
+    $project = Project::where('status', 'waiting_operasional')->findOrFail($id);
+    $data = [
+        'title' => 'Catat Kebutuhan Project',
+        'menuOperasionalProject' => 'active',
+        'project' => $project,
+    ];
+    return view('operasional.project.edit', $data);
+}
+
+public function operasionalUpdate(Request $request, $id)
+{
+    $request->validate([
+        'catatan_operasional' => 'nullable|string',
+    ]);
+
+    $project = Project::where('status', 'waiting_operasional')->findOrFail($id);
+
+    $project->update([
+        'need_surat_tugas' => $request->has('need_surat_tugas'),
+        'need_invoice' => $request->has('need_invoice'),
+        'need_jadwal_meeting' => $request->has('need_jadwal_meeting'),
+        'catatan_operasional' => $request->catatan_operasional,
+        'operasional_submitted_at' => now(),
+        'status' => 'waiting_supporting',
+    ]);
+
+    return redirect()->route('operasional.project')->with('success', 'Kebutuhan project berhasil dicatat');
+}
+
+public function operasionalDownload($id, $type)
+{
+    $project = Project::findOrFail($id);
+    
+    if ($type == 'surat_tugas' && $project->surat_tugas_file) {
+        return response()->download(storage_path('app/public/' . $project->surat_tugas_file));
+    } elseif ($type == 'invoice' && $project->invoice_file) {
+        return response()->download(storage_path('app/public/' . $project->invoice_file));
     }
-
-    public function operasionalEdit($id)
-    {
-        $project = Project::where('status', 'waiting_operasional')->findOrFail($id);
-        $data = [
-            'title' => 'Catat Kebutuhan Project',
-            'menuOperasionalProject' => 'active',
-            'project' => $project,
-        ];
-        return view('operasional.project.edit', $data);
-    }
-
-    public function operasionalUpdate(Request $request, $id)
-    {
-        $request->validate([
-            'catatan_operasional' => 'nullable|string',
-        ]);
-
-        $project = Project::where('status', 'waiting_operasional')->findOrFail($id);
-
-        $project->update([
-            'need_surat_tugas' => $request->has('need_surat_tugas'),
-            'need_invoice' => $request->has('need_invoice'),
-            'need_jadwal_meeting' => $request->has('need_jadwal_meeting'),
-            'catatan_operasional' => $request->catatan_operasional,
-            'operasional_submitted_at' => now(),
-            'status' => 'waiting_supporting',
-        ]);
-
-        return redirect()->route('operasional.project')->with('success', 'Kebutuhan project berhasil dicatat');
-    }
+    
+    return redirect()->back()->with('error', 'File tidak ditemukan');
+}
 
     // ========== SUPPORTING ==========
     public function supportingIndex()

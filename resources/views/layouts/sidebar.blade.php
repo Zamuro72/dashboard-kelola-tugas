@@ -114,6 +114,14 @@
                 <a class="nav-link" href="{{ route('operasional.project') }}">
                     <i class="fas fa-project-diagram"></i>
                     <span>Project List</span>
+                    @php
+                        $unreadCount = \App\Models\Project::where('status', 'completed')
+                            ->where('operasional_notified', false)
+                            ->count();
+                    @endphp
+                    @if($unreadCount > 0)
+                        <span class="badge badge-danger badge-counter">{{ $unreadCount }}</span>
+                    @endif
                 </a>
             </li>
             @endif
