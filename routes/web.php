@@ -63,6 +63,13 @@ route::middleware('isMarketing')->group(function () {
     Route::delete('marketing/project/destroy/{id}', [ProjectController::class, 'marketingDestroy'])->name('marketing.project.destroy');
 });
 
+route::middleware('isSupporting')->group(function () {
+    Route::get('supporting/project', [ProjectController::class, 'supportingIndex'])->name('supporting.project');
+    Route::get('supporting/project/show/{id}', [ProjectController::class, 'supportingShow'])->name('supporting.project.show');
+    Route::get('supporting/project/edit/{id}', [ProjectController::class, 'supportingEdit'])->name('supporting.project.edit');
+    Route::post('supporting/project/update/{id}', [ProjectController::class, 'supportingUpdate'])->name('supporting.project.update');
+});
+
 // Operasional - Project Management
 route::middleware('isOperasional')->group(function () {
     Route::get('operasional/project', [ProjectController::class, 'operasionalIndex'])->name('operasional.project');
@@ -115,10 +122,5 @@ route::middleware('isOperasional')->group(function () {
 
         // Admin Perjalanan Dinas
         Route::get('admin/perdin', [PerjalananDinasController::class, 'adminIndex'])->name('adminPerdin');
-        // Supporting - Project Management (tambahkan di dalam middleware isAdminOrSupporting yang sudah ada)
-Route::get('supporting/project', [ProjectController::class, 'supportingIndex'])->name('supporting.project');
-Route::get('supporting/project/show/{id}', [ProjectController::class, 'supportingShow'])->name('supporting.project.show');
-Route::get('supporting/project/edit/{id}', [ProjectController::class, 'supportingEdit'])->name('supporting.project.edit');
-Route::post('supporting/project/update/{id}', [ProjectController::class, 'supportingUpdate'])->name('supporting.project.update');
     });
 });
