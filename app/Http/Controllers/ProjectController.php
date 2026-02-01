@@ -106,15 +106,23 @@ class ProjectController extends Controller
     }
 
     public function marketingDestroy($id)
-    {
-        $project = Project::where('marketing_user_id', Auth::id())
-            ->where('status', 'draft')
-            ->findOrFail($id);
-        
-        $project->delete();
-
-        return redirect()->route('marketing.project')->with('success', 'Project berhasil dihapus');
+{
+    // Hapus tanpa batasan status - Marketing bisa hapus semua projectnya
+    $project = Project::where('marketing_user_id', Auth::id())
+        ->findOrFail($id);
+    
+    // Hapus file jika ada
+    if ($project->surat_tugas_file && Storage::disk('public')->exists($project->surat_tugas_file)) {
+        Storage::disk('public')->delete($project->surat_tugas_file);
     }
+    if ($project->invoice_file && Storage::disk('public')->exists($project->invoice_file)) {
+        Storage::disk('public')->delete($project->invoice_file);
+    }
+    
+    $project->delete();
+
+    return redirect()->route('marketing.project')->with('success', 'Project berhasil dihapus');
+}
 
     // ========== OPERASIONAL ==========
 public function operasionalIndex()
@@ -195,6 +203,24 @@ public function operasionalDownload($id, $type)
     }
     
     return redirect()->back()->with('error', 'File tidak ditemukan');
+}
+
+public function operasionalDestroy($id)
+{
+    // Operasional bisa hapus project apapun statusnya
+    $project = Project::findOrFail($id);
+    
+    // Hapus file jika ada
+    if ($project->surat_tugas_file && Storage::disk('public')->exists($project->surat_tugas_file)) {
+        Storage::disk('public')->delete($project->surat_tugas_file);
+    }
+    if ($project->invoice_file && Storage::disk('public')->exists($project->invoice_file)) {
+        Storage::disk('public')->delete($project->invoice_file);
+    }
+    
+    $project->delete();
+
+    return redirect()->route('operasional.project')->with('success', 'Project berhasil dihapus');
 }
 
     // ========== SUPPORTING ==========

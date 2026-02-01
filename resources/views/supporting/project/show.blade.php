@@ -9,7 +9,7 @@
 
 <div class="card">
     <div class="card-header bg-info d-flex justify-content-between align-items-center">
-        <a href="{{ route('operasional.project') }}" class="btn btn-sm btn-success">
+        <a href="{{ route('supporting.project') }}" class="btn btn-sm btn-success">
             <i class="fas fa-arrow-left mr-2"></i>
             Kembali
         </a>

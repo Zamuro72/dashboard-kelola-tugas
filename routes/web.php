@@ -77,6 +77,7 @@ route::middleware('isOperasional')->group(function () {
     Route::get('operasional/project/edit/{id}', [ProjectController::class, 'operasionalEdit'])->name('operasional.project.edit');
     Route::post('operasional/project/update/{id}', [ProjectController::class, 'operasionalUpdate'])->name('operasional.project.update');
     Route::get('operasional/project/download/{id}/{type}', [ProjectController::class, 'operasionalDownload'])->name('operasional.project.download');
+    Route::delete('operasional/project/destroy/{id}', [ProjectController::class, 'operasionalDestroy'])->name('operasional.project.destroy');
 });
 
 

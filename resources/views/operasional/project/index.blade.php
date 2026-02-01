@@ -84,6 +84,13 @@
                                     <span class="badge badge-light ml-1">!</span>
                                 @endif
                             </a>
+                            <form action="{{ route('operasional.project.destroy', $project->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus project ini? Semua data dan file terkait akan ikut terhapus!')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-danger" title="Hapus">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
                             @if($project->status == 'waiting_operasional')
                             <a href="{{ route('operasional.project.edit', $project->id) }}" class="btn btn-sm btn-warning" title="Catat Kebutuhan">
                                 <i class="fas fa-edit"></i> Catat

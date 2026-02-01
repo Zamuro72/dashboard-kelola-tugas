@@ -58,10 +58,6 @@
                             <a href="{{ route('marketing.project.show', $project->id) }}" class="btn btn-sm btn-info" title="Lihat">
                                 <i class="fas fa-eye"></i>
                             </a>
-                            @if($project->status == 'draft')
-                            <a href="{{ route('marketing.project.edit', $project->id) }}" class="btn btn-sm btn-warning" title="Edit">
-                                <i class="fas fa-edit"></i>
-                            </a>
                             <form action="{{ route('marketing.project.destroy', $project->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus project ini?')">
                                 @csrf
                                 @method('DELETE')
@@ -69,6 +65,10 @@
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>
+                            @if($project->status == 'draft')
+                            <a href="{{ route('marketing.project.edit', $project->id) }}" class="btn btn-sm btn-warning" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
                             @endif
                         </td>
                     </tr>
