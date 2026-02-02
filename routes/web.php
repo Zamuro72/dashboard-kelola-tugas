@@ -9,6 +9,7 @@ use App\Http\Controllers\LemburController;
 use App\Http\Controllers\PesertaController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\NotaPerdinController;
 use App\Http\Controllers\PerjalananDinasController;
 
 Route::get('/', function () {
@@ -51,6 +52,14 @@ route::middleware('checkLogin')->group(function () {
     Route::post('perdin/update/{id}', [PerjalananDinasController::class, 'update'])->name('perdinUpdate');
     Route::delete('perdin/destroy/{id}', [PerjalananDinasController::class, 'destroy'])->name('perdinDestroy');
     Route::get('perdin/pdf/{id}', [PerjalananDinasController::class, 'pdf'])->name('perdinPdf');
+
+    // Nota Perhitungan Perjalanan Dinas
+Route::get('nota-perdin', [NotaPerdinController::class, 'index'])->name('notaPerdin');
+Route::get('nota-perdin/create', [NotaPerdinController::class, 'create'])->name('notaPerdinCreate');
+Route::post('nota-perdin/store', [NotaPerdinController::class, 'store'])->name('notaPerdinStore');
+Route::get('nota-perdin/show/{id}', [NotaPerdinController::class, 'show'])->name('notaPerdinShow');
+Route::delete('nota-perdin/destroy/{id}', [NotaPerdinController::class, 'destroy'])->name('notaPerdinDestroy');
+Route::get('nota-perdin/pdf/{id}', [NotaPerdinController::class, 'pdf'])->name('notaPerdinPdf');
 
     // Marketing - Project Management
 route::middleware('isMarketing')->group(function () {

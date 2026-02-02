@@ -126,6 +126,16 @@
             </li>
             @endif
 
+            @if (auth()->user()->jabatan == 'Marketing' || auth()->user()->jabatan == 'Operasional' || auth()->user()->jabatan == 'Supporting')
+            <!-- Nav Item - Nota Perdin -->
+            <li class="nav-item {{$menuNotaPerdin ?? ''}}">
+                <a class="nav-link" href="{{ route('notaPerdin') }}">
+                    <i class="fas fa-file-invoice"></i>
+                    <span>Nota Perhitungan</span>
+                </a>
+            </li>
+            @endif
+
 
             <!-- Nav Item - Tables -->
             <li class="nav-item {{$menuKaryawanTugas ?? ''}}">
