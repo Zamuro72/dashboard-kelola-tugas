@@ -10,7 +10,7 @@
     <meta name="author" content="">
 
     <link href="{{asset('enno/assets/img/favicon.png')}}" rel="icon">
-    <title>M Tugas | {{$title}}</title>
+    <title>M Kandel | {{$title}}</title>
 
     <!-- Custom fonts for this template-->
     <link href="{{asset('sbadmin2/vendor/fontawesome-free/css/all.min.css')}}" rel="stylesheet" type="text/css">
