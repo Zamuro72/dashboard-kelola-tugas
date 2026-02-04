@@ -27,6 +27,8 @@
                                 <th>Skema</th>
                                 <th>Nama Klien/Perusahaan</th>
                                 <th>Penanggung Jawab</th>
+                                <th>Email</th>
+                                <th>No Whatsapp</th>
                                 <th>Sertifikat Terbit</th>
                                 <th>Sertifikat Expired</th>
                                 <th>Status</th>
@@ -55,6 +57,8 @@
                                             {{ $klien->nama_penanggung_jawab ?? '-' }}
                                         @endif
                                     </td>
+                                    <td>{{ $klien->no_whatsapp ?? '-' }}</td>
+                                    <td>{{ $klien->email ?? '-' }}</td>
                                     <td>{{ $klien->sertifikat_terbit ? $klien->sertifikat_terbit->format('d-m-Y') : '-' }}</td>
                                     <td>{{ $klien->tanggal_expired ? $klien->tanggal_expired->format('d-m-Y') : '-' }}</td>
                                     <td>{!! $klien->getStatusSertifikatBadge() !!}</td>
