@@ -4,9 +4,9 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\KlienController;
 use App\Http\Controllers\TugasController;
 use App\Http\Controllers\LemburController;
-use App\Http\Controllers\PesertaController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\NotaPerdinController;
@@ -54,40 +54,40 @@ route::middleware('checkLogin')->group(function () {
     Route::get('perdin/pdf/{id}', [PerjalananDinasController::class, 'pdf'])->name('perdinPdf');
 
     // Nota Perhitungan Perjalanan Dinas
-Route::get('nota-perdin', [NotaPerdinController::class, 'index'])->name('notaPerdin');
-Route::get('nota-perdin/create', [NotaPerdinController::class, 'create'])->name('notaPerdinCreate');
-Route::post('nota-perdin/store', [NotaPerdinController::class, 'store'])->name('notaPerdinStore');
-Route::get('nota-perdin/show/{id}', [NotaPerdinController::class, 'show'])->name('notaPerdinShow');
-Route::delete('nota-perdin/destroy/{id}', [NotaPerdinController::class, 'destroy'])->name('notaPerdinDestroy');
-Route::get('nota-perdin/pdf/{id}', [NotaPerdinController::class, 'pdf'])->name('notaPerdinPdf');
+    Route::get('nota-perdin', [NotaPerdinController::class, 'index'])->name('notaPerdin');
+    Route::get('nota-perdin/create', [NotaPerdinController::class, 'create'])->name('notaPerdinCreate');
+    Route::post('nota-perdin/store', [NotaPerdinController::class, 'store'])->name('notaPerdinStore');
+    Route::get('nota-perdin/show/{id}', [NotaPerdinController::class, 'show'])->name('notaPerdinShow');
+    Route::delete('nota-perdin/destroy/{id}', [NotaPerdinController::class, 'destroy'])->name('notaPerdinDestroy');
+    Route::get('nota-perdin/pdf/{id}', [NotaPerdinController::class, 'pdf'])->name('notaPerdinPdf');
 
     // Marketing - Project Management
-route::middleware('isMarketing')->group(function () {
-    Route::get('marketing/project', [ProjectController::class, 'marketingIndex'])->name('marketing.project');
-    Route::get('marketing/project/create', [ProjectController::class, 'marketingCreate'])->name('marketing.project.create');
-    Route::post('marketing/project/store', [ProjectController::class, 'marketingStore'])->name('marketing.project.store');
-    Route::get('marketing/project/show/{id}', [ProjectController::class, 'marketingShow'])->name('marketing.project.show');
-    Route::get('marketing/project/edit/{id}', [ProjectController::class, 'marketingEdit'])->name('marketing.project.edit');
-    Route::post('marketing/project/update/{id}', [ProjectController::class, 'marketingUpdate'])->name('marketing.project.update');
-    Route::delete('marketing/project/destroy/{id}', [ProjectController::class, 'marketingDestroy'])->name('marketing.project.destroy');
-});
+    route::middleware('isMarketing')->group(function () {
+        Route::get('marketing/project', [ProjectController::class, 'marketingIndex'])->name('marketing.project');
+        Route::get('marketing/project/create', [ProjectController::class, 'marketingCreate'])->name('marketing.project.create');
+        Route::post('marketing/project/store', [ProjectController::class, 'marketingStore'])->name('marketing.project.store');
+        Route::get('marketing/project/show/{id}', [ProjectController::class, 'marketingShow'])->name('marketing.project.show');
+        Route::get('marketing/project/edit/{id}', [ProjectController::class, 'marketingEdit'])->name('marketing.project.edit');
+        Route::post('marketing/project/update/{id}', [ProjectController::class, 'marketingUpdate'])->name('marketing.project.update');
+        Route::delete('marketing/project/destroy/{id}', [ProjectController::class, 'marketingDestroy'])->name('marketing.project.destroy');
+    });
 
-route::middleware('isSupporting')->group(function () {
-    Route::get('supporting/project', [ProjectController::class, 'supportingIndex'])->name('supporting.project');
-    Route::get('supporting/project/show/{id}', [ProjectController::class, 'supportingShow'])->name('supporting.project.show');
-    Route::get('supporting/project/edit/{id}', [ProjectController::class, 'supportingEdit'])->name('supporting.project.edit');
-    Route::post('supporting/project/update/{id}', [ProjectController::class, 'supportingUpdate'])->name('supporting.project.update');
-});
+    route::middleware('isSupporting')->group(function () {
+        Route::get('supporting/project', [ProjectController::class, 'supportingIndex'])->name('supporting.project');
+        Route::get('supporting/project/show/{id}', [ProjectController::class, 'supportingShow'])->name('supporting.project.show');
+        Route::get('supporting/project/edit/{id}', [ProjectController::class, 'supportingEdit'])->name('supporting.project.edit');
+        Route::post('supporting/project/update/{id}', [ProjectController::class, 'supportingUpdate'])->name('supporting.project.update');
+    });
 
-// Operasional - Project Management
-route::middleware('isOperasional')->group(function () {
-    Route::get('operasional/project', [ProjectController::class, 'operasionalIndex'])->name('operasional.project');
-    Route::get('operasional/project/show/{id}', [ProjectController::class, 'operasionalShow'])->name('operasional.project.show');
-    Route::get('operasional/project/edit/{id}', [ProjectController::class, 'operasionalEdit'])->name('operasional.project.edit');
-    Route::post('operasional/project/update/{id}', [ProjectController::class, 'operasionalUpdate'])->name('operasional.project.update');
-    Route::get('operasional/project/download/{id}/{type}', [ProjectController::class, 'operasionalDownload'])->name('operasional.project.download');
-    Route::delete('operasional/project/destroy/{id}', [ProjectController::class, 'operasionalDestroy'])->name('operasional.project.destroy');
-});
+    // Operasional - Project Management
+    route::middleware('isOperasional')->group(function () {
+        Route::get('operasional/project', [ProjectController::class, 'operasionalIndex'])->name('operasional.project');
+        Route::get('operasional/project/show/{id}', [ProjectController::class, 'operasionalShow'])->name('operasional.project.show');
+        Route::get('operasional/project/edit/{id}', [ProjectController::class, 'operasionalEdit'])->name('operasional.project.edit');
+        Route::post('operasional/project/update/{id}', [ProjectController::class, 'operasionalUpdate'])->name('operasional.project.update');
+        Route::get('operasional/project/download/{id}/{type}', [ProjectController::class, 'operasionalDownload'])->name('operasional.project.download');
+        Route::delete('operasional/project/destroy/{id}', [ProjectController::class, 'operasionalDestroy'])->name('operasional.project.destroy');
+    });
 
 
 
@@ -109,21 +109,6 @@ route::middleware('isOperasional')->group(function () {
         Route::post('tugas/update/{id}', [TugasController::class, 'update'])->name('tugasUpdate');
         Route::delete('tugas/destroy/{id}', [TugasController::class, 'destroy'])->name('tugasDestroy');
         Route::get('tugas/excel', [TugasController::class, 'excel'])->name('tugasExcel');
-
-        // Peserta
-        Route::get('peserta', [PesertaController::class, 'index'])->name('peserta');
-        Route::get('peserta/notifikasi', [PesertaController::class, 'notifikasi'])->name('pesertaNotifikasi');
-        Route::get('peserta/create', [PesertaController::class, 'create'])->name('pesertaCreate');
-        Route::post('peserta/store', [PesertaController::class, 'store'])->name('pesertaStore');
-        Route::get('peserta/import', [PesertaController::class, 'importForm'])->name('pesertaImportForm');
-        Route::post('peserta/import', [PesertaController::class, 'import'])->name('pesertaImport');
-        Route::get('peserta/edit/{id}', [PesertaController::class, 'edit'])->name('pesertaEdit');
-        Route::post('peserta/update/{id}', [PesertaController::class, 'update'])->name('pesertaUpdate');
-        Route::delete('peserta/destroy/{id}', [PesertaController::class, 'destroy'])->name('pesertaDestroy');
-        Route::delete('peserta/delete-year/{tahun}', [PesertaController::class, 'destroyByTahun'])->name('pesertaDestroyByTahun');
-        Route::post('peserta/toggle-telat-bayar/{id}', [PesertaController::class, 'toggleTelatBayar'])->name('pesertaToggleTelatBayar');
-        Route::get('peserta/excel', [PesertaController::class, 'excel'])->name('pesertaExcel');
-        Route::get('peserta/pdf', [PesertaController::class, 'pdf'])->name('pesertaPdf');
     });
 
     route::middleware('isAdminOrSupporting')->group(function () {
@@ -132,5 +117,65 @@ route::middleware('isOperasional')->group(function () {
 
         // Admin Perjalanan Dinas
         Route::get('admin/perdin', [PerjalananDinasController::class, 'adminIndex'])->name('adminPerdin');
+    });
+
+    // Route untuk Admin dan Marketing (Data Klien)
+    Route::middleware(['auth'])->group(function () {
+
+        // Halaman utama - Daftar Jasa
+        Route::get('/klien', [KlienController::class, 'index'])->name('klien.index');
+        Route::get('/klien/status/{status}', [KlienController::class, 'filterByStatus'])->name('klien.status');
+
+        // Pilih tahun
+        Route::get('/klien/{jasaId}/tahun', [KlienController::class, 'showTahun'])->name('klien.tahun');
+
+        // Pilih skema (untuk jasa yang punya skema)
+        Route::get('/klien/{jasaId}/tahun/{tahun}/skema', [KlienController::class, 'showSkema'])->name('klien.skema');
+
+        // Data klien tanpa skema
+        Route::get('/klien/{jasaId}/tahun/{tahun}/data', [KlienController::class, 'showData'])->name('klien.data');
+
+        // Data klien dengan skema
+        Route::get('/klien/{jasaId}/tahun/{tahun}/skema/{skemaId}/data', [KlienController::class, 'showData'])->name('klien.data.skema');
+
+        // Form tambah klien tanpa skema
+        Route::get('/klien/{jasaId}/tahun/{tahun}/create', [KlienController::class, 'create'])->name('klien.create');
+
+        // Form tambah klien dengan skema
+        Route::get('/klien/{jasaId}/tahun/{tahun}/skema/{skemaId}/create', [KlienController::class, 'create'])->name('klien.create.skema');
+
+        // Simpan klien tanpa skema
+        Route::post('/klien/{jasaId}/tahun/{tahun}/store', [KlienController::class, 'store'])->name('klien.store');
+
+        // Simpan klien dengan skema
+        Route::post('/klien/{jasaId}/tahun/{tahun}/skema/{skemaId}/store', [KlienController::class, 'store'])->name('klien.store.skema');
+
+        // Edit klien
+        Route::get('/klien/{id}/edit', [KlienController::class, 'edit'])->name('klien.edit');
+
+        // Update klien
+        Route::put('/klien/{id}', [KlienController::class, 'update'])->name('klien.update');
+
+        // Hapus klien
+        Route::delete('/klien/{id}', [KlienController::class, 'destroy'])->name('klien.destroy');
+
+        // Notifikasi expired
+        Route::get('/klien/notifikasi', [KlienController::class, 'notifikasi'])->name('klien.notifikasi');
+
+        // Export Excel tanpa skema
+        Route::get('/klien/{jasaId}/tahun/{tahun}/excel', [KlienController::class, 'excel'])->name('klien.excel');
+
+        // Export Excel dengan skema
+        Route::get('/klien/{jasaId}/tahun/{tahun}/skema/{skemaId}/excel', [KlienController::class, 'excel'])->name('klien.excel.skema');
+
+        // Export PDF tanpa skema
+        Route::get('/klien/{jasaId}/tahun/{tahun}/pdf', [KlienController::class, 'pdf'])->name('klien.pdf');
+
+        // Export PDF dengan skema
+        Route::get('/klien/{jasaId}/tahun/{tahun}/skema/{skemaId}/pdf', [KlienController::class, 'pdf'])->name('klien.pdf.skema');
+
+        // Import
+        Route::get('/klien/import', [KlienController::class, 'importForm'])->name('klien.import.form');
+        Route::post('/klien/import', [KlienController::class, 'import'])->name('klien.import');
     });
 });

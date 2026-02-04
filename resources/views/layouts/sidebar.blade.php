@@ -42,11 +42,22 @@
                     <span>Data Tugas</span></a>
             </li>
 
-            <!-- Nav Item - Peserta -->
-            <li class="nav-item {{$menuAdminPeserta ?? ''}}">
-                <a class="nav-link" href="{{ route('peserta') }}">
-                    <i class="fas fa-users"></i>
-                    <span>Data Peserta</span>
+            <!-- Nav Item - Data Klien -->
+            <li class="nav-item {{ isset($menuAdminKlien) ? $menuAdminKlien : '' }}">
+                <a class="nav-link" href="{{ route('klien.index') }}">
+                    <i class="fas fa-fw fa-users"></i>
+                    <span>Data Klien</span>
+                    @php
+                        $user = auth()->user();
+                        $jumlahNotif = \App\Models\Klien::where('user_id', $user->id)
+                            ->akanExpired()
+                            ->count() + \App\Models\Klien::where('user_id', $user->id)
+                            ->sudahExpired()
+                            ->count();
+                    @endphp
+                    @if($jumlahNotif > 0)
+                        <span class="badge badge-danger badge-counter">{{ $jumlahNotif }}</span>
+                    @endif
                 </a>
             </li>
 
@@ -104,6 +115,25 @@
                 <a class="nav-link" href="{{ route('marketing.project') }}">
                     <i class="fas fa-project-diagram"></i>
                     <span>Project Management</span>
+                </a>
+            </li>
+
+            <!-- Nav Item - Data Klien -->
+            <li class="nav-item {{ isset($menuMarketingKlien) ? $menuMarketingKlien : '' }}">
+                <a class="nav-link" href="{{ route('klien.index') }}">
+                    <i class="fas fa-fw fa-users"></i>
+                    <span>Data Klien</span>
+                    @php
+                        $user = auth()->user();
+                        $jumlahNotif = \App\Models\Klien::where('user_id', $user->id)
+                            ->akanExpired()
+                            ->count() + \App\Models\Klien::where('user_id', $user->id)
+                            ->sudahExpired()
+                            ->count();
+                    @endphp
+                    @if($jumlahNotif > 0)
+                        <span class="badge badge-danger badge-counter">{{ $jumlahNotif }}</span>
+                    @endif
                 </a>
             </li>
             @endif
