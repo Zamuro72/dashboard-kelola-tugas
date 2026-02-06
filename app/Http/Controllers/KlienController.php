@@ -146,6 +146,11 @@ class KlienController extends Controller
             });
         }
 
+        // Filter by tipe_klien
+        if ($request->has('tipe_klien') && $request->tipe_klien != '') {
+            $query->where('tipe_klien', $request->tipe_klien);
+        }
+
         $kliens = $query->orderBy('created_at', 'desc')->paginate(30)->withQueryString();
 
         $data = [

@@ -92,20 +92,32 @@
         </div>
         <div class="card-body">
             <!-- Search Form -->
+            <!-- Filter & Search Form -->
             <form action="" method="GET" class="mb-3">
-                <div class="input-group">
-                    <input type="text" name="search" class="form-control" 
-                           placeholder="Cari nama klien, perusahaan, email..." 
-                           value="{{ request('search') }}">
-                    <div class="input-group-append">
-                        <button class="btn btn-primary" type="submit">
-                            <i class="fas fa-search"></i> Cari
-                        </button>
-                        @if(request('search'))
-                            <a href="{{ url()->current() }}" class="btn btn-secondary">
-                                <i class="fas fa-times"></i> Reset
-                            </a>
-                        @endif
+                <div class="form-row align-items-center">
+                    <div class="col-auto my-1">
+                        <select name="tipe_klien" class="custom-select mr-sm-2" onchange="this.form.submit()">
+                            <option value="">Semua Tipe</option>
+                            <option value="Personal" {{ request('tipe_klien') == 'Personal' ? 'selected' : '' }}>Personal</option>
+                            <option value="Perusahaan" {{ request('tipe_klien') == 'Perusahaan' ? 'selected' : '' }}>Perusahaan</option>
+                        </select>
+                    </div>
+                    <div class="col my-1">
+                        <div class="input-group">
+                            <input type="text" name="search" class="form-control" 
+                                   placeholder="Cari nama klien, perusahaan, email..." 
+                                   value="{{ request('search') }}">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="fas fa-search"></i> Cari
+                                </button>
+                                @if(request('search') || request('tipe_klien'))
+                                    <a href="{{ url()->current() }}" class="btn btn-secondary">
+                                        <i class="fas fa-times"></i> Reset
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
                     </div>
                 </div>
             </form>

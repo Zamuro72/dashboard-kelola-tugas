@@ -29,6 +29,9 @@ route::middleware('checkLogin')->group(function () {
 
     // dashboard
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('dashboard/chart-data', [DashboardController::class, 'getChartData'])->name('dashboard.chartData');
+    Route::get('dashboard/chart-details', [DashboardController::class, 'getChartDetails'])->name('dashboard.chartDetails');
+    Route::get('dashboard/pie-chart-data', [DashboardController::class, 'getPieChartData'])->name('dashboard.pieChartData');
 
     Route::get('tugas', [TugasController::class, 'index'])->name('tugas');
     Route::get('tugas/pdf', [TugasController::class, 'pdf'])->name('tugasPdf');
