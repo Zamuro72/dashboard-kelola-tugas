@@ -111,6 +111,9 @@ class DashboardController extends Controller
             if (strtoupper($jasa->nama_jasa) == 'ANDALALIN') {
                 $color = '#A52A2A'; // Brown
             }
+            if (strpos(strtoupper($jasa->nama_jasa), 'GREENSHIP') !== false) {
+                $color = '#800080'; // Purple
+            }
 
             $series[] = [
                 'name' => $jasa->nama_jasa,
@@ -214,6 +217,9 @@ class DashboardController extends Controller
             $color = $defaultColors[$index % count($defaultColors)];
             if (strtoupper($jasa->nama_jasa) == 'ANDALALIN') {
                 $color = '#A52A2A'; // Brown
+            }
+            if (strpos(strtoupper($jasa->nama_jasa), 'GREENSHIP') !== false) {
+                $color = '#800080'; // Purple
             }
 
             // Always add to series as requested (including 0)
