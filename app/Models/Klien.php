@@ -24,10 +24,12 @@ class Klien extends Model
         'email',
         'no_whatsapp',
         'sertifikat_terbit',
+        'tanggal_lahir',
     ];
 
     protected $casts = [
         'sertifikat_terbit' => 'date',
+        'tanggal_lahir' => 'date',
     ];
 
     public function user()

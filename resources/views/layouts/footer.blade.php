@@ -12,23 +12,29 @@
     <script src="{{ asset('sweetalert2/dist/sweetalert2.all.min.js') }}"></script>
 
     @session('success')
-         <script>
-    Swal.fire({
-  title: "Sukses",
-  text: "{{ session('success') }}",
-  icon: "success"
-});
-</script> 
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Sukses',
+            html: {!! json_encode(session('success')) !!},
+            showConfirmButton: true,
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#4e73df',
+        });
+    </script> 
     @endsession
 
     @session('error')
          <script>
-    Swal.fire({
-  title: "Gagal",
-  text: "{{ session('error') }}",
-  icon: "error"
-});
-</script> 
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal',
+            html: {!! json_encode(session('error')) !!},
+            showConfirmButton: true,
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#4e73df',
+        });
+    </script> 
     @endsession
 
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>

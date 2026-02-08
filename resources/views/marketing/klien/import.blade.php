@@ -200,6 +200,39 @@
         </div>
     </div>
 
+    <!-- Hapus Data per Tahun -->
+    <div class="card shadow mb-4 border-left-danger">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-danger">
+                <i class="fas fa-trash"></i> Hapus Data per Tahun
+            </h6>
+        </div>
+        <div class="card-body">
+            <p class="text-danger">Fitur ini akan menghapus <strong>SEMUA</strong> data klien pada tahun yang dipilih. Tindakan ini tidak dapat dibatalkan.</p>
+            
+            <form action="{{ route('klien.deleteYear') }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus SEMUA data di tahun ini?');">
+                @csrf
+                <div class="form-row align-items-center">
+                    <div class="col-auto">
+                        <label class="sr-only" for="tahun">Tahun</label>
+                        <select class="form-control mb-2" id="tahun" name="tahun" required>
+                            <option value="">Pilih Tahun...</option>
+                            @for($y = date('Y'); $y >= 2020; $y--)
+                                <option value="{{ $y }}">{{ $y }}</option>
+                            @endfor
+                            <!-- Tambahan tahun 1970 untuk membersihkan data error -->
+                            <option value="1970">1970 (Data Error)</option>
+                        </select>
+                    </div>
+                    <input type="hidden" name="confirm_delete" value="1">
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-danger mb-2">Hapus Data</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
 </div>
 
 <script>

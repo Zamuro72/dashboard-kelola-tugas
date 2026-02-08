@@ -26,6 +26,7 @@
                                 <th>Tahun</th>
                                 <th>Skema</th>
                                 <th>Nama Klien/Perusahaan</th>
+                                <th>Tanggal Lahir</th>
                                 <th>Penanggung Jawab</th>
                                 <th>Email</th>
                                 <th>No Whatsapp</th>
@@ -50,6 +51,13 @@
                                             @endif
                                         @else
                                             <strong>{{ $klien->nama_perusahaan }}</strong>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($klien->tipe_klien == 'Personal')
+                                            {{ $klien->tanggal_lahir ? $klien->tanggal_lahir->format('d-m-Y') : '-' }}
+                                        @else
+                                            -
                                         @endif
                                     </td>
                                     <td>

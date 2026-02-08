@@ -213,6 +213,7 @@ class KlienController extends Controller
         if ($request->tipe_klien == 'Personal') {
             $rules['nama_klien'] = 'required|string|max:255';
             $rules['nama_perusahaan'] = 'nullable|string|max:255';
+            $rules['tanggal_lahir'] = 'nullable|date';
         } else {
             $rules['nama_perusahaan'] = 'required|string|max:255';
             $rules['nama_penanggung_jawab'] = 'required|string|max:255';
@@ -239,6 +240,7 @@ class KlienController extends Controller
             'email' => $request->email,
             'no_whatsapp' => $request->no_whatsapp,
             'sertifikat_terbit' => $request->sertifikat_terbit,
+            'tanggal_lahir' => $request->tanggal_lahir,
         ]);
 
         if ($skemaId) {
@@ -290,6 +292,7 @@ class KlienController extends Controller
         if ($request->tipe_klien == 'Personal') {
             $rules['nama_klien'] = 'required|string|max:255';
             $rules['nama_perusahaan'] = 'nullable|string|max:255';
+            $rules['tanggal_lahir'] = 'nullable|date';
         } else {
             $rules['nama_perusahaan'] = 'required|string|max:255';
             $rules['nama_penanggung_jawab'] = 'required|string|max:255';
@@ -312,6 +315,7 @@ class KlienController extends Controller
             'email' => $request->email,
             'no_whatsapp' => $request->no_whatsapp,
             'sertifikat_terbit' => $request->sertifikat_terbit,
+            'tanggal_lahir' => $request->tanggal_lahir,
         ]);
 
         if ($klien->skema_id) {
@@ -466,10 +470,43 @@ class KlienController extends Controller
             Excel::import(new \App\Imports\KlienImport(Auth::id()), $request->file('file'));
 
             return redirect()->route('klien.index')->with('success', 'Data klien berhasil diimport');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+            $errorMessages = [];
+            foreach ($failures as $failure) {
+                foreach ($failure->errors() as $error) {
+                    $errorMessages[] = 'Baris ' . $failure->row() . ': ' . $error;
+                }
+            }
+            return redirect()->back()->with('error', 'Gagal validasi import:<br>' . implode('<br>', $errorMessages));
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Gagal mengimport file: ' . $e->getMessage());
         }
     }
+    /**
+     * Hapus data klien per tahun
+     */
+    public function deleteByYear(Request $request)
+    {
+        $request->validate([
+            'tahun' => 'required|integer',
+            'confirm_delete' => 'required|in:1'
+        ]);
+
+        /** @var User $user */
+        $user = Auth::user();
+        $query = Klien::where('tahun', $request->tahun);
+
+        if ($user->jabatan != 'Admin') {
+            $query->where('user_id', $user->id);
+        }
+
+        $count = $query->count();
+        $query->delete();
+
+        return redirect()->back()->with('success', 'Berhasil menghapus ' . $count . ' data klien tahun ' . $request->tahun);
+    }
+
     /**
      * Filter Klien by Status
      */

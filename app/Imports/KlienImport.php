@@ -8,15 +8,24 @@ use App\Models\Skema;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
+use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
+use Maatwebsite\Excel\Concerns\WithMapping;
 use Carbon\Carbon;
 
-class KlienImport implements ToModel, WithHeadingRow, WithValidation
+class KlienImport implements ToModel, WithHeadingRow, WithValidation, SkipsEmptyRows, WithMapping
 {
-    protected $userId;
+    private $userId;
 
     public function __construct($userId)
     {
         $this->userId = $userId;
+    }
+
+    public function map($row): array
+    {
+        return array_map(function ($value) {
+            return is_string($value) ? trim($value) : $value;
+        }, $row);
     }
 
     public function model(array $row)
@@ -182,14 +191,35 @@ class KlienImport implements ToModel, WithHeadingRow, WithValidation
             }
         }
 
-        // Jika masih belum ketemu, coba detect dari nama jasa langsung
         if (!$jasaId && isset($row['jasa'])) {
             $namaJasa = trim($row['jasa']);
             $jasa = Jasa::where('nama_jasa', 'LIKE', '%' . $namaJasa . '%')->first();
             if ($jasa) {
                 $jasaId = $jasa->id;
-                // Jasa tanpa skema atau skema otomatis null
             }
+        }
+
+        // Jika jasaId sudah ketemu tapi skemaId belum, coba cari skema berdasarkan nama_skema di row dan jasaId
+        if ($jasaId && !$skemaId && !empty($namaSkema)) {
+            $skemaObj = Skema::where('jasa_id', $jasaId)
+                ->where(function ($q) use ($namaSkema) {
+                    $q->where('nama_skema', 'LIKE', '%' . $namaSkema . '%')
+                        ->orWhereRaw('? LIKE CONCAT("%", nama_skema, "%")', [$namaSkema]);
+                })
+                ->first();
+
+            // Fallback khusus untuk Ahli K3 Umum jika tidak ketemu exact match
+            if (!$skemaObj) {
+                if (stripos($namaSkema, 'Ahli K3 Umum') !== false) {
+                    $skemaObj = Skema::where('jasa_id', $jasaId)->where('nama_skema', 'Ahli K3 Umum')->first();
+                } elseif (stripos($namaSkema, 'Ahli K3 Listrik') !== false) {
+                    $skemaObj = Skema::where('jasa_id', $jasaId)->where('nama_skema', 'Ahli K3 Listrik')->first();
+                } elseif (stripos($namaSkema, 'Petugas P3K') !== false) {
+                    $skemaObj = Skema::where('jasa_id', $jasaId)->where('nama_skema', 'Petugas P3K')->first();
+                }
+            }
+
+            $skemaId = $skemaObj ? $skemaObj->id : null;
         }
 
         // Jika tidak ada jasa yang terdeteksi, skip row ini
@@ -197,13 +227,36 @@ class KlienImport implements ToModel, WithHeadingRow, WithValidation
             return null;
         }
 
+        // Jika skema kosong, skip row ini (karena validation kita buat nullable untuk handle empty row)
+        if (empty($namaSkema)) {
+            return null;
+        }
+
         // Parse tanggal sertifikat terbit
         $sertifikatTerbit = null;
         if (!empty($row['sertifikat_terbit'])) {
             try {
-                $sertifikatTerbit = Carbon::parse($row['sertifikat_terbit'])->format('Y-m-d');
+                if (is_numeric($row['sertifikat_terbit'])) {
+                    $sertifikatTerbit = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['sertifikat_terbit'])->format('Y-m-d');
+                } else {
+                    $sertifikatTerbit = Carbon::parse($row['sertifikat_terbit'])->format('Y-m-d');
+                }
             } catch (\Exception $e) {
                 $sertifikatTerbit = null;
+            }
+        }
+
+        // Parse tanggal lahir
+        $tanggalLahir = null;
+        if (!empty($row['tanggal_lahir'])) {
+            try {
+                if (is_numeric($row['tanggal_lahir'])) {
+                    $tanggalLahir = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_lahir'])->format('Y-m-d');
+                } else {
+                    $tanggalLahir = Carbon::parse($row['tanggal_lahir'])->format('Y-m-d');
+                }
+            } catch (\Exception $e) {
+                $tanggalLahir = null;
             }
         }
 
@@ -227,22 +280,35 @@ class KlienImport implements ToModel, WithHeadingRow, WithValidation
             'nama_klien' => $row['nama_klien'] ?? null,
             'nama_perusahaan' => $row['nama_perusahaan'] ?? null,
             'nama_penanggung_jawab' => $row['nama_penanggung_jawab'] ?? null,
-            'email' => $row['email'] ?? null,
+            'email' => !empty($row['email']) ? trim($row['email']) : null,
             'no_whatsapp' => $row['no_whatsapp'] ?? null,
             'sertifikat_terbit' => $sertifikatTerbit,
+            'tanggal_lahir' => $tanggalLahir,
         ]);
     }
 
     public function rules(): array
     {
         return [
-            'skema' => 'required',
+            'skema' => 'nullable',
             'nama_klien' => 'nullable|string',
             'nama_perusahaan' => 'nullable|string',
             'nama_penanggung_jawab' => 'nullable|string',
-            'email' => 'nullable|email',
+            'email' => [
+                'nullable',
+                function ($attribute, $value, $fail) {
+                    if (!$value) return;
+                    $cleanValue = trim($value);
+                    if ($cleanValue === '') return; // Allow whitespace-only (treated as null)
+
+                    if (!filter_var($cleanValue, FILTER_VALIDATE_EMAIL)) {
+                        $fail('Format email tidak valid (' . htmlspecialchars($cleanValue) . ')');
+                    }
+                }
+            ],
             'no_whatsapp' => 'nullable|string',
             'sertifikat_terbit' => 'nullable',
+            'tanggal_lahir' => 'nullable',
         ];
     }
 
@@ -250,7 +316,6 @@ class KlienImport implements ToModel, WithHeadingRow, WithValidation
     {
         return [
             'skema.required' => 'Kolom skema tidak boleh kosong',
-            'email.email' => 'Format email tidak valid',
         ];
     }
 }

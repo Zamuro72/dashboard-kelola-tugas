@@ -130,13 +130,14 @@
                                 <th width="5%">No</th>
                                 <th>Tipe</th>
                                 <th>Nama Klien/Perusahaan</th>
+                                <th>Tanggal Lahir</th>
                                 <th>Penanggung Jawab</th>
                                 <th>Email</th>
-                                <th>No WhatsApp</th>
-                                <th>Sertifikat Terbit</th>
-                                <th>Sertifikat Expired</th>
+                                <th style="min-width: 150px">No WhatsApp</th>
+                                <th style="min-width: 130px">Sertifikat Terbit</th>
+                                <th style="min-width: 130px">Sertifikat Expired</th>
                                 <th>Status</th>
-                                <th width="12%">Aksi</th>
+                                <th style="min-width: 120px">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -161,6 +162,13 @@
                                         @endif
                                     </td>
                                     <td>
+                                        @if($klien->tipe_klien == 'Personal')
+                                            {{ $klien->tanggal_lahir ? $klien->tanggal_lahir->format('d-m-Y') : '-' }}
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
+                                    <td>
                                         @if($klien->tipe_klien == 'Perusahaan')
                                             {{ $klien->nama_penanggung_jawab ?? '-' }}
                                         @endif
@@ -170,7 +178,7 @@
                                     <td>{{ $klien->sertifikat_terbit ? $klien->sertifikat_terbit->format('d-m-Y') : '-' }}</td>
                                     <td>{{ $klien->tanggal_expired ? $klien->tanggal_expired->format('d-m-Y') : '-' }}</td>
                                     <td>{!! $klien->getStatusSertifikatBadge() !!}</td>
-                                    <td>
+                                    <td class="text-center">
                                         <a href="{{ route('klien.edit', $klien->id) }}" 
                                            class="btn btn-warning btn-sm" title="Edit">
                                             <i class="fas fa-edit"></i>

@@ -85,6 +85,16 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
+
+                    <div class="form-group">
+                        <label for="tanggal_lahir">Tanggal Lahir</label>
+                        <input type="date" name="tanggal_lahir" id="tanggal_lahir" 
+                               class="form-control @error('tanggal_lahir') is-invalid @enderror" 
+                               value="{{ old('tanggal_lahir', $klien->tanggal_lahir ? $klien->tanggal_lahir->format('Y-m-d') : '') }}">
+                        @error('tanggal_lahir')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
                 </div>
 
                 <!-- Form Perusahaan -->

@@ -180,5 +180,8 @@ route::middleware('checkLogin')->group(function () {
         // Import
         Route::get('/klien/import', [KlienController::class, 'importForm'])->name('klien.import.form');
         Route::post('/klien/import', [KlienController::class, 'import'])->name('klien.import');
+
+        // Delete Data by Year
+        Route::post('/klien/delete-year', [KlienController::class, 'deleteByYear'])->name('klien.deleteYear');
     });
 });
