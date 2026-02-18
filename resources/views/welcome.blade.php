@@ -7,6 +7,8 @@
   <title>Manajemen Kandel</title>
   <meta name="description" content="">
   <meta name="keywords" content="">
+  <meta name="robots" content="noindex, nofollow">
+
 
   <!-- Favicons -->
   <link href="{{asset('enno/assets/img/favicon.png')}}" rel="icon">
