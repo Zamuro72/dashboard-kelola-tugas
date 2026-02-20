@@ -293,8 +293,9 @@
                 plotOptions: {
                     bar: {
                         horizontal: false,
-                        columnWidth: '55%',
-                        endingShape: 'rounded'
+                        columnWidth: '70%',
+                        endingShape: 'flat',
+                        borderRadius: 0
                     },
                 },
                 dataLabels: {
