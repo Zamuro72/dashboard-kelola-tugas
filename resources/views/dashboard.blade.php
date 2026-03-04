@@ -249,6 +249,7 @@
                             <tr>
                                 <th>Nama Klien/Perusahaan</th>
                                 <th>Tipe</th>
+                                <th class="skema-column" style="display:none;">Skema</th>
                                 <th>Pemilik Data</th>
                                 <th>Tanggal Terbit</th>
                             </tr>
@@ -361,6 +362,15 @@
 
         // Fetch Details
         function fetchDetails(year, period, jasaName, index) {
+            // Determine if skema column should be shown
+            var showSkema = (jasaName === 'BNSP' || jasaName === 'Kemnaker RI');
+            if (showSkema) {
+                $('.skema-column').show();
+            } else {
+                $('.skema-column').hide();
+            }
+            var colCount = showSkema ? 5 : 4;
+
             // Show loading or scroll to details
             $('#detailsCard').show();
             $('#detailsTitle').text('Detail Data: ' + jasaName + ' (' + (period === 'monthly' ? 'Bulan ke-' + (index+1) : 'Minggu ke-' + (index+1)) + ')');
@@ -369,7 +379,7 @@
                 scrollTop: $("#detailsCard").offset().top
             }, 500);
 
-            $('#detailsTable tbody').html('<tr><td colspan="4" class="text-center">Loading...</td></tr>');
+            $('#detailsTable tbody').html('<tr><td colspan="' + colCount + '" class="text-center">Loading...</td></tr>');
 
             $.ajax({
                 url: "{{ route('dashboard.chartDetails') }}",
@@ -387,17 +397,20 @@
                             rows += '<tr>';
                             rows += '<td>' + item.nama_klien + '</td>';
                             rows += '<td>' + item.tipe_klien + '</td>';
+                            if (showSkema) {
+                                rows += '<td class="skema-column">' + item.skema + '</td>';
+                            }
                             rows += '<td>' + item.pemilik_data + '</td>';
                             rows += '<td>' + item.sertifikat_terbit + '</td>';
                             rows += '</tr>';
                         });
                     } else {
-                        rows = '<tr><td colspan="4" class="text-center">Tidak ada data detail</td></tr>';
+                        rows = '<tr><td colspan="' + colCount + '" class="text-center">Tidak ada data detail</td></tr>';
                     }
                     $('#detailsTable tbody').html(rows);
                 },
                 error: function(xhr) {
-                    $('#detailsTable tbody').html('<tr><td colspan="4" class="text-center text-danger">Gagal memuat data</td></tr>');
+                    $('#detailsTable tbody').html('<tr><td colspan="' + colCount + '" class="text-center text-danger">Gagal memuat data</td></tr>');
                 }
             });
         }

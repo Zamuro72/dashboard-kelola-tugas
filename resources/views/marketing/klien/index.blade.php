@@ -183,6 +183,9 @@
                                     <div class="text-xs text-muted mt-2">
                                         Masa Berlaku: {{ $jasa->masa_berlaku_tahun }} Tahun
                                     </div>
+                                    <div class="text-xs font-weight-bold text-dark mt-1">
+                                        <i class="fas fa-users mr-1"></i> Total Data: {{ $jasa->kliens_count }}
+                                    </div>
                                 </div>
                                 <div class="col-auto">
                                     <i class="fas fa-arrow-right fa-2x text-gray-300"></i>

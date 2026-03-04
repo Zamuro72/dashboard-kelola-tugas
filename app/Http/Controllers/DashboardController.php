@@ -140,7 +140,7 @@ class DashboardController extends Controller
 
         $user = Auth::user();
 
-        $query = Klien::with(['jasa', 'user'])->aktif()->where('tahun', $year);
+        $query = Klien::with(['jasa', 'user', 'skema'])->aktif()->where('tahun', $year);
 
         if ($user->jabatan === 'Marketing') {
             $query->where('user_id', $user->id);
@@ -162,6 +162,7 @@ class DashboardController extends Controller
             return [
                 'nama_klien' => $item->tipe_klien == 'Perusahaan' ? $item->nama_perusahaan : $item->nama_klien,
                 'tipe_klien' => $item->tipe_klien,
+                'skema' => $item->skema ? $item->skema->nama_skema : '-',
                 'pemilik_data' => $item->user->nama . ' (' . $item->user->jabatan . ')',
                 'sertifikat_terbit' => $item->sertifikat_terbit->format('d M Y'),
             ];

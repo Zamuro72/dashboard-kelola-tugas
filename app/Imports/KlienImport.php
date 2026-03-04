@@ -294,18 +294,7 @@ class KlienImport implements ToModel, WithHeadingRow, WithValidation, SkipsEmpty
             'nama_klien' => 'nullable|string',
             'nama_perusahaan' => 'nullable|string',
             'nama_penanggung_jawab' => 'nullable|string',
-            'email' => [
-                'nullable',
-                function ($attribute, $value, $fail) {
-                    if (!$value) return;
-                    $cleanValue = trim($value);
-                    if ($cleanValue === '') return; // Allow whitespace-only (treated as null)
-
-                    if (!filter_var($cleanValue, FILTER_VALIDATE_EMAIL)) {
-                        $fail('Format email tidak valid (' . htmlspecialchars($cleanValue) . ')');
-                    }
-                }
-            ],
+            'email' => 'nullable|string',
             'no_whatsapp' => 'nullable|string',
             'sertifikat_terbit' => 'nullable',
             'tanggal_lahir' => 'nullable',

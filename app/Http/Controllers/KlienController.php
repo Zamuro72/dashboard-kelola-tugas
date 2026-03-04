@@ -32,11 +32,21 @@ class KlienController extends Controller
             ->sudahExpired()
             ->count();
 
+        // Load jasa with klien count
+        $jasaQuery = Jasa::with('skema');
+        if ($user->jabatan == 'Marketing') {
+            $jasaQuery->withCount(['kliens' => function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            }]);
+        } else {
+            $jasaQuery->withCount('kliens');
+        }
+
         $data = [
             'title' => 'Data Klien',
             'menuAdminKlien' => 'active',
             'menuMarketingKlien' => 'active',
-            'jasaList' => Jasa::with('skema')->get(),
+            'jasaList' => $jasaQuery->get(),
             'jumlahAkanExpired' => $jumlahAkanExpired,
             'jumlahSudahExpired' => $jumlahSudahExpired,
         ];
