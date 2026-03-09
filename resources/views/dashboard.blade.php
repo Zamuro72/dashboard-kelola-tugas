@@ -443,8 +443,20 @@
                         $filter.val(year);
                     }
 
+                    // Filter out jasa with 0 data
+                    var filteredSeries = [];
+                    var filteredLabels = [];
+                    var filteredColors = [];
+                    for (var i = 0; i < response.series.length; i++) {
+                        if (response.series[i] > 0) {
+                            filteredSeries.push(response.series[i]);
+                            filteredLabels.push(response.labels[i]);
+                            filteredColors.push(response.colors[i]);
+                        }
+                    }
+
                     // Calculate total
-                    var total = response.series.reduce((a, b) => a + b, 0);
+                    var total = filteredSeries.reduce((a, b) => a + b, 0);
 
                     // If total is 0, show message
                     if (total === 0) {
@@ -452,14 +464,59 @@
                         return;
                     }
 
+                    // Store real percentages for labels
+                    var realPercentages = filteredSeries.map(function(val) {
+                        return (val / total * 100).toFixed(1);
+                    });
+                    var realCounts = filteredSeries.slice();
+
+                    // Set minimum visual size (2% of total) so small slices are visible
+                    var minVisual = total * 0.02;
+                    var displaySeries = filteredSeries.map(function(val) {
+                        return val < minVisual ? minVisual : val;
+                    });
+
                     var options = {
-                        series: response.series,
+                        series: displaySeries,
                         chart: {
                             type: 'donut',
-                            height: 350
+                            height: 400
                         },
-                        labels: response.labels,
-                        colors: response.colors,
+                        labels: filteredLabels,
+                        colors: filteredColors,
+                        dataLabels: {
+                            enabled: true,
+                            formatter: function(val, opts) {
+                                return opts.w.config.labels[opts.seriesIndex] + ': ' + realPercentages[opts.seriesIndex] + '%';
+                            },
+                            style: {
+                                fontSize: '11px',
+                                fontWeight: 'bold'
+                            },
+                            dropShadow: {
+                                enabled: false
+                            }
+                        },
+                        plotOptions: {
+                            pie: {
+                                donut: {
+                                    size: '55%'
+                                },
+                                expandOnClick: true,
+                                dataLabels: {
+                                    offset: -5,
+                                    minAngleToShowLabel: 0
+                                }
+                            }
+                        },
+                        tooltip: {
+                            custom: function({ seriesIndex }) {
+                                var name = filteredLabels[seriesIndex];
+                                var count = realCounts[seriesIndex];
+                                var pct = realPercentages[seriesIndex];
+                                return '<div style="padding: 8px 12px"><strong>' + name + '</strong><br>' + count + ' klien (' + pct + '%)</div>';
+                            }
+                        },
                         legend: {
                             position: 'right'
                         },

@@ -161,7 +161,7 @@
             <li class="nav-item {{$menuNotaPerdin ?? ''}}">
                 <a class="nav-link" href="{{ route('notaPerdin') }}">
                     <i class="fas fa-file-invoice"></i>
-                    <span>Nota Perhitungan</span>
+                    <span>Nota Perhitungan Perdin</span>
                 </a>
             </li>
             @endif

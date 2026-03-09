@@ -24,14 +24,14 @@
                                 <th width="5%">No</th>
                                 <th>Jasa</th>
                                 <th>Tahun</th>
-                                <th>Skema</th>
+                                <th style="min-width: 120px">Skema</th>
                                 <th>Nama Klien/Perusahaan</th>
-                                <th>Tanggal Lahir</th>
+                                <th style="min-width: 120px">Tanggal Lahir</th>
                                 <th>Penanggung Jawab</th>
                                 <th>Email</th>
                                 <th>No Whatsapp</th>
-                                <th>Sertifikat Terbit</th>
-                                <th>Sertifikat Expired</th>
+                                <th style="min-width: 130px">Sertifikat Terbit</th>
+                                <th style="min-width: 130px">Sertifikat Expired</th>
                                 <th>Status</th>
                                 <th width="10%">Aksi</th>
                             </tr>

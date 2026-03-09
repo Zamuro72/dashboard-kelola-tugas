@@ -25,14 +25,14 @@
                             <tr>
                                 <th width="5%">No</th>
                                 <th>Jasa</th>
-                                <th>Skema</th>
+                                <th style="min-width: 120px">Skema</th>
                                 <th>Tahun</th>
                                 <th>Tipe</th>
                                 <th>Nama Klien/Perusahaan</th>
                                 <th>Email</th>
                                 <th>No WhatsApp</th>
-                                <th>Sertifikat Terbit</th>
-                                <th>Sertifikat Expired</th>
+                                <th style="min-width: 130px">Sertifikat Terbit</th>
+                                <th style="min-width: 130px">Sertifikat Expired</th>
                                 <th>Sisa Hari</th>
                                 <th width="10%">Aksi</th>
                             </tr>
@@ -121,14 +121,14 @@
                             <tr>
                                 <th width="5%">No</th>
                                 <th>Jasa</th>
-                                <th>Skema</th>
+                                <th style="min-width: 120px">Skema</th>
                                 <th>Tahun</th>
                                 <th>Tipe</th>
                                 <th>Nama Klien/Perusahaan</th>
                                 <th>Email</th>
                                 <th>No WhatsApp</th>
-                                <th>Sertifikat Terbit</th>
-                                <th>Sertifikat Expired</th>
+                                <th style="min-width: 130px">Sertifikat Terbit</th>
+                                <th style="min-width: 130px">Sertifikat Expired</th>
                                 <th>Keterangan</th>
                                 <th width="10%">Aksi</th>
                             </tr>
