@@ -226,6 +226,8 @@ class KlienController extends Controller
             'email' => 'nullable|email',
             'no_whatsapp' => 'nullable',
             'sertifikat_terbit' => 'nullable|date',
+            'status_manual' => 'nullable|in:ongoing proses deal,belum jelas,proses terbit',
+            'catatan' => 'nullable|string',
         ];
 
         if ($request->tipe_klien == 'Personal') {
@@ -259,6 +261,8 @@ class KlienController extends Controller
             'no_whatsapp' => $request->no_whatsapp,
             'sertifikat_terbit' => $request->sertifikat_terbit,
             'tanggal_lahir' => $request->tanggal_lahir,
+            'status_manual' => $request->status_manual,
+            'catatan' => $request->catatan,
         ]);
 
         if ($skemaId) {
@@ -305,6 +309,8 @@ class KlienController extends Controller
             'email' => 'nullable|email',
             'no_whatsapp' => 'nullable',
             'sertifikat_terbit' => 'nullable|date',
+            'status_manual' => 'nullable|in:ongoing proses deal,belum jelas,proses terbit',
+            'catatan' => 'nullable|string',
         ];
 
         if ($request->tipe_klien == 'Personal') {
@@ -334,6 +340,8 @@ class KlienController extends Controller
             'no_whatsapp' => $request->no_whatsapp,
             'sertifikat_terbit' => $request->sertifikat_terbit,
             'tanggal_lahir' => $request->tanggal_lahir,
+            'status_manual' => $request->status_manual,
+            'catatan' => $request->catatan,
         ]);
 
         // Redirect back to notifikasi if requested

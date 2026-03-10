@@ -25,6 +25,8 @@ class Klien extends Model
         'no_whatsapp',
         'sertifikat_terbit',
         'tanggal_lahir',
+        'status_manual',
+        'catatan',
     ];
 
     protected $casts = [
@@ -93,6 +95,18 @@ class Klien extends Model
      */
     public function getStatusSertifikatBadge()
     {
+        // Prioritaskan status_manual jika ada
+        if ($this->status_manual) {
+            if ($this->status_manual == 'ongoing proses deal') {
+                return '<span class="badge badge-warning">Ongoing Proses Deal</span>';
+            } elseif ($this->status_manual == 'belum jelas') {
+                return '<span class="badge badge-secondary">Belum Jelas</span>';
+            } elseif ($this->status_manual == 'proses terbit') {
+                return '<span class="badge badge-info">Proses Terbit</span>';
+            }
+        }
+
+        // Fallback ke otomatis
         if (!$this->sertifikat_terbit) {
             return '<span class="badge badge-info">Proses Terbit</span>';
         }

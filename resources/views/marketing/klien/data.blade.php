@@ -179,6 +179,31 @@
                                     <td>{{ $klien->tanggal_expired ? $klien->tanggal_expired->format('d-m-Y') : '-' }}</td>
                                     <td>{!! $klien->getStatusSertifikatBadge() !!}</td>
                                     <td class="text-center">
+                                        @if($klien->catatan)
+                                            <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#catatanModal{{ $klien->id }}" title="Lihat Catatan">
+                                                <i class="fas fa-comment"></i>
+                                            </button>
+
+                                            <!-- Catatan Modal -->
+                                            <div class="modal fade text-left" id="catatanModal{{ $klien->id }}" tabindex="-1" role="dialog" aria-labelledby="catatanModalLabel{{ $klien->id }}" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="catatanModalLabel{{ $klien->id }}">Catatan Klien: {{ $klien->nama_klien ?? $klien->nama_perusahaan }}</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            {{ $klien->catatan }}
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
                                         <a href="{{ route('klien.edit', $klien->id) }}" 
                                            class="btn btn-warning btn-sm" title="Edit">
                                             <i class="fas fa-edit"></i>

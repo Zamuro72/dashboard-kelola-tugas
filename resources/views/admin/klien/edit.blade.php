@@ -167,6 +167,28 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="status_manual">Status</label>
+                    <select name="status_manual" id="status_manual" class="form-control @error('status_manual') is-invalid @enderror">
+                        <option value="" disabled selected>-- Pilih Status --</option>
+                        <option value="ongoing proses deal" {{ old('status_manual', $klien->status_manual) == 'ongoing proses deal' ? 'selected' : '' }}>Ongoing Proses Deal</option>
+                        <option value="belum jelas" {{ old('status_manual', $klien->status_manual) == 'belum jelas' ? 'selected' : '' }}>Belum Jelas</option>
+                        <option value="proses terbit" {{ old('status_manual', $klien->status_manual) == 'proses terbit' ? 'selected' : '' }}>Proses Terbit</option>
+                    </select>
+                    @error('status_manual')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                    <small class="text-muted">Abaikan untuk memakai status bawaan (Aktif, Sudah Expired, dll)</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="catatan">Catatan</label>
+                    <textarea name="catatan" id="catatan" class="form-control @error('catatan') is-invalid @enderror" rows="3" placeholder="Masukkan catatan tambahan (opsional)">{{ old('catatan', $klien->catatan) }}</textarea>
+                    @error('catatan')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="form-group">
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i> Update
                     </button>
@@ -228,6 +250,47 @@ document.addEventListener('DOMContentLoaded', function() {
 
     tipeKlien.addEventListener('change', toggleForm);
     toggleForm(); // Trigger on load
+
+    // Mutual Exclusive Logic for Sertifikat Terbit & Status Manual
+    const sertifikatTerbitMutual = document.getElementById('sertifikat_terbit');
+    const statusManualMutual = document.getElementById('status_manual');
+
+    function toggleExclusive() {
+        if (statusManualMutual && statusManualMutual.value && statusManualMutual.value !== '') {
+            sertifikatTerbitMutual.value = '';
+            sertifikatTerbitMutual.readOnly = true;
+            sertifikatTerbitMutual.style.backgroundColor = '#e9ecef';
+            sertifikatTerbitMutual.style.pointerEvents = 'none';
+        } else if (sertifikatTerbitMutual) {
+            sertifikatTerbitMutual.readOnly = false;
+            sertifikatTerbitMutual.style.backgroundColor = '';
+            sertifikatTerbitMutual.style.pointerEvents = 'auto';
+        }
+
+        if (sertifikatTerbitMutual && sertifikatTerbitMutual.value) {
+            if(statusManualMutual) {
+                statusManualMutual.value = '';
+                statusManualMutual.style.pointerEvents = 'none';
+                // Gunakan cara custom CSS/readonly visual karena select option 'disabled' bisa bikin tidak ter-submit dengan sempurna bagi old value
+                for (let i = 0; i < statusManualMutual.options.length; i++) {
+                    if (statusManualMutual.options[i].value !== '') {
+                        statusManualMutual.options[i].disabled = true;
+                    }
+                }
+            }
+        } else if (statusManualMutual) {
+            statusManualMutual.style.pointerEvents = 'auto';
+            for (let i = 0; i < statusManualMutual.options.length; i++) {
+                statusManualMutual.options[i].disabled = false;
+            }
+        }
+    }
+
+    if (sertifikatTerbitMutual && statusManualMutual) {
+        sertifikatTerbitMutual.addEventListener('change', toggleExclusive);
+        statusManualMutual.addEventListener('change', toggleExclusive);
+        toggleExclusive();
+    }
 });
 </script>
 @endsection
