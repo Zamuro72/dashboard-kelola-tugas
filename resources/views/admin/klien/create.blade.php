@@ -128,38 +128,40 @@
                     </div>
                 </div>
 
-                <!-- Data Umum -->
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" name="email" id="email" 
-                           class="form-control @error('email') is-invalid @enderror" 
-                           value="{{ old('email') }}" placeholder="Masukkan email">
-                    @error('email')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+                <!-- Data Umum (Hidden by default) -->
+                <div id="data-umum" style="display: none;">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" name="email" id="email" 
+                               class="form-control @error('email') is-invalid @enderror" 
+                               value="{{ old('email') }}" placeholder="Masukkan email">
+                        @error('email')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
 
-                <div class="form-group">
-                    <label for="no_whatsapp">No WhatsApp</label>
-                    <input type="text" name="no_whatsapp" id="no_whatsapp" 
-                           class="form-control @error('no_whatsapp') is-invalid @enderror" 
-                           value="{{ old('no_whatsapp') }}" placeholder="Masukkan nomor WhatsApp">
-                    @error('no_whatsapp')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+                    <div class="form-group">
+                        <label for="no_whatsapp">No WhatsApp</label>
+                        <input type="text" name="no_whatsapp" id="no_whatsapp" 
+                               class="form-control @error('no_whatsapp') is-invalid @enderror" 
+                               value="{{ old('no_whatsapp') }}" placeholder="Masukkan nomor WhatsApp">
+                        @error('no_whatsapp')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
 
-                <div class="form-group">
-                    <label for="sertifikat_terbit">Sertifikat Terbit</label>
-                    <input type="date" name="sertifikat_terbit" id="sertifikat_terbit" 
-                           class="form-control @error('sertifikat_terbit') is-invalid @enderror" 
-                           value="{{ old('sertifikat_terbit') }}">
-                    @error('sertifikat_terbit')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                    <small class="text-muted">
-                        Masa berlaku sertifikat: {{ $jasa->masa_berlaku_tahun }} tahun
-                    </small>
+                    <div class="form-group">
+                        <label for="sertifikat_terbit">Sertifikat Terbit</label>
+                        <input type="date" name="sertifikat_terbit" id="sertifikat_terbit" 
+                               class="form-control @error('sertifikat_terbit') is-invalid @enderror" 
+                               value="{{ old('sertifikat_terbit') }}">
+                        @error('sertifikat_terbit')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                        <small class="text-muted">
+                            Masa berlaku sertifikat: {{ $jasa->masa_berlaku_tahun }} tahun
+                        </small>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -189,6 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const tipeKlien = document.getElementById('tipe_klien');
     const formPersonal = document.getElementById('form-personal');
     const formPerusahaan = document.getElementById('form-perusahaan');
+    const dataUmum = document.getElementById('data-umum');
     
     // Untuk handle input nama_perusahaan yang sama
     const namaPerusahaanPersonal = document.getElementById('nama_perusahaan_personal');
@@ -200,6 +203,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (value === 'Personal') {
             formPersonal.style.display = 'block';
             formPerusahaan.style.display = 'none';
+            dataUmum.style.display = 'block';
             
             // Set required
             document.getElementById('nama_klien').required = true;
@@ -213,6 +217,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (value === 'Perusahaan') {
             formPersonal.style.display = 'none';
             formPerusahaan.style.display = 'block';
+            dataUmum.style.display = 'block';
             
             // Set required
             document.getElementById('nama_klien').required = false;
@@ -226,6 +231,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             formPersonal.style.display = 'none';
             formPerusahaan.style.display = 'none';
+            dataUmum.style.display = 'none';
         }
     }
 
@@ -234,6 +240,21 @@ document.addEventListener('DOMContentLoaded', function() {
     // Trigger on page load if there's old value
     if (tipeKlien.value) {
         toggleForm();
+    }
+    
+    // Auto-fill and lock Sertifikat Terbit year based on selected Tahun
+    const sertifikatTerbit = document.getElementById('sertifikat_terbit');
+    const selectedTahun = "{{ $tahun }}";
+    
+    if (sertifikatTerbit && selectedTahun) {
+        // Set Min and Max to the selected year
+        sertifikatTerbit.min = `${selectedTahun}-01-01`;
+        sertifikatTerbit.max = `${selectedTahun}-12-31`;
+        
+        // If empty, auto-fill with January 1st of the selected year
+        if (!sertifikatTerbit.value) {
+            sertifikatTerbit.value = `${selectedTahun}-01-01`;
+        }
     }
 });
 </script>

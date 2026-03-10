@@ -167,12 +167,14 @@
             @endif
 
 
+            @if (auth()->user()->jabatan != 'Marketing')
             <!-- Nav Item - Tables -->
             <li class="nav-item {{$menuKaryawanTugas ?? ''}}">
                 <a class="nav-link" href="{{ route('tugas') }}">
                     <i class="fas fa-tasks"></i>
                     <span>Data Tugas</span></a>
             </li>
+            @endif
 
             <!-- Nav Item - Pengajuan Lembur -->
             <li class="nav-item {{$menuKaryawanLembur ?? ''}}">

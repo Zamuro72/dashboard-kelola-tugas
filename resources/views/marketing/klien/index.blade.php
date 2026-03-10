@@ -13,6 +13,9 @@
                     <span class="badge badge-light">{{ $jumlahAkanExpired + $jumlahSudahExpired }}</span>
                 @endif
             </a>
+            <button type="button" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm mr-2" data-toggle="modal" data-target="#modalHapusData">
+                <i class="fas fa-trash fa-sm text-white-50"></i> Hapus Data
+            </button>
             <a href="{{ route('klien.import.form') }}" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm mr-2">
                 <i class="fas fa-file-excel fa-sm text-white-50"></i> Import Data
             </a>
@@ -63,6 +66,53 @@
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
                     <button type="button" class="btn btn-primary" id="btnLanjutTambah">Lanjut</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Hapus Data -->
+    <div class="modal fade" id="modalHapusData" tabindex="-1" role="dialog" aria-labelledby="modalHapusDataLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content border-bottom-danger">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="modalHapusDataLabel">Hapus Data Klien</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{{ route('klien.deleteYear') }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus SEMUA data pada Jasa dan Tahun ini? Tindakan ini tidak dapat dibatalkan.');">
+                    @csrf
+                    <div class="modal-body">
+                        <p class="text-danger small">Fitur ini akan menghapus <strong>semua data klien</strong> berdasarkan Jasa dan Tahun yang dipilih.</p>
+                        
+                        <div class="form-group">
+                            <label for="hapus_jasa_id">Pilih Jasa <span class="text-danger">*</span></label>
+                            <select class="form-control" id="hapus_jasa_id" name="jasa_id" required>
+                                <option value="" disabled selected>-- Pilih Jasa --</option>
+                                @foreach($jasaList as $jasa)
+                                    <option value="{{ $jasa->id }}">{{ $jasa->nama_jasa }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="hapus_tahun">Pilih Tahun <span class="text-danger">*</span></label>
+                            <select class="form-control" id="hapus_tahun" name="tahun" required>
+                                <option value="" disabled selected>-- Pilih Tahun --</option>
+                                @forelse($availableYears as $y)
+                                    <option value="{{ $y }}">{{ $y }}</option>
+                                @empty
+                                    <option value="" disabled>Belum ada data</option>
+                                @endforelse
+                            </select>
+                        </div>
+                        <input type="hidden" name="confirm_delete" value="1">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-danger">Hapus Data</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

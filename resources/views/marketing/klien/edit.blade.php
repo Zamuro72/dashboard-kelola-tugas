@@ -5,7 +5,12 @@
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">{{ $title }}</h1>
-        @if($klien->skema_id)
+        @if(request('from') == 'notifikasi')
+            <a href="{{ route('klien.notifikasi') }}" 
+               class="d-none d-sm-inline-block btn btn-sm btn-secondary shadow-sm">
+                <i class="fas fa-arrow-left fa-sm text-white-50"></i> Kembali
+            </a>
+        @elseif($klien->skema_id)
             <a href="{{ route('klien.data.skema', ['jasaId' => $klien->jasa_id, 'tahun' => $klien->tahun, 'skemaId' => $klien->skema_id]) }}" 
                class="d-none d-sm-inline-block btn btn-sm btn-secondary shadow-sm">
                 <i class="fas fa-arrow-left fa-sm text-white-50"></i> Kembali
@@ -27,6 +32,10 @@
             <form action="{{ route('klien.update', $klien->id) }}" method="POST">
                 @csrf
                 @method('PUT')
+                
+                @if(request('from'))
+                    <input type="hidden" name="from" value="{{ request('from') }}">
+                @endif
 
                 <!-- Info Jasa -->
                 <div class="row mb-3">
@@ -161,7 +170,12 @@
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i> Update
                     </button>
-                    @if($klien->skema_id)
+                    @if(request('from') == 'notifikasi')
+                        <a href="{{ route('klien.notifikasi') }}" 
+                           class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Batal
+                        </a>
+                    @elseif($klien->skema_id)
                         <a href="{{ route('klien.data.skema', ['jasaId' => $klien->jasa_id, 'tahun' => $klien->tahun, 'skemaId' => $klien->skema_id]) }}" 
                            class="btn btn-secondary">
                             <i class="fas fa-times"></i> Batal

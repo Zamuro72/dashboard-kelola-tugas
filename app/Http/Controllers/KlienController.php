@@ -42,6 +42,13 @@ class KlienController extends Controller
             $jasaQuery->withCount('kliens');
         }
 
+        // Get distinct available years from existing data for current user
+        $availableYears = Klien::where('user_id', $user->id)
+            ->select('tahun')
+            ->distinct()
+            ->orderBy('tahun', 'desc')
+            ->pluck('tahun');
+
         $data = [
             'title' => 'Data Klien',
             'menuAdminKlien' => 'active',
@@ -49,6 +56,7 @@ class KlienController extends Controller
             'jasaList' => $jasaQuery->get(),
             'jumlahAkanExpired' => $jumlahAkanExpired,
             'jumlahSudahExpired' => $jumlahSudahExpired,
+            'availableYears' => $availableYears,
         ];
 
         if ($user->jabatan == 'Admin') {
@@ -328,6 +336,12 @@ class KlienController extends Controller
             'tanggal_lahir' => $request->tanggal_lahir,
         ]);
 
+        // Redirect back to notifikasi if requested
+        if ($request->has('from') && $request->from == 'notifikasi') {
+            return redirect()->route('klien.notifikasi')
+                ->with('success', 'Data klien berhasil diupdate');
+        }
+
         if ($klien->skema_id) {
             return redirect()->route('klien.data', ['jasaId' => $klien->jasa_id, 'tahun' => $klien->tahun, 'skemaId' => $klien->skema_id])
                 ->with('success', 'Data klien berhasil diupdate');
@@ -499,22 +513,24 @@ class KlienController extends Controller
     public function deleteByYear(Request $request)
     {
         $request->validate([
+            'jasa_id' => 'required|exists:jasa,id',
             'tahun' => 'required|integer',
             'confirm_delete' => 'required|in:1'
         ]);
 
         /** @var User $user */
         $user = Auth::user();
-        $query = Klien::where('tahun', $request->tahun);
-
-        if ($user->jabatan != 'Admin') {
-            $query->where('user_id', $user->id);
-        }
+        $query = Klien::where('tahun', $request->tahun)
+            ->where('jasa_id', $request->jasa_id)
+            ->where('user_id', $user->id);
 
         $count = $query->count();
         $query->delete();
 
-        return redirect()->back()->with('success', 'Berhasil menghapus ' . $count . ' data klien tahun ' . $request->tahun);
+        $jasa = Jasa::find($request->jasa_id);
+        $namaJasa = $jasa ? $jasa->nama_jasa : 'Jasa tidak diketahui';
+
+        return redirect()->back()->with('success', 'Berhasil menghapus ' . $count . ' data klien ' . $namaJasa . ' tahun ' . $request->tahun);
     }
 
     /**

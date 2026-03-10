@@ -250,7 +250,9 @@
                                 <th>Nama Klien/Perusahaan</th>
                                 <th>Tipe</th>
                                 <th class="skema-column" style="display:none;">Skema</th>
-                                <th>Pemilik Data</th>
+                                @if(auth()->user()->jabatan == 'Admin')
+                                    <th>Pemilik Data</th>
+                                @endif
                                 <th>Tanggal Terbit</th>
                             </tr>
                         </thead>
@@ -273,6 +275,7 @@
         var chart;
         var currentYear = new Date().getFullYear();
         var currentPeriod = 'monthly';
+        var isAdmin = {{ auth()->user()->jabatan == 'Admin' ? 'true' : 'false' }};
 
         // Initialize Chart
         function initChart(data) {
@@ -369,7 +372,9 @@
             } else {
                 $('.skema-column').hide();
             }
-            var colCount = showSkema ? 5 : 4;
+            
+            var baseColCount = isAdmin ? 4 : 3;
+            var colCount = showSkema ? baseColCount + 1 : baseColCount;
 
             // Show loading or scroll to details
             $('#detailsCard').show();
@@ -400,7 +405,9 @@
                             if (showSkema) {
                                 rows += '<td class="skema-column">' + item.skema + '</td>';
                             }
-                            rows += '<td>' + item.pemilik_data + '</td>';
+                            if (isAdmin) {
+                                rows += '<td>' + item.pemilik_data + '</td>';
+                            }
                             rows += '<td>' + item.sertifikat_terbit + '</td>';
                             rows += '</tr>';
                         });

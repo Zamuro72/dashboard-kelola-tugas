@@ -87,7 +87,7 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <a href="{{ route('klien.edit', $klien->id) }}" 
+                                        <a href="{{ route('klien.edit', ['id' => $klien->id, 'from' => 'notifikasi']) }}" 
                                            class="btn btn-sm btn-primary" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
@@ -183,7 +183,7 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <a href="{{ route('klien.edit', $klien->id) }}" 
+                                        <a href="{{ route('klien.edit', ['id' => $klien->id, 'from' => 'notifikasi']) }}" 
                                            class="btn btn-sm btn-primary" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
