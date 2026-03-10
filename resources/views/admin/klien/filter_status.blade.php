@@ -25,6 +25,9 @@
                                 <th>Jasa</th>
                                 <th>Tahun</th>
                                 <th style="min-width: 120px">Skema</th>
+                                @if(auth()->user()->jabatan == 'Admin')
+                                    <th style="min-width: 130px">Pemilik Data</th>
+                                @endif
                                 <th>Nama Klien/Perusahaan</th>
                                 <th style="min-width: 120px">Tanggal Lahir</th>
                                 <th>Penanggung Jawab</th>
@@ -43,6 +46,9 @@
                                     <td>{{ $klien->jasa->nama_jasa }}</td>
                                     <td>{{ $klien->tahun }}</td>
                                     <td>{{ $klien->skema->nama_skema ?? '-' }}</td>
+                                    @if(auth()->user()->jabatan == 'Admin')
+                                        <td>{{ $klien->user->nama ?? '-' }}</td>
+                                    @endif
                                     <td>
                                         @if($klien->tipe_klien == 'Personal')
                                             <strong>{{ $klien->nama_klien }}</strong>

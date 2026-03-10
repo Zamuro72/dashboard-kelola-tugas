@@ -568,6 +568,14 @@ class KlienController extends Controller
                 $query->prosesTerbit();
                 $title = 'Data Klien Proses Terbit';
                 break;
+            case 'ongoing-proses-deal':
+                $query->ongoingProsesDeal();
+                $title = 'Data Klien Ongoing Proses Deal';
+                break;
+            case 'belum-jelas':
+                $query->belumJelas();
+                $title = 'Data Klien Belum Jelas';
+                break;
             default:
                 abort(404);
         }

@@ -130,14 +130,14 @@
                                 <th width="5%">No</th>
                                 <th>Tipe</th>
                                 <th>Nama Klien/Perusahaan</th>
-                                <th>Tanggal Lahir</th>
+                                <th style="min-width: 130px">Tanggal Lahir</th>
                                 <th>Penanggung Jawab</th>
                                 <th>Email</th>
                                 <th style="min-width: 150px">No WhatsApp</th>
                                 <th style="min-width: 130px">Sertifikat Terbit</th>
                                 <th style="min-width: 130px">Sertifikat Expired</th>
                                 <th>Status</th>
-                                <th style="min-width: 120px">Aksi</th>
+                                <th style="min-width: 140px">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>

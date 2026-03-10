@@ -177,7 +177,29 @@ class Klien extends Model
      */
     public function scopeProsesTerbit($query)
     {
-        return $query->whereNull('sertifikat_terbit');
+        return $query->where(function ($q) {
+            $q->where('status_manual', 'proses terbit')
+              ->orWhere(function ($q2) {
+                  $q2->whereNull('sertifikat_terbit')
+                     ->whereNull('status_manual');
+              });
+        });
+    }
+
+    /**
+     * Scope untuk klien dengan status Ongoing Proses Deal
+     */
+    public function scopeOngoingProsesDeal($query)
+    {
+        return $query->where('status_manual', 'ongoing proses deal');
+    }
+
+    /**
+     * Scope untuk klien dengan status Belum Jelas
+     */
+    public function scopeBelumJelas($query)
+    {
+        return $query->where('status_manual', 'belum jelas');
     }
 
     /**

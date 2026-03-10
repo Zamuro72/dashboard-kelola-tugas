@@ -14,6 +14,8 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        $user = Auth::user();
+        
         $data = array(
             "title"                 => "Dashboard",
             "menuDashboard"         => "active",
@@ -26,15 +28,21 @@ class DashboardController extends Controller
             "jumlahPesertaKemnaker" => Peserta::where('skema', 'like', '%Kemnaker RI%')->count(),
             "jumlahAkanExpired"     => Peserta::akanExpired()->count(),
             "jumlahSudahExpired"    => Peserta::sudahExpired()->count(),
-            "jumlahKlienAktif"      => User::where('id', Auth::id())->first()->jabatan == 'Admin'
+            "jumlahKlienAktif"      => $user->jabatan == 'Admin'
                 ? Klien::aktif()->count()
-                : Klien::where('user_id', Auth::id())->aktif()->count(),
-            "jumlahKlienExpired"    => User::where('id', Auth::id())->first()->jabatan == 'Admin'
+                : Klien::where('user_id', $user->id)->aktif()->count(),
+            "jumlahKlienExpired"    => $user->jabatan == 'Admin'
                 ? Klien::sudahExpired()->count()
-                : Klien::where('user_id', Auth::id())->sudahExpired()->count(),
-            "jumlahKlienProses"     => User::where('id', Auth::id())->first()->jabatan == 'Admin'
-                ? Klien::whereNull('sertifikat_terbit')->count()
-                : Klien::where('user_id', Auth::id())->whereNull('sertifikat_terbit')->count(),
+                : Klien::where('user_id', $user->id)->sudahExpired()->count(),
+            "jumlahKlienProses"     => $user->jabatan == 'Admin'
+                ? Klien::prosesTerbit()->count()
+                : Klien::where('user_id', $user->id)->prosesTerbit()->count(),
+            "jumlahKlienOngoingProsesDeal" => $user->jabatan == 'Admin'
+                ? Klien::ongoingProsesDeal()->count()
+                : Klien::where('user_id', $user->id)->ongoingProsesDeal()->count(),
+            "jumlahKlienBelumJelas" => $user->jabatan == 'Admin'
+                ? Klien::belumJelas()->count()
+                : Klien::where('user_id', $user->id)->belumJelas()->count(),
         );
         return view('dashboard', $data);
     }
