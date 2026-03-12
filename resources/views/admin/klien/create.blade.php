@@ -153,8 +153,7 @@
                     <div class="form-group">
                         <label for="sertifikat_terbit">Sertifikat Terbit</label>
                         <input type="date" name="sertifikat_terbit" id="sertifikat_terbit" 
-                               class="form-control @error('sertifikat_terbit') is-invalid @enderror" 
-                               value="{{ old('sertifikat_terbit') }}">
+                               class="form-control @error('sertifikat_terbit') is-invalid @enderror">
                         @error('sertifikat_terbit')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -264,19 +263,14 @@ document.addEventListener('DOMContentLoaded', function() {
         toggleForm();
     }
     
-    // Auto-fill and lock Sertifikat Terbit year based on selected Tahun
+    // Lock Sertifikat Terbit year based on selected Tahun (min and max only)
     const sertifikatTerbit = document.getElementById('sertifikat_terbit');
     const selectedTahun = "{{ $tahun }}";
     
     if (sertifikatTerbit && selectedTahun) {
-        // Set Min and Max to the selected year
+        // Set Min and Max to the selected year (lock to tahun range only)
         sertifikatTerbit.min = `${selectedTahun}-01-01`;
         sertifikatTerbit.max = `${selectedTahun}-12-31`;
-        
-        // If empty, auto-fill with January 1st of the selected year
-        if (!sertifikatTerbit.value) {
-            sertifikatTerbit.value = `${selectedTahun}-01-01`;
-        }
     }
 
     // Mutual Exclusive Logic for Sertifikat Terbit & Status Manual

@@ -4,24 +4,50 @@
 <div class="container-fluid">
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">{{ $title }}</h1>
-        <div>
-            <a href="{{ route('klien.notifikasi') }}" class="d-none d-sm-inline-block btn btn-sm btn-warning shadow-sm mr-2">
+        <h1 class="h3 mb-3 mb-sm-0 text-gray-800">{{ $title }}</h1>
+        
+        <!-- Desktop Menu (Hidden on Mobile) -->
+        <div class="d-none d-sm-flex flex-wrap gap-2">
+            <a href="{{ route('klien.notifikasi') }}" class="btn btn-sm btn-warning shadow-sm">
                 <i class="fas fa-bell fa-sm text-white-50"></i> 
                 Notifikasi
                 @if($jumlahAkanExpired > 0 || $jumlahSudahExpired > 0)
                     <span class="badge badge-light">{{ $jumlahAkanExpired + $jumlahSudahExpired }}</span>
                 @endif
             </a>
-            <button type="button" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm mr-2" data-toggle="modal" data-target="#modalHapusData">
+            <button type="button" class="btn btn-sm btn-danger shadow-sm" data-toggle="modal" data-target="#modalHapusData">
                 <i class="fas fa-trash fa-sm text-white-50"></i> Hapus Data
             </button>
-            <a href="{{ route('klien.import.form') }}" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm mr-2">
+            <a href="{{ route('klien.import.form') }}" class="btn btn-sm btn-success shadow-sm">
                 <i class="fas fa-file-excel fa-sm text-white-50"></i> Import Data
             </a>
-            <button type="button" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target="#modalTambahKlien">
+            <button type="button" class="btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target="#modalTambahKlien">
                 <i class="fas fa-plus fa-sm text-white-50"></i> Tambah Data
             </button>
+        </div>
+
+        <!-- Mobile Menu (Dropdown) -->
+        <div class="d-sm-none dropdown">
+            <button class="btn btn-sm btn-primary shadow-sm dropdown-toggle" type="button" id="mobileActionsMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-ellipsis-v"></i> Menu
+            </button>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="mobileActionsMenu">
+                <a class="dropdown-item" href="{{ route('klien.notifikasi') }}">
+                    <i class="fas fa-bell text-warning"></i> Notifikasi
+                    @if($jumlahAkanExpired > 0 || $jumlahSudahExpired > 0)
+                        <span class="badge badge-warning ml-2">{{ $jumlahAkanExpired + $jumlahSudahExpired }}</span>
+                    @endif
+                </a>
+                <button type="button" class="dropdown-item" data-toggle="modal" data-target="#modalTambahKlien">
+                    <i class="fas fa-plus text-primary"></i> Tambah Data
+                </button>
+                <a href="{{ route('klien.import.form') }}" class="dropdown-item">
+                    <i class="fas fa-file-excel text-success"></i> Import Data
+                </a>
+                <button type="button" class="dropdown-item text-danger" data-toggle="modal" data-target="#modalHapusData">
+                    <i class="fas fa-trash text-danger"></i> Hapus Data
+                </button>
+            </div>
         </div>
     </div>
 
@@ -258,6 +284,35 @@
 .hover-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 575.98px) {
+    .d-sm-flex {
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    
+    .dropdown-menu {
+        min-width: 200px;
+    }
+    
+    .dropdown-item {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .dropdown-item i {
+        width: 20px;
+        margin-right: 0.5rem;
+    }
+}
+
+/* Desktop Flex Spacing */
+@media (min-width: 576px) {
+    .d-sm-flex {
+        gap: 0.5rem;
+    }
 }
 </style>
 @endsection
