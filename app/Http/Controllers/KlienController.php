@@ -226,7 +226,7 @@ class KlienController extends Controller
             'email' => 'nullable|email',
             'no_whatsapp' => 'nullable',
             'sertifikat_terbit' => 'nullable|date',
-            'status_manual' => 'nullable|in:ongoing proses deal,belum jelas,proses terbit',
+            'status_manual' => 'nullable|in:ongoing proses deal,belum jelas,proses terbit,follow up',
             'catatan' => 'nullable|string',
         ];
 
@@ -309,7 +309,7 @@ class KlienController extends Controller
             'email' => 'nullable|email',
             'no_whatsapp' => 'nullable',
             'sertifikat_terbit' => 'nullable|date',
-            'status_manual' => 'nullable|in:ongoing proses deal,belum jelas,proses terbit',
+            'status_manual' => 'nullable|in:ongoing proses deal,belum jelas,proses terbit,follow up',
             'catatan' => 'nullable|string',
         ];
 
@@ -575,6 +575,10 @@ class KlienController extends Controller
             case 'belum-jelas':
                 $query->belumJelas();
                 $title = 'Data Klien Belum Jelas';
+                break;
+            case 'follow-up':
+                $query->followUp();
+                $title = 'Data Klien Follow Up';
                 break;
             default:
                 abort(404);

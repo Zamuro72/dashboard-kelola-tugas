@@ -43,6 +43,9 @@ class DashboardController extends Controller
             "jumlahKlienBelumJelas" => $user->jabatan == 'Admin'
                 ? Klien::belumJelas()->count()
                 : Klien::where('user_id', $user->id)->belumJelas()->count(),
+            "jumlahKlienFollowUp" => $user->jabatan == 'Admin'
+                ? Klien::followUp()->count()
+                : Klien::where('user_id', $user->id)->followUp()->count(),
         );
         return view('dashboard', $data);
     }

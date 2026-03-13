@@ -103,6 +103,8 @@ class Klien extends Model
                 return '<span class="badge badge-secondary">Belum Jelas</span>';
             } elseif ($this->status_manual == 'proses terbit') {
                 return '<span class="badge badge-info">Proses Terbit</span>';
+            } elseif ($this->status_manual == 'follow up') {
+                return '<span class="badge badge-primary">Follow Up</span>';
             }
         }
 
@@ -224,5 +226,13 @@ class Klien extends Model
     public function scopeTahun($query, $tahun)
     {
         return $query->where('tahun', $tahun);
+    }
+
+    /**
+     * Scope untuk klien dengan status Follow Up
+     */
+    public function scopeFollowUp($query)
+    {
+        return $query->where('status_manual', 'follow up');
     }
 }
