@@ -173,6 +173,7 @@
                         <option value="ongoing proses deal" {{ old('status_manual', $klien->status_manual) == 'ongoing proses deal' ? 'selected' : '' }}>Ongoing Proses Deal</option>
                         <option value="belum jelas" {{ old('status_manual', $klien->status_manual) == 'belum jelas' ? 'selected' : '' }}>Belum Jelas</option>
                         <option value="proses terbit" {{ old('status_manual', $klien->status_manual) == 'proses terbit' ? 'selected' : '' }}>Proses Terbit</option>
+                        <option value="follow up" {{ old('status_manual', $klien->status_manual) == 'follow up' ? 'selected' : '' }}>Follow Up</option>
                     </select>
                     @error('status_manual')
                         <div class="invalid-feedback">{{ $message }}</div>
