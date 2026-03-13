@@ -56,11 +56,8 @@ class DashboardController extends Controller
 
         $user = Auth::user();
 
-        // Base query with active scope
-        $query = Klien::with('jasa')->aktif();
-
-        // Filter by year (based on sertifikat_terbit year for now, or use the 'tahun' column?)
-        $query->where('tahun', $year);
+        // Base query WITHOUT aktif scope - show all statuses
+        $query = Klien::with(['jasa'])->where('tahun', $year);
 
         if ($user->jabatan === 'Marketing') {
             $query->where('user_id', $user->id);
@@ -68,11 +65,17 @@ class DashboardController extends Controller
 
         $data = $query->get();
 
+        // Calculate status for each klien
+        $data->each(function ($item) {
+            $item->computed_status = $this->getKlienStatusLabel($item);
+        });
+
         // Get all Jasa for series
         $allJasa = \App\Models\Jasa::all();
 
         // Prepare series data
         $series = [];
+        $statusBreakdown = []; // status breakdown per jasa per period for tooltip
         $colors = [
             '#4e73df',
             '#1cc88a',
@@ -84,7 +87,7 @@ class DashboardController extends Controller
             '#f8f9fc',
             '#2e59d9',
             '#17a673'
-        ]; // Example colors, can be dynamic
+        ];
 
         $categories = [];
         if ($period === 'monthly') {
@@ -97,33 +100,55 @@ class DashboardController extends Controller
 
         foreach ($allJasa as $index => $jasa) {
             $jasaData = [];
+            $jasaStatusBreakdown = [];
 
             if ($period === 'monthly') {
                 for ($m = 1; $m <= 12; $m++) {
-                    // Filter data for this Jasa and Month
-                    $count = $data->filter(function ($item) use ($jasa, $m) {
+                    $filtered = $data->filter(function ($item) use ($jasa, $m) {
                         return $item->jasa_id == $jasa->id &&
+                            $item->sertifikat_terbit &&
                             Carbon::parse($item->sertifikat_terbit)->month == $m;
-                    })->count();
-                    $jasaData[] = $count;
+                    });
+                    // Also count items without sertifikat_terbit (proses terbit etc) - assign to current month if applicable
+                    $filteredNoDate = $data->filter(function ($item) use ($jasa, $m) {
+                        return $item->jasa_id == $jasa->id &&
+                            !$item->sertifikat_terbit &&
+                            Carbon::parse($item->created_at)->month == $m;
+                    });
+                    $allFiltered = $filtered->merge($filteredNoDate);
+                    $jasaData[] = $allFiltered->count();
+
+                    // Build status breakdown
+                    $breakdown = $allFiltered->groupBy('computed_status')->map->count()->toArray();
+                    $jasaStatusBreakdown[] = $breakdown;
                 }
             } else {
                 for ($w = 1; $w <= 52; $w++) {
-                    $count = $data->filter(function ($item) use ($jasa, $w) {
+                    $filtered = $data->filter(function ($item) use ($jasa, $w) {
                         return $item->jasa_id == $jasa->id &&
+                            $item->sertifikat_terbit &&
                             Carbon::parse($item->sertifikat_terbit)->weekOfYear == $w;
-                    })->count();
-                    $jasaData[] = $count;
+                    });
+                    $filteredNoDate = $data->filter(function ($item) use ($jasa, $w) {
+                        return $item->jasa_id == $jasa->id &&
+                            !$item->sertifikat_terbit &&
+                            Carbon::parse($item->created_at)->weekOfYear == $w;
+                    });
+                    $allFiltered = $filtered->merge($filteredNoDate);
+                    $jasaData[] = $allFiltered->count();
+
+                    $breakdown = $allFiltered->groupBy('computed_status')->map->count()->toArray();
+                    $jasaStatusBreakdown[] = $breakdown;
                 }
             }
 
             // Custom color override
             $color = $colors[$index % count($colors)];
             if (strtoupper($jasa->nama_jasa) == 'ANDALALIN') {
-                $color = '#A52A2A'; // Brown
+                $color = '#A52A2A';
             }
             if (strpos(strtoupper($jasa->nama_jasa), 'GREENSHIP') !== false) {
-                $color = '#800080'; // Purple
+                $color = '#800080';
             }
 
             $series[] = [
@@ -131,6 +156,7 @@ class DashboardController extends Controller
                 'data' => $jasaData,
                 'color' => $color
             ];
+            $statusBreakdown[$jasa->nama_jasa] = $jasaStatusBreakdown;
         }
 
         return response()->json([
@@ -138,8 +164,34 @@ class DashboardController extends Controller
             'xaxis' => [
                 'categories' => $categories
             ],
-            'years' => Klien::select('tahun')->distinct()->orderBy('tahun', 'desc')->pluck('tahun')
+            'years' => Klien::select('tahun')->distinct()->orderBy('tahun', 'desc')->pluck('tahun'),
+            'statusBreakdown' => $statusBreakdown
         ]);
+    }
+
+    /**
+     * Helper: Get status label for a Klien instance
+     */
+    private function getKlienStatusLabel(Klien $klien): string
+    {
+        if ($klien->status_manual) {
+            if ($klien->status_manual == 'ongoing proses deal') return 'Ongoing Proses Deal';
+            if ($klien->status_manual == 'belum jelas') return 'Belum Jelas';
+            if ($klien->status_manual == 'proses terbit') return 'Proses Terbit';
+            if ($klien->status_manual == 'follow up') return 'Follow Up';
+        }
+
+        if (!$klien->sertifikat_terbit) {
+            return 'Proses Terbit';
+        }
+
+        if ($klien->isSertifikatExpired()) {
+            return 'Expired';
+        } elseif ($klien->isSertifikatAkanExpired()) {
+            return 'Akan Expired';
+        } else {
+            return 'Aktif';
+        }
     }
 
     public function getChartDetails(Request $request)
@@ -151,7 +203,8 @@ class DashboardController extends Controller
 
         $user = Auth::user();
 
-        $query = Klien::with(['jasa', 'user', 'skema'])->aktif()->where('tahun', $year);
+        // Remove aktif() scope - show all statuses
+        $query = Klien::with(['jasa', 'user', 'skema'])->where('tahun', $year);
 
         if ($user->jabatan === 'Marketing') {
             $query->where('user_id', $user->id);
@@ -163,10 +216,22 @@ class DashboardController extends Controller
 
         if ($period === 'monthly') {
             $month = $index + 1;
-            $query->whereMonth('sertifikat_terbit', $month);
+            $query->where(function ($q) use ($month) {
+                $q->whereMonth('sertifikat_terbit', $month)
+                  ->orWhere(function ($q2) use ($month) {
+                      $q2->whereNull('sertifikat_terbit')
+                         ->whereMonth('created_at', $month);
+                  });
+            });
         } else {
             $week = $index + 1;
-            $query->whereRaw('WEEKOFYEAR(sertifikat_terbit) = ?', [$week]);
+            $query->where(function ($q) use ($week) {
+                $q->whereRaw('WEEKOFYEAR(sertifikat_terbit) = ?', [$week])
+                  ->orWhere(function ($q2) use ($week) {
+                      $q2->whereNull('sertifikat_terbit')
+                         ->whereRaw('WEEKOFYEAR(created_at) = ?', [$week]);
+                  });
+            });
         }
 
         $data = $query->get()->map(function ($item) {
@@ -175,7 +240,8 @@ class DashboardController extends Controller
                 'tipe_klien' => $item->tipe_klien,
                 'skema' => $item->skema ? $item->skema->nama_skema : '-',
                 'pemilik_data' => $item->user->nama . ' (' . $item->user->jabatan . ')',
-                'sertifikat_terbit' => $item->sertifikat_terbit->format('d M Y'),
+                'sertifikat_terbit' => $item->sertifikat_terbit ? $item->sertifikat_terbit->format('d M Y') : '-',
+                'status' => $this->getKlienStatusLabel($item),
             ];
         });
 

@@ -254,7 +254,7 @@
         <div class="card shadow mb-4">
             <!-- Card Header - Dropdown -->
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Statistik Klien Aktif</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Statistik Klien</h6>
                 <div class="d-flex align-items-center">
                     <select id="yearFilter" class="form-control form-control-sm mr-2" style="width: auto;">
                         <!-- Options populated by JS -->
@@ -311,6 +311,7 @@
                                     <th>Pemilik Data</th>
                                 @endif
                                 <th>Tanggal Terbit</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -333,9 +334,23 @@
         var currentYear = new Date().getFullYear();
         var currentPeriod = 'monthly';
         var isAdmin = {{ auth()->user()->jabatan == 'Admin' ? 'true' : 'false' }};
+        var statusBreakdownData = {};
+
+        // Status color mapping
+        var statusColors = {
+            'Aktif': '#1cc88a',
+            'Expired': '#e74a3b',
+            'Akan Expired': '#f6c23e',
+            'Proses Terbit': '#36b9cc',
+            'Ongoing Proses Deal': '#f6c23e',
+            'Belum Jelas': '#858796',
+            'Follow Up': '#4e73df'
+        };
 
         // Initialize Chart
         function initChart(data) {
+            statusBreakdownData = data.statusBreakdown || {};
+
             var options = {
                 series: data.series,
                 chart: {
@@ -379,13 +394,78 @@
                     opacity: 1
                 },
                 tooltip: {
-                    y: {
-                        formatter: function (val) {
-                            return val + " klien"
+                    custom: function({ series, seriesIndex, dataPointIndex, w }) {
+                        var jasaName = w.config.series[seriesIndex].name;
+                        var total = series[seriesIndex][dataPointIndex];
+                        var breakdown = statusBreakdownData[jasaName] ? statusBreakdownData[jasaName][dataPointIndex] : {};
+                        
+                        var html = '<div style="padding: 8px 12px; font-size: 13px;">';
+                        html += '<strong>' + jasaName + '</strong><br>';
+                        html += '<span style="color: #666;">Total: ' + total + ' klien</span>';
+                        
+                        if (breakdown && Object.keys(breakdown).length > 0) {
+                            html += '<hr style="margin: 4px 0; border-color: #eee;">';
+                            for (var status in breakdown) {
+                                var color = statusColors[status] || '#858796';
+                                html += '<div style="margin: 2px 0;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:' + color + ';margin-right:5px;"></span>' + status + ': ' + breakdown[status] + '</div>';
+                            }
                         }
+                        
+                        html += '</div>';
+                        return html;
                     }
                 },
-                colors: data.colors
+                colors: data.colors,
+                legend: {
+                    position: 'bottom',
+                    fontSize: '12px'
+                },
+                responsive: [{
+                    breakpoint: 576,
+                    options: {
+                        chart: {
+                            height: 500,
+                            stacked: true
+                        },
+                        plotOptions: {
+                            bar: {
+                                columnWidth: '85%',
+                                borderRadius: 2
+                            }
+                        },
+                        stroke: {
+                            width: 1
+                        },
+                        xaxis: {
+                            labels: {
+                                rotate: -45,
+                                rotateAlways: true,
+                                style: {
+                                    fontSize: '10px'
+                                }
+                            }
+                        },
+                        yaxis: {
+                            title: {
+                                text: ''
+                            },
+                            labels: {
+                                style: {
+                                    fontSize: '10px'
+                                }
+                            }
+                        },
+                        legend: {
+                            position: 'bottom',
+                            fontSize: '10px',
+                            horizontalAlign: 'center',
+                            itemMargin: {
+                                horizontal: 5,
+                                vertical: 3
+                            }
+                        }
+                    }
+                }]
             };
 
             if(chart) {
@@ -420,6 +500,21 @@
             });
         }
 
+        // Status badge helper
+        function getStatusBadge(status) {
+            var badgeMap = {
+                'Aktif': 'badge-success',
+                'Expired': 'badge-danger',
+                'Akan Expired': 'badge-warning',
+                'Proses Terbit': 'badge-info',
+                'Ongoing Proses Deal': 'badge-warning',
+                'Belum Jelas': 'badge-secondary',
+                'Follow Up': 'badge-primary'
+            };
+            var badgeClass = badgeMap[status] || 'badge-secondary';
+            return '<span class="badge ' + badgeClass + '">' + status + '</span>';
+        }
+
         // Fetch Details
         function fetchDetails(year, period, jasaName, index) {
             // Determine if skema column should be shown
@@ -430,7 +525,7 @@
                 $('.skema-column').hide();
             }
             
-            var baseColCount = isAdmin ? 4 : 3;
+            var baseColCount = isAdmin ? 5 : 4;
             var colCount = showSkema ? baseColCount + 1 : baseColCount;
 
             // Show loading or scroll to details
@@ -466,6 +561,7 @@
                                 rows += '<td>' + item.pemilik_data + '</td>';
                             }
                             rows += '<td>' + item.sertifikat_terbit + '</td>';
+                            rows += '<td>' + getStatusBadge(item.status) + '</td>';
                             rows += '</tr>';
                         });
                     } else {
