@@ -544,11 +544,11 @@ class KlienController extends Controller
     /**
      * Filter Klien by Status
      */
-    public function filterByStatus($status)
+    public function filterByStatus(Request $request, $status)
     {
         /** @var User $user */
         $user = Auth::user();
-        $query = Klien::with(['jasa', 'skema']);
+        $query = Klien::with(['jasa', 'skema', 'user']);
 
         if ($user->jabatan != 'Admin') {
             $query->where('user_id', $user->id);
@@ -584,10 +584,38 @@ class KlienController extends Controller
                 abort(404);
         }
 
-        $kliens = $query->paginate(30);
+        // Admin-only filters
+        $users = collect();
+        $jasaList = collect();
+        if ($user->jabatan == 'Admin') {
+            // Filter by pemilik data (user_id)
+            if ($request->filled('pemilik_data')) {
+                $query->where('kliens.user_id', $request->pemilik_data);
+            }
+
+            // Filter by jasa
+            if ($request->filled('filter_jasa')) {
+                $query->where('kliens.jasa_id', $request->filter_jasa);
+            }
+
+            // Search by nama klien
+            if ($request->filled('search_nama')) {
+                $search = $request->search_nama;
+                $query->where(function ($q) use ($search) {
+                    $q->where('kliens.nama_klien', 'like', '%' . $search . '%')
+                      ->orWhere('kliens.nama_perusahaan', 'like', '%' . $search . '%');
+                });
+            }
+
+            // Data for filter dropdowns
+            $users = User::where('jabatan', 'Marketing')->orWhere('jabatan', 'Admin')->orderBy('nama')->get();
+            $jasaList = Jasa::orderBy('nama_jasa')->get();
+        }
+
+        $kliens = $query->orderBy('kliens.created_at', 'desc')->paginate(30)->withQueryString();
 
         if ($user->jabatan == 'Admin') {
-            return view('admin.klien.filter_status', compact('kliens', 'title', 'status'));
+            return view('admin.klien.filter_status', compact('kliens', 'title', 'status', 'users', 'jasaList'));
         } else {
             return view('marketing.klien.filter_status', compact('kliens', 'title', 'status'));
         }

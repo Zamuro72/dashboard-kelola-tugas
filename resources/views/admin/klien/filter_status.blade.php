@@ -18,6 +18,61 @@
             <h6 class="m-0 font-weight-bold text-primary">Daftar Klien - {{ ucfirst($status) }}</h6>
         </div>
         <div class="card-body">
+
+            {{-- ========== ADMIN FILTER BAR ========== --}}
+            @if(auth()->user()->jabatan == 'Admin')
+                <!-- Tombol Filter Mobile -->
+                <div class="d-md-none mb-3">
+                    <button class="btn btn-primary btn-sm btn-block shadow-sm" type="button" data-toggle="collapse" data-target="#collapseFilterAdmin" aria-expanded="{{ request('pemilik_data') || request('filter_jasa') || request('search_nama') ? 'true' : 'false' }}" aria-controls="collapseFilterAdmin">
+                        <i class="fas fa-filter mr-1"></i> Filter
+                    </button>
+                </div>
+
+                <div class="collapse d-md-block {{ request('pemilik_data') || request('filter_jasa') || request('search_nama') ? 'show' : '' }}" id="collapseFilterAdmin">
+                <form method="GET" action="{{ route('klien.status', $status) }}" class="mb-4">
+                    <div class="row align-items-end">
+                        <div class="col-12 col-sm-6 col-md-3 mb-2">
+                            <label class="small font-weight-bold text-gray-700 mb-1">Pemilik Data</label>
+                            <select name="pemilik_data" class="form-control form-control-sm">
+                                <option value="">-- Semua Pemilik --</option>
+                                @foreach($users as $u)
+                                    <option value="{{ $u->id }}" {{ request('pemilik_data') == $u->id ? 'selected' : '' }}>
+                                        {{ $u->nama }} ({{ $u->jabatan }})
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-3 mb-2">
+                            <label class="small font-weight-bold text-gray-700 mb-1">Jasa</label>
+                            <select name="filter_jasa" class="form-control form-control-sm">
+                                <option value="">-- Semua Jasa --</option>
+                                @foreach($jasaList as $j)
+                                    <option value="{{ $j->id }}" {{ request('filter_jasa') == $j->id ? 'selected' : '' }}>
+                                        {{ $j->nama_jasa }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-3 mb-2">
+                            <label class="small font-weight-bold text-gray-700 mb-1">Cari Nama Klien</label>
+                            <input type="text" name="search_nama" class="form-control form-control-sm"
+                                   placeholder="Ketik nama klien/perusahaan..."
+                                   value="{{ request('search_nama') }}">
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-3 mb-2">
+                            <button type="submit" class="btn btn-primary btn-sm btn-block">
+                                <i class="fas fa-search mr-1"></i> Terapkan
+                            </button>
+                            <a href="{{ route('klien.status', $status) }}" class="btn btn-outline-secondary btn-sm btn-block mt-1">
+                                <i class="fas fa-sync-alt mr-1"></i> Reset
+                            </a>
+                        </div>
+                    </div>
+                </form>
+                </div>
+                <hr class="d-none d-md-block">
+            @endif
+
             @if($kliens->count() > 0)
 
                 {{-- ========== MOBILE CARD VIEW (< 768px) ========== --}}
@@ -88,6 +143,13 @@
                                     </div>
                                 </div>
 
+                                {{-- Keterangan: tanggal & jam input --}}
+                                <div class="small mt-2" style="background: #f8f9fc; border-radius: 4px; padding: 6px 8px;">
+                                    <i class="fas fa-clock text-primary mr-1"></i>
+                                    <span class="text-muted">Diinput:</span>
+                                    <strong>{{ $klien->created_at ? $klien->created_at->format('d-m-Y H:i') : '-' }}</strong>
+                                </div>
+
                                 <div class="mt-2 text-right">
                                     <a href="{{ route('klien.edit', $klien->id) }}" class="btn btn-warning btn-sm" title="Edit">
                                         <i class="fas fa-edit"></i> Edit
@@ -119,6 +181,7 @@
                                     <th>Sertifikat Terbit</th>
                                     <th>Expired</th>
                                     <th>Status</th>
+                                    <th>Keterangan</th>
                                     <th width="5%">Aksi</th>
                                 </tr>
                             </thead>
@@ -165,6 +228,13 @@
                                         <td><small>{{ $klien->sertifikat_terbit ? $klien->sertifikat_terbit->format('d-m-Y') : '-' }}</small></td>
                                         <td><small>{{ $klien->tanggal_expired ? $klien->tanggal_expired->format('d-m-Y') : '-' }}</small></td>
                                         <td><small>{!! $klien->getStatusSertifikatBadge() !!}</small></td>
+                                        <td>
+                                            <small>
+                                                {{ $klien->created_at ? $klien->created_at->format('d-m-Y') : '-' }}
+                                                <br>
+                                                <span class="text-muted">{{ $klien->created_at ? $klien->created_at->format('H:i') : '' }}</span>
+                                            </small>
+                                        </td>
                                         <td class="text-center">
                                             <a href="{{ route('klien.edit', $klien->id) }}" 
                                                class="btn btn-warning btn-sm" title="Edit">
