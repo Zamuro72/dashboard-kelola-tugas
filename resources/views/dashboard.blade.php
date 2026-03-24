@@ -2,15 +2,42 @@
 
 @section('content')
 
+<style>
+@media (max-width: 576px) {
+    .dashboard-badges .col-6 {
+        padding-left: 6px;
+        padding-right: 6px;
+    }
+    .dashboard-badges .mb-4 {
+        margin-bottom: 0.75rem !important;
+    }
+    .dashboard-badges .card {
+        border-radius: 0.5rem;
+    }
+    .dashboard-badges .card-body {
+        padding: 0.75rem 0.85rem;
+    }
+    .dashboard-badges .card .h5 {
+        font-size: 1.15rem;
+    }
+    .dashboard-badges .card .text-xs {
+        font-size: 0.65rem;
+    }
+    .dashboard-badges .card .fa-2x {
+        font-size: 1.4em;
+    }
+}
+</style>
+
 <h1 class="h3 mb-4 text-gray-800">
     <i class="fas fa-th-large mr-2"></i>
     {{ $title }}
 </h1>
 
-<div class="row">
+<div class="row dashboard-badges">
 
     @if (auth()->user()->jabatan == 'Admin')
-<div class="col-xl-3 col-md-6 mb-4">
+<div class="col-xl-3 col-md-6 col-6 mb-4">
     <div class="card border-left-primary shadow h-100 py-2">
         <div class="card-body">
             <div class="row no-gutters align-items-center">
@@ -27,7 +54,7 @@
     </div>
 </div>
 
-<div class="col-xl-3 col-md-6 mb-4">
+<div class="col-xl-3 col-md-6 col-6 mb-4">
     <div class="card border-left-dark shadow h-100 py-2">
         <div class="card-body">
             <div class="row no-gutters align-items-center">
@@ -44,7 +71,7 @@
     </div>
 </div>
 
-<div class="col-xl-3 col-md-6 mb-4">
+<div class="col-xl-3 col-md-6 col-6 mb-4">
     <div class="card border-left-info shadow h-100 py-2">
         <div class="card-body">
             <div class="row no-gutters align-items-center">
@@ -61,7 +88,7 @@
     </div>
 </div>
 
-<div class="col-xl-3 col-md-6 mb-4">
+<div class="col-xl-3 col-md-6 col-6 mb-4">
     <div class="card border-left-info shadow h-100 py-2">
         <div class="card-body">
             <div class="row no-gutters align-items-center">
@@ -81,7 +108,7 @@
    @endif
 
    @if (auth()->user()->jabatan == 'Karyawan'&& auth()->user()->is_tugas == true)
-<div class="col-xl-3 col-md-6 mb-4">
+<div class="col-xl-3 col-md-6 col-6 mb-4">
     <div class="card border-left-success shadow h-100 py-2">
         <div class="card-body">
             <div class="row no-gutters align-items-center">
@@ -104,7 +131,7 @@
    @endif
 
     @if (auth()->user()->jabatan == 'Karyawan'&& auth()->user()->is_tugas == false)
-<div class="col-xl-3 col-md-6 mb-4">
+<div class="col-xl-3 col-md-6 col-6 mb-4">
     <div class="card border-left-danger shadow h-100 py-2">
         <div class="card-body">
             <div class="row no-gutters align-items-center">
@@ -128,7 +155,7 @@
 
    @if(in_array(auth()->user()->jabatan, ['Admin', 'Marketing']))
    <!-- Klien Status Widgets -->
-    <div class="col-xl-3 col-md-6 mb-4">
+    <div class="col-xl-3 col-md-6 col-6 mb-4">
         <a href="{{ route('klien.status', 'aktif') }}" style="text-decoration: none;">
             <div class="card border-left-success shadow h-100 py-2">
                 <div class="card-body">
@@ -147,7 +174,7 @@
         </a>
     </div>
 
-    <div class="col-xl-3 col-md-6 mb-4">
+    <div class="col-xl-3 col-md-6 col-6 mb-4">
         <a href="{{ route('klien.status', 'expired') }}" style="text-decoration: none;">
             <div class="card border-left-danger shadow h-100 py-2">
                 <div class="card-body">
@@ -166,7 +193,7 @@
         </a>
     </div>
 
-    <div class="col-xl-3 col-md-6 mb-4">
+    <div class="col-xl-3 col-md-6 col-6 mb-4">
         <a href="{{ route('klien.status', 'proses') }}" style="text-decoration: none;">
             <div class="card border-left-info shadow h-100 py-2">
                 <div class="card-body">
@@ -185,7 +212,7 @@
         </a>
     </div>
 
-    <div class="col-xl-3 col-md-6 mb-4">
+    <div class="col-xl-3 col-md-6 col-6 mb-4">
         <a href="{{ route('klien.status', 'ongoing-proses-deal') }}" style="text-decoration: none;">
             <div class="card border-left-warning shadow h-100 py-2">
                 <div class="card-body">
@@ -204,7 +231,7 @@
         </a>
     </div>
 
-    <div class="col-xl-3 col-md-6 mb-4">
+    <div class="col-xl-3 col-md-6 col-6 mb-4">
         <a href="{{ route('klien.status', 'belum-jelas') }}" style="text-decoration: none;">
             <div class="card border-left-secondary shadow h-100 py-2">
                 <div class="card-body">
@@ -223,7 +250,7 @@
         </a>
     </div>
 
-    <div class="col-xl-3 col-md-6 mb-4">
+    <div class="col-xl-3 col-md-6 col-6 mb-4">
         <a href="{{ route('klien.status', 'follow-up') }}" style="text-decoration: none;">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body">
