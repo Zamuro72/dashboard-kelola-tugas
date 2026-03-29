@@ -1,0 +1,227 @@
+/* ============================================
+   Notifikasi Page - Mobile Responsive (≤ 480px)
+   Converts table rows into stacked card layout
+   ============================================ */
+
+/* Mobile card container - hidden by default, shown on mobile */
+.notifikasi-mobile-cards {
+    display: none;
+}
+
+@media (max-width: 480px) {
+    /* Hide the desktop table on mobile */
+    .notifikasi-desktop-table {
+        display: none !important;
+    }
+
+    /* Show card layout on mobile */
+    .notifikasi-mobile-cards {
+        display: block;
+    }
+
+    /* Page heading adjustments */
+    .notifikasi-page .h3,
+    .notifikasi-page h1.h3 {
+        font-size: 1.25rem;
+    }
+
+    /* Card header text */
+    .notifikasi-page .card-header h6 {
+        font-size: 0.8rem;
+        line-height: 1.4;
+    }
+
+    /* Card body padding */
+    .notifikasi-page .card-body {
+        padding: 0.75rem;
+    }
+
+    /* Back button - show on mobile */
+    .notifikasi-page .btn-kembali-mobile {
+        display: inline-block !important;
+    }
+
+    /* ---- Mobile Card Item Styles ---- */
+    .notifikasi-card-item {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        margin-bottom: 12px;
+        overflow: hidden;
+        border: 1px solid #e3e6f0;
+        transition: box-shadow 0.2s ease;
+    }
+
+    .notifikasi-card-item:active {
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+    }
+
+    /* Card top bar with number and badge */
+    .notifikasi-card-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 14px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .notifikasi-card-top.bg-warning-light {
+        background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    }
+
+    .notifikasi-card-top.bg-danger-light {
+        background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    }
+
+    .notifikasi-card-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #fff;
+    }
+
+    .notifikasi-card-number.bg-warning-num {
+        background-color: #f6c23e;
+    }
+
+    .notifikasi-card-number.bg-danger-num {
+        background-color: #e74a3b;
+    }
+
+    /* Card body content */
+    .notifikasi-card-body {
+        padding: 12px 14px;
+    }
+
+    .notifikasi-card-row {
+        display: flex;
+        align-items: flex-start;
+        padding: 5px 0;
+        border-bottom: 1px solid #f8f9fc;
+    }
+
+    .notifikasi-card-row:last-child {
+        border-bottom: none;
+    }
+
+    .notifikasi-card-label {
+        flex: 0 0 105px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: #858796;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    .notifikasi-card-value {
+        flex: 1;
+        font-size: 0.8rem;
+        color: #3a3b45;
+        word-break: break-word;
+    }
+
+    .notifikasi-card-value strong {
+        color: #2e2f37;
+    }
+
+    /* Card footer with actions */
+    .notifikasi-card-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 14px;
+        background: #f8f9fc;
+        border-top: 1px solid #e3e6f0;
+    }
+
+    /* Expired date highlight */
+    .notifikasi-expired-date {
+        font-weight: 700;
+        font-size: 0.78rem;
+    }
+
+    .notifikasi-expired-date.text-warning {
+        color: #d4a017 !important;
+    }
+
+    .notifikasi-expired-date.text-danger {
+        color: #c0392b !important;
+    }
+
+    /* Sisa hari badge */
+    .notifikasi-sisa-badge {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: #fff;
+    }
+
+    .notifikasi-sisa-badge.badge-warning {
+        background-color: #f6c23e;
+    }
+
+    .notifikasi-sisa-badge.badge-danger {
+        background-color: #e74a3b;
+    }
+
+    /* Action buttons in card */
+    .notifikasi-card-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .notifikasi-card-actions .btn {
+        padding: 5px 12px;
+        font-size: 0.75rem;
+        border-radius: 6px;
+    }
+
+    /* WhatsApp link style */
+    .notifikasi-card-value .wa-link {
+        color: #25d366;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .notifikasi-card-value .wa-link i {
+        margin-right: 3px;
+    }
+
+    /* Tipe badge in card */
+    .notifikasi-card-value .badge {
+        font-size: 0.68rem;
+        padding: 3px 8px;
+        border-radius: 4px;
+    }
+
+    /* Empty state on mobile */
+    .notifikasi-empty-state i {
+        font-size: 2rem !important;
+    }
+
+    .notifikasi-empty-state p {
+        font-size: 0.85rem;
+    }
+
+    /* Container fluid padding adjustment */
+    .notifikasi-page.container-fluid {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    /* Modal adjustments for mobile */
+    .notifikasi-page .modal-dialog {
+        margin: 10px;
+    }
+
+    .notifikasi-page .modal-title {
+        font-size: 0.9rem;
+    }
+}
