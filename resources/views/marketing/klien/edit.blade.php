@@ -32,6 +32,7 @@
             <form action="{{ route('klien.update', $klien->id) }}" method="POST">
                 @csrf
                 @method('PUT')
+                <input type="hidden" name="skema_id" value="{{ old('skema_id', $klien->skema_id) }}">
                 
                 @if(request('from'))
                     <input type="hidden" name="from" value="{{ request('from') }}">

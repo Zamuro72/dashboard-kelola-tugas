@@ -56,11 +56,11 @@ class DashboardController extends Controller
 
         $user = Auth::user();
 
-        // Base query WITHOUT aktif scope - show all statuses
-        $query = Klien::with(['jasa'])->where('tahun', $year);
+        // Fetch all clients (including Proses Terbit, Expired, etc) for the Bar Chart
+        $query = Klien::with(['jasa'])->where('kliens.tahun', $year);
 
         if ($user->jabatan === 'Marketing') {
-            $query->where('user_id', $user->id);
+            $query->where('kliens.user_id', $user->id);
         }
 
         $data = $query->get();
@@ -104,18 +104,15 @@ class DashboardController extends Controller
 
             if ($period === 'monthly') {
                 for ($m = 1; $m <= 12; $m++) {
-                    $filtered = $data->filter(function ($item) use ($jasa, $m) {
-                        return $item->jasa_id == $jasa->id &&
-                            $item->sertifikat_terbit &&
-                            Carbon::parse($item->sertifikat_terbit)->month == $m;
+                    $allFiltered = $data->filter(function ($item) use ($jasa, $m) {
+                        if ($item->jasa_id != $jasa->id) return false;
+                        
+                        if ($item->sertifikat_terbit) {
+                            return Carbon::parse($item->sertifikat_terbit)->month == $m;
+                        } else {
+                            return Carbon::parse($item->created_at)->month == $m;
+                        }
                     });
-                    // Also count items without sertifikat_terbit (proses terbit etc) - assign to current month if applicable
-                    $filteredNoDate = $data->filter(function ($item) use ($jasa, $m) {
-                        return $item->jasa_id == $jasa->id &&
-                            !$item->sertifikat_terbit &&
-                            Carbon::parse($item->created_at)->month == $m;
-                    });
-                    $allFiltered = $filtered->merge($filteredNoDate);
                     $jasaData[] = $allFiltered->count();
 
                     // Build status breakdown
@@ -124,17 +121,15 @@ class DashboardController extends Controller
                 }
             } else {
                 for ($w = 1; $w <= 52; $w++) {
-                    $filtered = $data->filter(function ($item) use ($jasa, $w) {
-                        return $item->jasa_id == $jasa->id &&
-                            $item->sertifikat_terbit &&
-                            Carbon::parse($item->sertifikat_terbit)->weekOfYear == $w;
+                    $allFiltered = $data->filter(function ($item) use ($jasa, $w) {
+                        if ($item->jasa_id != $jasa->id) return false;
+                        
+                        if ($item->sertifikat_terbit) {
+                            return Carbon::parse($item->sertifikat_terbit)->weekOfYear == $w;
+                        } else {
+                            return Carbon::parse($item->created_at)->weekOfYear == $w;
+                        }
                     });
-                    $filteredNoDate = $data->filter(function ($item) use ($jasa, $w) {
-                        return $item->jasa_id == $jasa->id &&
-                            !$item->sertifikat_terbit &&
-                            Carbon::parse($item->created_at)->weekOfYear == $w;
-                    });
-                    $allFiltered = $filtered->merge($filteredNoDate);
                     $jasaData[] = $allFiltered->count();
 
                     $breakdown = $allFiltered->groupBy('computed_status')->map->count()->toArray();
@@ -159,14 +154,19 @@ class DashboardController extends Controller
             $statusBreakdown[$jasa->nama_jasa] = $jasaStatusBreakdown;
         }
 
+        $yearsQuery = Klien::select('tahun')->distinct()->orderBy('tahun', 'desc');
+        if ($user->jabatan === 'Marketing') {
+            $yearsQuery->where('user_id', $user->id);
+        }
+
         return response()->json([
             'series' => $series,
             'xaxis' => [
                 'categories' => $categories
             ],
-            'years' => Klien::select('tahun')->distinct()->orderBy('tahun', 'desc')->pluck('tahun'),
+            'years' => $yearsQuery->pluck('tahun'),
             'statusBreakdown' => $statusBreakdown
-        ]);
+        ])->header('Cache-Control', 'no-cache, no-store, must-revalidate');
     }
 
     /**
@@ -203,11 +203,11 @@ class DashboardController extends Controller
 
         $user = Auth::user();
 
-        // Remove aktif() scope - show all statuses
-        $query = Klien::with(['jasa', 'user', 'skema'])->where('tahun', $year);
+        // Ambil semua klien untuk detail data
+        $query = Klien::with(['jasa', 'user', 'skema'])->where('kliens.tahun', $year);
 
         if ($user->jabatan === 'Marketing') {
-            $query->where('user_id', $user->id);
+            $query->where('kliens.user_id', $user->id);
         }
 
         $query->whereHas('jasa', function ($q) use ($jasaName) {
@@ -245,7 +245,7 @@ class DashboardController extends Controller
             ];
         });
 
-        return response()->json($data);
+        return response()->json($data)->header('Cache-Control', 'no-cache, no-store, must-revalidate');
     }
 
     public function getPieChartData(Request $request)
@@ -253,8 +253,8 @@ class DashboardController extends Controller
         $user = Auth::user();
         $year = $request->input('year', 'all');
 
-        // Fetch ALL active clients first (Consistent with Bar Chart logic)
-        $query = Klien::aktif();
+        // Fetch ALL clients (including Proses Terbit)
+        $query = Klien::query();
 
         if ($user->jabatan === 'Marketing') {
             $query->where('kliens.user_id', $user->id);
@@ -288,8 +288,10 @@ class DashboardController extends Controller
         ];
 
         foreach ($allJasa as $index => $jasa) {
-            // Count in memory using Collection where()
-            $count = $activeClients->where('jasa_id', $jasa->id)->count();
+            // Evaluasi strict counting untuk menghindari bug koleksi
+            $count = $activeClients->filter(function ($item) use ($jasa) {
+                return $item->jasa_id == $jasa->id;
+            })->count();
 
             // Logic colors consistent with bar chart
             $color = $defaultColors[$index % count($defaultColors)];
@@ -318,6 +320,6 @@ class DashboardController extends Controller
             'labels' => $labels,
             'colors' => $colors,
             'years' => $availableYears
-        ]);
+        ])->header('Cache-Control', 'no-cache, no-store, must-revalidate');
     }
 }

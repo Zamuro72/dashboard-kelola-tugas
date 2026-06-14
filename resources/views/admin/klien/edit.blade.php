@@ -30,6 +30,7 @@
         </div>
         <div class="card-body">
             <form action="{{ route('klien.update', $klien->id) }}" method="POST">
+                                <input type="hidden" name="skema_id" value="{{ old('skema_id', $klien->skema_id) }}">
                 @csrf
                 @method('PUT')
                 

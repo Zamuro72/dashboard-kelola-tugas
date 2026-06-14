@@ -27,10 +27,14 @@ class KlienExport implements FromCollection, WithHeadings, WithMapping, WithStyl
 
     public function collection()
     {
-        $query = Klien::with(['jasa', 'skema'])
-            ->where('user_id', $this->userId)
+        $query = Klien::with(['jasa', 'skema', 'user'])
             ->where('jasa_id', $this->jasaId)
             ->where('tahun', $this->tahun);
+
+        // Jika userId null (Admin), ambil semua data
+        if ($this->userId !== null) {
+            $query->where('user_id', $this->userId);
+        }
 
         if ($this->skemaId) {
             $query->where('skema_id', $this->skemaId);

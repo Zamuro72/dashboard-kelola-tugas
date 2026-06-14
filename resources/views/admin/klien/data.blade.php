@@ -190,6 +190,7 @@
                                     <th class="d-none d-lg-table-cell" style="min-width: 130px">Sertifikat Terbit</th>
                                     <th class="d-none d-lg-table-cell" style="min-width: 130px">Expired</th>
                                 @endif
+                                <th class="d-none d-md-table-cell">Marketing</th>
                                 <th>Status</th>
                                 <th style="min-width: 100px">Aksi</th>
                             </tr>
@@ -255,6 +256,9 @@
                                             <small>{{ $klien->tanggal_expired ? $klien->tanggal_expired->format('d-m-Y') : '-' }}</small>
                                         </td>
                                     @endif
+                                    <td class="d-none d-md-table-cell">
+                                        <small>{{ $klien->user->nama ?? '-' }}</small>
+                                    </td>
                                     <td>
                                         <small>{!! $klien->getStatusSertifikatBadge() !!}</small>
                                     </td>

@@ -307,7 +307,7 @@
     <div class="col-xl-12 col-lg-12">
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                 <h6 class="m-0 font-weight-bold text-primary">Distribusi Klien Aktif per Jasa</h6>
+                 <h6 class="m-0 font-weight-bold text-primary">Distribusi Klien per Jasa</h6>
                  <div class="dropdown no-arrow">
                     <select id="pieYearFilter" class="form-control form-control-sm">
                         <option value="all">Semua Tahun</option>
@@ -508,15 +508,22 @@
             $.ajax({
                 url: "{{ route('dashboard.chartData') }}",
                 type: "GET",
+                cache: false,
                 data: { year: year, period: period },
                 success: function(response) {
-                    // Populate Year Filter if empty
+                    // Populate Year Filter (update if new years available)
                     if ($('#yearFilter option').length === 0) {
                         response.years.forEach(function(y) {
                             $('#yearFilter').append(new Option(y, y));
                         });
-                        // Set current year
                         $('#yearFilter').val(year);
+                    } else {
+                        // Add any new years not yet in the dropdown
+                        response.years.forEach(function(y) {
+                            if ($('#yearFilter option[value="' + y + '"]').length === 0) {
+                                $('#yearFilter').prepend(new Option(y, y));
+                            }
+                        });
                     }
 
                     initChart(response);
@@ -578,8 +585,9 @@
                     var rows = '';
                     if(response.length > 0) {
                         response.forEach(function(item) {
+                            var namaClient = item.nama_klien ? item.nama_klien : (item.nama_perusahaan ? item.nama_perusahaan : '-');
                             rows += '<tr>';
-                            rows += '<td>' + item.nama_klien + '</td>';
+                            rows += '<td>' + namaClient + '</td>';
                             rows += '<td>' + item.tipe_klien + '</td>';
                             if (showSkema) {
                                 rows += '<td class="skema-column">' + item.skema + '</td>';
@@ -618,16 +626,23 @@
              $.ajax({
                 url: "{{ route('dashboard.pieChartData') }}",
                 type: "GET",
+                cache: false,
                 data: { year: year },
                 success: function(response) {
-                    // Populate Year Filter if empty (only has default)
+                    // Populate Year Filter (update if new years available)
                     var $filter = $('#pieYearFilter');
                     if ($filter.children('option').length <= 1 && response.years) {
                         response.years.forEach(function(y) {
                             $filter.append('<option value="' + y + '">' + y + '</option>');
                         });
-                        // Set selected value back to year if needed, though default is 'all'
                         $filter.val(year);
+                    } else if (response.years) {
+                        // Add any new years not yet in the dropdown
+                        response.years.forEach(function(y) {
+                            if ($filter.find('option[value="' + y + '"]').length === 0) {
+                                $filter.append('<option value="' + y + '">' + y + '</option>');
+                            }
+                        });
                     }
 
                     // Filter out jasa with 0 data

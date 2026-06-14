@@ -32,6 +32,9 @@
                       method="POST">
             @endif
                 @csrf
+                @if($skema)
+                    <input type="hidden" name="skema_id" value="{{ old('skema_id', $skema->id) }}">
+                @endif
 
                 <!-- Info Jasa -->
                 <div class="row mb-3">

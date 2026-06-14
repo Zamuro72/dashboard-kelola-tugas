@@ -22,32 +22,34 @@ class KlienController extends Controller
     {
         /** @var User $user */
         $user = Auth::user();
+        $isAdmin = $user->jabatan == 'Admin';
 
         // Hitung notifikasi expired
-        $jumlahAkanExpired = Klien::where('user_id', $user->id)
-            ->akanExpired()
-            ->count();
-
-        $jumlahSudahExpired = Klien::where('user_id', $user->id)
-            ->sudahExpired()
-            ->count();
+        $notifQuery = Klien::query();
+        if (!$isAdmin) {
+            $notifQuery->where('user_id', $user->id);
+        }
+        $jumlahAkanExpired = (clone $notifQuery)->akanExpired()->count();
+        $jumlahSudahExpired = (clone $notifQuery)->sudahExpired()->count();
 
         // Load jasa with klien count
         $jasaQuery = Jasa::with('skema');
-        if ($user->jabatan == 'Marketing') {
+        if ($isAdmin) {
+            // Admin melihat total semua klien dari semua user
+            $jasaQuery->withCount('kliens');
+        } else {
+            // Marketing hanya melihat klien miliknya
             $jasaQuery->withCount(['kliens' => function ($query) use ($user) {
                 $query->where('user_id', $user->id);
             }]);
-        } else {
-            $jasaQuery->withCount('kliens');
         }
 
-        // Get distinct available years from existing data for current user
-        $availableYears = Klien::where('user_id', $user->id)
-            ->select('tahun')
-            ->distinct()
-            ->orderBy('tahun', 'desc')
-            ->pluck('tahun');
+        // Get distinct available years from existing data
+        $yearsQuery = Klien::select('tahun')->distinct()->orderBy('tahun', 'desc');
+        if (!$isAdmin) {
+            $yearsQuery->where('user_id', $user->id);
+        }
+        $availableYears = $yearsQuery->pluck('tahun');
 
         $data = [
             'title' => 'Data Klien',
@@ -59,7 +61,7 @@ class KlienController extends Controller
             'availableYears' => $availableYears,
         ];
 
-        if ($user->jabatan == 'Admin') {
+        if ($isAdmin) {
             return view('admin.klien.index', $data);
         } else {
             return view('marketing.klien.index', $data);
@@ -73,15 +75,21 @@ class KlienController extends Controller
     {
         /** @var User $user */
         $user = Auth::user();
+        $isAdmin = $user->jabatan == 'Admin';
         $jasa = Jasa::findOrFail($jasaId);
 
         // Ambil daftar tahun dari data klien
-        $tahunList = Klien::where('user_id', $user->id)
-            ->where('jasa_id', $jasaId)
+        $tahunQuery = Klien::where('jasa_id', $jasaId)
             ->select('tahun')
             ->distinct()
-            ->orderBy('tahun', 'desc')
-            ->pluck('tahun');
+            ->orderBy('tahun', 'desc');
+
+        // Marketing hanya melihat tahun dari data miliknya
+        if (!$isAdmin) {
+            $tahunQuery->where('user_id', $user->id);
+        }
+
+        $tahunList = $tahunQuery->pluck('tahun');
 
         $data = [
             'title' => 'Pilih Tahun - ' . $jasa->nama_jasa,
@@ -91,7 +99,7 @@ class KlienController extends Controller
             'tahunList' => $tahunList,
         ];
 
-        if ($user->jabatan == 'Admin') {
+        if ($isAdmin) {
             return view('admin.klien.tahun', $data);
         } else {
             return view('marketing.klien.tahun', $data);
@@ -112,6 +120,17 @@ class KlienController extends Controller
 
         /** @var User $user */
         $user = Auth::user();
+        $isAdmin = $user->jabatan == 'Admin';
+
+        $skemaList = Skema::where('jasa_id', $jasaId)
+            ->withCount(['kliens' => function ($query) use ($user, $tahun, $isAdmin) {
+                $query->where('tahun', $tahun);
+                // Marketing hanya hitung klien miliknya, admin hitung semua
+                if (!$isAdmin) {
+                    $query->where('user_id', $user->id);
+                }
+            }])
+            ->get();
 
         $data = [
             'title' => 'Skema ' . $jasa->nama_jasa . ' - Tahun ' . $tahun,
@@ -119,15 +138,10 @@ class KlienController extends Controller
             'menuMarketingKlien' => 'active',
             'jasa' => $jasa,
             'tahun' => $tahun,
-            'skemaList' => Skema::where('jasa_id', $jasaId)
-                ->withCount(['kliens' => function ($query) use ($user, $tahun) {
-                    $query->where('user_id', $user->id)
-                        ->where('tahun', $tahun);
-                }])
-                ->get(),
+            'skemaList' => $skemaList,
         ];
 
-        if ($user->jabatan == 'Admin') {
+        if ($isAdmin) {
             return view('admin.klien.skema', $data);
         } else {
             return view('marketing.klien.skema', $data);
@@ -141,12 +155,17 @@ class KlienController extends Controller
     {
         /** @var User $user */
         $user = Auth::user();
+        $isAdmin = $user->jabatan == 'Admin';
         $jasa = Jasa::findOrFail($jasaId);
         $skema = $skemaId ? Skema::findOrFail($skemaId) : null;
 
-        $query = Klien::where('user_id', $user->id)
-            ->where('jasa_id', $jasaId)
+        $query = Klien::where('jasa_id', $jasaId)
             ->where('tahun', $tahun);
+
+        // Marketing hanya melihat data miliknya, Admin melihat semua
+        if (!$isAdmin) {
+            $query->where('user_id', $user->id);
+        }
 
         if ($skemaId) {
             $query->where('skema_id', $skemaId);
@@ -169,6 +188,11 @@ class KlienController extends Controller
             $query->where('tipe_klien', $request->tipe_klien);
         }
 
+        // Admin: load relasi user untuk menampilkan nama marketing
+        if ($isAdmin) {
+            $query->with('user');
+        }
+
         $kliens = $query->orderBy('created_at', 'desc')->paginate(30)->withQueryString();
 
         $data = [
@@ -179,9 +203,10 @@ class KlienController extends Controller
             'tahun' => $tahun,
             'skema' => $skema,
             'kliens' => $kliens,
+            'isAdmin' => $isAdmin,
         ];
 
-        if ($user->jabatan == 'Admin') {
+        if ($isAdmin) {
             return view('admin.klien.data', $data);
         } else {
             return view('marketing.klien.data', $data);
@@ -279,7 +304,16 @@ class KlienController extends Controller
      */
     public function edit($id)
     {
-        $klien = Klien::where('user_id', Auth::id())->findOrFail($id);
+        /** @var User $user */
+        $user = Auth::user();
+        $isAdmin = $user->jabatan == 'Admin';
+
+        // Admin bisa edit klien siapapun, Marketing hanya miliknya
+        if ($isAdmin) {
+            $klien = Klien::findOrFail($id);
+        } else {
+            $klien = Klien::where('user_id', Auth::id())->findOrFail($id);
+        }
 
         $data = [
             'title' => 'Edit Klien',
@@ -288,9 +322,7 @@ class KlienController extends Controller
             'klien' => $klien,
         ];
 
-        /** @var User $user */
-        $user = Auth::user();
-        if ($user->jabatan == 'Admin') {
+        if ($isAdmin) {
             return view('admin.klien.edit', $data);
         } else {
             return view('marketing.klien.edit', $data);
@@ -302,7 +334,16 @@ class KlienController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $klien = Klien::where('user_id', Auth::id())->findOrFail($id);
+        /** @var User $user */
+        $user = Auth::user();
+        $isAdmin = $user->jabatan == 'Admin';
+
+        // Admin bisa update klien siapapun, Marketing hanya miliknya
+        if ($isAdmin) {
+            $klien = Klien::findOrFail($id);
+        } else {
+            $klien = Klien::where('user_id', Auth::id())->findOrFail($id);
+        }
 
         $rules = [
             'tipe_klien' => 'required|in:Personal,Perusahaan',
@@ -342,6 +383,7 @@ class KlienController extends Controller
             'tanggal_lahir' => $request->tanggal_lahir,
             'status_manual' => $request->status_manual,
             'catatan' => $request->catatan,
+            'skema_id' => $request->skema_id,
         ]);
 
         // Redirect back to notifikasi if requested
@@ -351,7 +393,7 @@ class KlienController extends Controller
         }
 
         if ($klien->skema_id) {
-            return redirect()->route('klien.data', ['jasaId' => $klien->jasa_id, 'tahun' => $klien->tahun, 'skemaId' => $klien->skema_id])
+            return redirect()->route('klien.data.skema', ['jasaId' => $klien->jasa_id, 'tahun' => $klien->tahun, 'skemaId' => $klien->skema_id])
                 ->with('success', 'Data klien berhasil diupdate');
         } else {
             return redirect()->route('klien.data', ['jasaId' => $klien->jasa_id, 'tahun' => $klien->tahun])
@@ -364,7 +406,16 @@ class KlienController extends Controller
      */
     public function destroy($id)
     {
-        $klien = Klien::where('user_id', Auth::id())->findOrFail($id);
+        /** @var User $user */
+        $user = Auth::user();
+        $isAdmin = $user->jabatan == 'Admin';
+
+        // Admin bisa hapus klien siapapun, Marketing hanya miliknya
+        if ($isAdmin) {
+            $klien = Klien::findOrFail($id);
+        } else {
+            $klien = Klien::where('user_id', Auth::id())->findOrFail($id);
+        }
         $jasaId = $klien->jasa_id;
         $tahun = $klien->tahun;
         $skemaId = $klien->skema_id;
@@ -387,18 +438,19 @@ class KlienController extends Controller
     {
         /** @var User $user */
         $user = Auth::user();
+        $isAdmin = $user->jabatan == 'Admin';
 
-        $klienAkanExpired = Klien::where('user_id', $user->id)
-            ->akanExpired()
-            ->with(['jasa', 'skema'])
-            ->orderBy('sertifikat_terbit')
-            ->get();
+        $akanExpiredQuery = Klien::akanExpired()->with(['jasa', 'skema']);
+        $sudahExpiredQuery = Klien::sudahExpired()->with(['jasa', 'skema']);
 
-        $klienSudahExpired = Klien::where('user_id', $user->id)
-            ->sudahExpired()
-            ->with(['jasa', 'skema'])
-            ->orderBy('sertifikat_terbit')
-            ->get();
+        // Marketing hanya melihat notifikasi data miliknya
+        if (!$isAdmin) {
+            $akanExpiredQuery->where('kliens.user_id', $user->id);
+            $sudahExpiredQuery->where('kliens.user_id', $user->id);
+        }
+
+        $klienAkanExpired = $akanExpiredQuery->orderBy('sertifikat_terbit')->get();
+        $klienSudahExpired = $sudahExpiredQuery->orderBy('sertifikat_terbit')->get();
 
         $data = [
             'title' => 'Notifikasi Sertifikat Klien',
@@ -422,12 +474,16 @@ class KlienController extends Controller
     {
         /** @var User $user */
         $user = Auth::user();
+        $isAdmin = $user->jabatan == 'Admin';
         $jasa = Jasa::findOrFail($jasaId);
         $skema = $skemaId ? Skema::findOrFail($skemaId) : null;
 
         $filename = 'DataKlien_' . $jasa->nama_jasa . '_' . $tahun . ($skema ? '_' . $skema->nama_skema : '') . '_' . now()->format('d-m-Y_H.i.s') . '.xlsx';
 
-        return Excel::download(new KlienExport($user->id, $jasaId, $tahun, $skemaId), $filename);
+        // Admin: export semua data (userId = null), Marketing: hanya miliknya
+        $exportUserId = $isAdmin ? null : $user->id;
+
+        return Excel::download(new KlienExport($exportUserId, $jasaId, $tahun, $skemaId), $filename);
     }
 
     /**
@@ -437,12 +493,17 @@ class KlienController extends Controller
     {
         /** @var User $user */
         $user = Auth::user();
+        $isAdmin = $user->jabatan == 'Admin';
         $jasa = Jasa::findOrFail($jasaId);
         $skema = $skemaId ? Skema::findOrFail($skemaId) : null;
 
-        $query = Klien::where('user_id', $user->id)
-            ->where('jasa_id', $jasaId)
+        $query = Klien::where('jasa_id', $jasaId)
             ->where('tahun', $tahun);
+
+        // Admin export semua data, Marketing hanya miliknya
+        if (!$isAdmin) {
+            $query->where('user_id', $user->id);
+        }
 
         if ($skemaId) {
             $query->where('skema_id', $skemaId);
