@@ -17,10 +17,23 @@
 
     <!-- Sertifikat Akan Expired (3 Bulan Kedepan) -->
     <div class="card shadow mb-4">
-        <div class="card-header py-3 bg-warning">
+        <div class="card-header py-3 bg-warning d-flex align-items-center justify-content-between flex-wrap gap-2">
             <h6 class="m-0 font-weight-bold text-white">
                 <i class="fas fa-exclamation-triangle"></i> Sertifikat Akan Expired (3 Bulan Kedepan)
+                <span class="badge badge-light ml-2">{{ $klienAkanExpired->total() }} data</span>
             </h6>
+            @if($klienAkanExpired->total() > 0)
+            <div class="d-flex flex-wrap gap-1">
+                <a href="{{ route('klien.notifikasi.akan_expired.pdf') }}" target="_blank"
+                   class="btn btn-sm btn-danger shadow-sm" title="Export PDF Akan Expired">
+                    <i class="fas fa-file-pdf fa-sm"></i> <span class="d-none d-md-inline">Export</span> PDF
+                </a>
+                <a href="{{ route('klien.notifikasi.akan_expired.excel') }}"
+                   class="btn btn-sm btn-success shadow-sm" title="Export Excel Akan Expired">
+                    <i class="fas fa-file-excel fa-sm"></i> <span class="d-none d-md-inline">Export</span> Excel
+                </a>
+            </div>
+            @endif
         </div>
         <div class="card-body">
             @if($klienAkanExpired->count() > 0)
@@ -46,7 +59,7 @@
                         <tbody>
                             @foreach($klienAkanExpired as $index => $klien)
                                 <tr>
-                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ ($klienAkanExpired->currentPage() - 1) * $klienAkanExpired->perPage() + $index + 1 }}</td>
                                     <td>{{ $klien->jasa->nama_jasa }}</td>
                                     <td>{{ $klien->skema->nama_skema ?? '-' }}</td>
                                     <td>{{ $klien->tahun }}</td>
@@ -109,13 +122,25 @@
                     </table>
                 </div>
 
+                <!-- Pagination Akan Expired -->
+                @if($klienAkanExpired->hasPages())
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div class="text-muted small">
+                        Menampilkan {{ $klienAkanExpired->firstItem() }}-{{ $klienAkanExpired->lastItem() }} dari {{ $klienAkanExpired->total() }} data
+                    </div>
+                    <div>
+                        {{ $klienAkanExpired->appends(['sudah_page' => $klienSudahExpired->currentPage()])->links('pagination::bootstrap-4') }}
+                    </div>
+                </div>
+                @endif
+
                 <!-- Mobile Card Layout -->
                 <div class="notifikasi-mobile-cards">
                     @foreach($klienAkanExpired as $index => $klien)
                         <div class="notifikasi-card-item">
                             <div class="notifikasi-card-top bg-warning-light">
                                 <div style="display:flex; align-items:center; gap:10px;">
-                                    <span class="notifikasi-card-number bg-warning-num">{{ $index + 1 }}</span>
+                                    <span class="notifikasi-card-number bg-warning-num">{{ ($klienAkanExpired->currentPage() - 1) * $klienAkanExpired->perPage() + $index + 1 }}</span>
                                     @if($klien->tipe_klien == 'Personal')
                                         <span class="badge badge-info">Personal</span>
                                     @else
@@ -257,10 +282,23 @@
 
     <!-- Sertifikat Sudah Expired -->
     <div class="card shadow mb-4">
-        <div class="card-header py-3 bg-danger">
+        <div class="card-header py-3 bg-danger d-flex align-items-center justify-content-between flex-wrap gap-2">
             <h6 class="m-0 font-weight-bold text-white">
                 <i class="fas fa-times-circle"></i> Sertifikat Sudah Expired
+                <span class="badge badge-light ml-2">{{ $klienSudahExpired->total() }} data</span>
             </h6>
+            @if($klienSudahExpired->total() > 0)
+            <div class="d-flex flex-wrap gap-1">
+                <a href="{{ route('klien.notifikasi.sudah_expired.pdf') }}" target="_blank"
+                   class="btn btn-sm btn-light shadow-sm text-danger" title="Export PDF Sudah Expired">
+                    <i class="fas fa-file-pdf fa-sm"></i> <span class="d-none d-md-inline">Export</span> PDF
+                </a>
+                <a href="{{ route('klien.notifikasi.sudah_expired.excel') }}"
+                   class="btn btn-sm btn-success shadow-sm" title="Export Excel Sudah Expired">
+                    <i class="fas fa-file-excel fa-sm"></i> <span class="d-none d-md-inline">Export</span> Excel
+                </a>
+            </div>
+            @endif
         </div>
         <div class="card-body">
             @if($klienSudahExpired->count() > 0)
@@ -286,7 +324,7 @@
                         <tbody>
                             @foreach($klienSudahExpired as $index => $klien)
                                 <tr>
-                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ ($klienSudahExpired->currentPage() - 1) * $klienSudahExpired->perPage() + $index + 1 }}</td>
                                     <td>{{ $klien->jasa->nama_jasa }}</td>
                                     <td>{{ $klien->skema->nama_skema ?? '-' }}</td>
                                     <td>{{ $klien->tahun }}</td>
@@ -349,13 +387,25 @@
                     </table>
                 </div>
 
+                <!-- Pagination Sudah Expired -->
+                @if($klienSudahExpired->hasPages())
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div class="text-muted small">
+                        Menampilkan {{ $klienSudahExpired->firstItem() }}-{{ $klienSudahExpired->lastItem() }} dari {{ $klienSudahExpired->total() }} data
+                    </div>
+                    <div>
+                        {{ $klienSudahExpired->appends(['akan_page' => $klienAkanExpired->currentPage()])->links('pagination::bootstrap-4') }}
+                    </div>
+                </div>
+                @endif
+
                 <!-- Mobile Card Layout -->
                 <div class="notifikasi-mobile-cards">
                     @foreach($klienSudahExpired as $index => $klien)
                         <div class="notifikasi-card-item">
                             <div class="notifikasi-card-top bg-danger-light">
                                 <div style="display:flex; align-items:center; gap:10px;">
-                                    <span class="notifikasi-card-number bg-danger-num">{{ $index + 1 }}</span>
+                                    <span class="notifikasi-card-number bg-danger-num">{{ ($klienSudahExpired->currentPage() - 1) * $klienSudahExpired->perPage() + $index + 1 }}</span>
                                     @if($klien->tipe_klien == 'Personal')
                                         <span class="badge badge-info">Personal</span>
                                     @else

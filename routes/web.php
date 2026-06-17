@@ -29,9 +29,9 @@ route::middleware('checkLogin')->group(function () {
 
     // dashboard
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('dashboard/chart-data', [DashboardController::class, 'getChartData'])->name('dashboard.chartData');
-    Route::get('dashboard/chart-details', [DashboardController::class, 'getChartDetails'])->name('dashboard.chartDetails');
-    Route::get('dashboard/pie-chart-data', [DashboardController::class, 'getPieChartData'])->name('dashboard.pieChartData');
+    Route::get('dashboard/chart-data-v2', [DashboardController::class, 'getChartData'])->name('dashboard.chartData');
+    Route::get('dashboard/chart-details-v2', [DashboardController::class, 'getChartDetails'])->name('dashboard.chartDetails');
+    Route::get('dashboard/pie-chart-data-v2', [DashboardController::class, 'getPieChartData'])->name('dashboard.pieChartData');
 
     Route::get('tugas', [TugasController::class, 'index'])->name('tugas');
     Route::get('tugas/pdf', [TugasController::class, 'pdf'])->name('tugasPdf');
@@ -159,11 +159,19 @@ route::middleware('checkLogin')->group(function () {
         // Update klien
         Route::put('/klien/{id}', [KlienController::class, 'update'])->name('klien.update');
 
-        // Hapus klien
+        Route::delete('/klien/bulk-delete', [KlienController::class, 'bulkDestroy'])->name('klien.bulkDelete');
         Route::delete('/klien/{id}', [KlienController::class, 'destroy'])->name('klien.destroy');
 
         // Notifikasi expired
         Route::get('/klien/notifikasi', [KlienController::class, 'notifikasi'])->name('klien.notifikasi');
+
+        // Export Notifikasi - Akan Expired
+        Route::get('/klien/notifikasi/akan-expired/pdf', [KlienController::class, 'notifikasiAkanExpiredPdf'])->name('klien.notifikasi.akan_expired.pdf');
+        Route::get('/klien/notifikasi/akan-expired/excel', [KlienController::class, 'notifikasiAkanExpiredExcel'])->name('klien.notifikasi.akan_expired.excel');
+
+        // Export Notifikasi - Sudah Expired
+        Route::get('/klien/notifikasi/sudah-expired/pdf', [KlienController::class, 'notifikasiSudahExpiredPdf'])->name('klien.notifikasi.sudah_expired.pdf');
+        Route::get('/klien/notifikasi/sudah-expired/excel', [KlienController::class, 'notifikasiSudahExpiredExcel'])->name('klien.notifikasi.sudah_expired.excel');
 
         // Export Excel tanpa skema
         Route::get('/klien/{jasaId}/tahun/{tahun}/excel', [KlienController::class, 'excel'])->name('klien.excel');

@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\KlienExport;
+use App\Exports\NotifikasiAkanExpiredExport;
+use App\Exports\NotifikasiSudahExpiredExport;
 use Illuminate\Support\Facades\DB;
 
 class KlienController extends Controller
@@ -402,6 +404,32 @@ class KlienController extends Controller
     }
 
     /**
+     * Hapus banyak klien sekaligus
+     */
+    public function bulkDestroy(Request $request)
+    {
+        $ids = $request->input('ids');
+        
+        if (empty($ids)) {
+            return back()->with('error', 'Tidak ada data klien yang dipilih untuk dihapus.');
+        }
+
+        /** @var User $user */
+        $user = Auth::user();
+        $isAdmin = $user->jabatan == 'Admin';
+
+        $query = Klien::whereIn('id', $ids);
+        
+        if (!$isAdmin) {
+            $query->where('user_id', $user->id);
+        }
+
+        $query->delete();
+
+        return back()->with('success', count($ids) . ' data klien berhasil dihapus.');
+    }
+
+    /**
      * Hapus klien
      */
     public function destroy($id)
@@ -449,8 +477,8 @@ class KlienController extends Controller
             $sudahExpiredQuery->where('kliens.user_id', $user->id);
         }
 
-        $klienAkanExpired = $akanExpiredQuery->orderBy('sertifikat_terbit')->get();
-        $klienSudahExpired = $sudahExpiredQuery->orderBy('sertifikat_terbit')->get();
+        $klienAkanExpired = $akanExpiredQuery->orderBy('sertifikat_terbit')->paginate(50, ['*'], 'akan_page');
+        $klienSudahExpired = $sudahExpiredQuery->orderBy('sertifikat_terbit')->paginate(50, ['*'], 'sudah_page');
 
         $data = [
             'title' => 'Notifikasi Sertifikat Klien',
@@ -465,6 +493,94 @@ class KlienController extends Controller
         } else {
             return view('marketing.klien.notifikasi', $data);
         }
+    }
+
+    /**
+     * Export PDF - Sertifikat Akan Expired
+     */
+    public function notifikasiAkanExpiredPdf()
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        $isAdmin = $user->jabatan == 'Admin';
+
+        $query = Klien::akanExpired()->with(['jasa', 'skema']);
+        if (!$isAdmin) {
+            $query->where('kliens.user_id', $user->id);
+        }
+        $kliens = $query->orderBy('sertifikat_terbit')->get();
+
+        $data = [
+            'kliens'  => $kliens,
+            'tanggal' => now()->format('d-m-Y'),
+            'jam'     => now()->format('H.i.s'),
+        ];
+
+        ini_set('memory_limit', '1024M');
+        ini_set('max_execution_time', 300);
+
+        $filename = 'Notifikasi_AkanExpired_' . now()->format('d-m-Y_H.i.s') . '.pdf';
+        $viewName = $isAdmin ? 'admin.klien.notifikasi_akan_expired_pdf' : 'marketing.klien.notifikasi_akan_expired_pdf';
+        $pdf = Pdf::loadView($viewName, $data);
+        return $pdf->setPaper('a4', 'landscape')->stream($filename);
+    }
+
+    /**
+     * Export PDF - Sertifikat Sudah Expired
+     */
+    public function notifikasiSudahExpiredPdf()
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        $isAdmin = $user->jabatan == 'Admin';
+
+        $query = Klien::sudahExpired()->with(['jasa', 'skema']);
+        if (!$isAdmin) {
+            $query->where('kliens.user_id', $user->id);
+        }
+        $kliens = $query->orderBy('sertifikat_terbit')->get();
+
+        $data = [
+            'kliens'  => $kliens,
+            'tanggal' => now()->format('d-m-Y'),
+            'jam'     => now()->format('H.i.s'),
+        ];
+
+        ini_set('memory_limit', '1024M');
+        ini_set('max_execution_time', 300);
+
+        $filename = 'Notifikasi_SudahExpired_' . now()->format('d-m-Y_H.i.s') . '.pdf';
+        $viewName = $isAdmin ? 'admin.klien.notifikasi_sudah_expired_pdf' : 'marketing.klien.notifikasi_sudah_expired_pdf';
+        $pdf = Pdf::loadView($viewName, $data);
+        return $pdf->setPaper('a4', 'landscape')->stream($filename);
+    }
+
+    /**
+     * Export Excel - Sertifikat Akan Expired
+     */
+    public function notifikasiAkanExpiredExcel()
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        $isAdmin = $user->jabatan == 'Admin';
+        $exportUserId = $isAdmin ? null : $user->id;
+
+        $filename = 'Notifikasi_AkanExpired_' . now()->format('d-m-Y_H.i.s') . '.xlsx';
+        return Excel::download(new NotifikasiAkanExpiredExport($exportUserId), $filename);
+    }
+
+    /**
+     * Export Excel - Sertifikat Sudah Expired
+     */
+    public function notifikasiSudahExpiredExcel()
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        $isAdmin = $user->jabatan == 'Admin';
+        $exportUserId = $isAdmin ? null : $user->id;
+
+        $filename = 'Notifikasi_SudahExpired_' . now()->format('d-m-Y_H.i.s') . '.xlsx';
+        return Excel::download(new NotifikasiSudahExpiredExport($exportUserId), $filename);
     }
 
     /**

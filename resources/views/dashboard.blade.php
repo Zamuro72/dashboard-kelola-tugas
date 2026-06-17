@@ -506,7 +506,7 @@
         // Fetch Chart Data
         function loadChartData(year, period) {
             $.ajax({
-                url: "{{ route('dashboard.chartData') }}",
+                url: "/dashboard/chart-data-v2?_cb=" + new Date().getTime(),
                 type: "GET",
                 cache: false,
                 data: { year: year, period: period },
@@ -573,7 +573,7 @@
             $('#detailsTable tbody').html('<tr><td colspan="' + colCount + '" class="text-center">Loading...</td></tr>');
 
             $.ajax({
-                url: "{{ route('dashboard.chartDetails') }}",
+                url: "/dashboard/chart-details-v2?_cb=" + new Date().getTime(),
                 type: "GET",
                 data: { 
                     year: year, 
@@ -624,7 +624,7 @@
         // Pie Chart
         function loadPieChart(year = 'all') {
              $.ajax({
-                url: "{{ route('dashboard.pieChartData') }}",
+                url: "/dashboard/pie-chart-data-v2?_cb=" + new Date().getTime(),
                 type: "GET",
                 cache: false,
                 data: { year: year },

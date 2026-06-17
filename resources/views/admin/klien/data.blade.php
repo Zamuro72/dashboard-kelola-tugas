@@ -68,6 +68,9 @@
                 
                 <!-- Desktop Menu -->
                 <div class="d-none d-sm-flex gap-2 flex-wrap">
+                    <button type="button" class="btn btn-danger btn-sm" onclick="submitBulkDelete()" id="btn-bulk-delete" style="display:none;">
+                        <i class="fas fa-trash"></i> Hapus Terpilih (<span id="selected-count">0</span>)
+                    </button>
                     @if($skema)
                         <a href="{{ route('klien.excel.skema', ['jasaId' => $jasa->id, 'tahun' => $tahun, 'skemaId' => $skema->id]) }}" 
                            class="btn btn-success btn-sm">
@@ -103,6 +106,9 @@
                         <i class="fas fa-ellipsis-v"></i> Aksi
                     </button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="mobileDataMenu">
+                        <a class="dropdown-item text-danger" href="#" onclick="submitBulkDelete()" id="btn-bulk-delete-mobile" style="display:none;">
+                            <i class="fas fa-trash"></i> Hapus Terpilih (<span id="selected-count-mobile">0</span>)
+                        </a>
                         @if($skema)
                             <a class="dropdown-item" href="{{ route('klien.excel.skema', ['jasaId' => $jasa->id, 'tahun' => $tahun, 'skemaId' => $skema->id]) }}">
                                 <i class="fas fa-file-excel text-success"></i> Export Excel
@@ -160,11 +166,17 @@
             </form>
 
             @if($kliens->count() > 0)
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover table-sm" width="100%" cellspacing="0">
-                        <thead class="bg-primary text-white">
-                            <tr>
-                                <th width="5%">No</th>
+                <form id="bulk-delete-form" action="{{ route('klien.bulkDelete') }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-sm" width="100%" cellspacing="0">
+                            <thead class="bg-primary text-white">
+                                <tr>
+                                    <th width="3%" class="text-center">
+                                        <input type="checkbox" id="selectAll">
+                                    </th>
+                                    <th width="5%">No</th>
                                 @if(request('tipe_klien') == 'Personal')
                                     {{-- Kolom untuk tipe Personal --}}
                                     <th>Nama</th>
@@ -185,6 +197,7 @@
                                     <th>Tipe</th>
                                     <th>Nama</th>
                                     <th>Perusahaan</th>
+                                    <th>Penanggung Jawab</th>
                                     <th class="d-none d-md-table-cell">Email</th>
                                     <th class="d-none d-md-table-cell">No WhatsApp</th>
                                     <th class="d-none d-lg-table-cell" style="min-width: 130px">Sertifikat Terbit</th>
@@ -198,6 +211,9 @@
                         <tbody>
                             @foreach($kliens as $index => $klien)
                                 <tr>
+                                    <td class="text-center">
+                                        <input type="checkbox" name="ids[]" class="klien-checkbox" value="{{ $klien->id }}">
+                                    </td>
                                     <td>{{ $kliens->firstItem() + $index }}</td>
                                     @if(request('tipe_klien') == 'Personal')
                                         {{-- Data untuk tipe Personal --}}
@@ -242,6 +258,9 @@
                                         </td>
                                         <td>
                                             <small>{{ $klien->nama_perusahaan ?? '-' }}</small>
+                                        </td>
+                                        <td>
+                                            <small>{{ $klien->tipe_klien == 'Perusahaan' ? ($klien->nama_penanggung_jawab ?? '-') : '-' }}</small>
                                         </td>
                                         <td class="d-none d-md-table-cell">
                                             <small>{{ $klien->email ?? '-' }}</small>
@@ -311,6 +330,7 @@
                         </tbody>
                     </table>
                 </div>
+                </form>
 
                 <!-- Pagination -->
                 <div class="mt-3">
@@ -339,9 +359,55 @@
 </div>
 
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const selectAll = document.getElementById('selectAll');
+    const checkboxes = document.querySelectorAll('.klien-checkbox');
+    const btnBulkDelete = document.getElementById('btn-bulk-delete');
+    const btnBulkDeleteMobile = document.getElementById('btn-bulk-delete-mobile');
+    const selectedCount = document.getElementById('selected-count');
+    const selectedCountMobile = document.getElementById('selected-count-mobile');
+
+    function updateBulkDeleteButton() {
+        const checked = document.querySelectorAll('.klien-checkbox:checked').length;
+        if (checked > 0) {
+            if (btnBulkDelete) btnBulkDelete.style.display = 'inline-block';
+            if (btnBulkDeleteMobile) btnBulkDeleteMobile.style.display = 'block';
+            if (selectedCount) selectedCount.innerText = checked;
+            if (selectedCountMobile) selectedCountMobile.innerText = checked;
+        } else {
+            if (btnBulkDelete) btnBulkDelete.style.display = 'none';
+            if (btnBulkDeleteMobile) btnBulkDeleteMobile.style.display = 'none';
+        }
+    }
+
+    if (selectAll) {
+        selectAll.addEventListener('change', function() {
+            checkboxes.forEach(cb => {
+                cb.checked = selectAll.checked;
+            });
+            updateBulkDeleteButton();
+        });
+    }
+
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', function() {
+            updateBulkDeleteButton();
+            if (!this.checked && selectAll) {
+                selectAll.checked = false;
+            }
+        });
+    });
+});
+
 function confirmDelete(id) {
     if (confirm('Apakah Anda yakin ingin menghapus data klien ini?')) {
         document.getElementById('delete-form-' + id).submit();
+    }
+}
+
+function submitBulkDelete() {
+    if (confirm('Apakah Anda yakin ingin menghapus data klien yang dipilih?')) {
+        document.getElementById('bulk-delete-form').submit();
     }
 }
 </script>
