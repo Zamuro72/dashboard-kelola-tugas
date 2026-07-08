@@ -166,18 +166,15 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="status_manual">Status</label>
+                        <label for="status_manual">Status Manual</label>
                         <select name="status_manual" id="status_manual" class="form-control @error('status_manual') is-invalid @enderror">
-                            <option value="" disabled selected>-- Pilih Status --</option>
-                            <option value="ongoing proses deal" {{ old('status_manual') == 'ongoing proses deal' ? 'selected' : '' }}>Ongoing Proses Deal</option>
-                            <option value="belum jelas" {{ old('status_manual') == 'belum jelas' ? 'selected' : '' }}>Belum Jelas</option>
+                            <option value="" selected>-- Otomatis --</option>
                             <option value="proses terbit" {{ old('status_manual') == 'proses terbit' ? 'selected' : '' }}>Proses Terbit</option>
-                            <option value="follow up" {{ old('status_manual') == 'follow up' ? 'selected' : '' }}>Follow Up</option>
                         </select>
                         @error('status_manual')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
-                        <small class="text-muted">Abaikan untuk memakai status bawaan (Aktif, Sudah Expired, dll)</small>
+                        <small class="text-muted">Pilih Proses Terbit jika sertifikat belum selesai.</small>
                     </div>
 
                     <div class="form-group">

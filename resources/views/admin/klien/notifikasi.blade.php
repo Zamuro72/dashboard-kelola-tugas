@@ -281,7 +281,7 @@
     </div>
 
     <!-- Sertifikat Sudah Expired -->
-    <div class="card shadow mb-4">
+    <div class="card shadow mb-4" id="sudah-expired">
         <div class="card-header py-3 bg-danger d-flex align-items-center justify-content-between flex-wrap gap-2">
             <h6 class="m-0 font-weight-bold text-white">
                 <i class="fas fa-times-circle"></i> Sertifikat Sudah Expired

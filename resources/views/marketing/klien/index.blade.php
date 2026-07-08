@@ -64,6 +64,15 @@
                 <div class="modal-body">
                     <form id="formPilihJasa">
                         <div class="form-group">
+                            <label>Kategori Klien</label>
+                            <select class="form-control" id="kategoriKlien">
+                                <option value="aktif" selected>Klien Aktif</option>
+                                <option value="tidak_aktif">Klien Tidak Aktif</option>
+                            </select>
+                        </div>
+                        
+                        <div id="formKlienAktif">
+                            <div class="form-group">
                             <label for="pilihJasa">Pilih Jasa</label>
                             <select class="form-control" id="pilihJasa" required>
                                 <option value="" disabled selected>-- Pilih Jasa --</option>
@@ -80,11 +89,12 @@
                             <label for="pilihTahun">Tahun</label>
                             <input type="number" class="form-control" id="pilihTahun" value="{{ date('Y') }}" required>
                         </div>
-                        <div class="form-group" id="groupSkema" style="display: none;">
-                            <label for="pilihSkema">Pilih Skema</label>
-                            <select class="form-control" id="pilihSkema">
-                                <option value="" disabled selected>-- Pilih Skema --</option>
-                            </select>
+                            <div class="form-group" id="groupSkema" style="display: none;">
+                                <label for="pilihSkema">Pilih Skema</label>
+                                <select class="form-control" id="pilihSkema">
+                                    <option value="" disabled selected>-- Pilih Skema --</option>
+                                </select>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -149,6 +159,16 @@
         const pilihSkema = document.getElementById('pilihSkema');
         const groupSkema = document.getElementById('groupSkema');
         const btnLanjut = document.getElementById('btnLanjutTambah');
+        const kategoriKlien = document.getElementById('kategoriKlien');
+        const formKlienAktif = document.getElementById('formKlienAktif');
+
+        kategoriKlien.addEventListener('change', function() {
+            if (this.value === 'aktif') {
+                formKlienAktif.style.display = 'block';
+            } else {
+                formKlienAktif.style.display = 'none';
+            }
+        });
 
         pilihJasa.addEventListener('change', function() {
             const selectedOption = this.options[this.selectedIndex];
@@ -173,10 +193,15 @@
         });
 
         btnLanjut.addEventListener('click', function() {
+            if (kategoriKlien.value === 'tidak_aktif') {
+                window.location.href = "{{ route('klien-tidak-aktif.create') }}";
+                return;
+            }
+
             const jasaId = pilihJasa.value;
             const tahun = document.getElementById('pilihTahun').value;
             const skemaId = pilihSkema.value;
-            const hasSkema = pilihJasa.options[pilihJasa.selectedIndex].getAttribute('data-has-skema') === '1';
+            const hasSkema = pilihJasa.options[pilihJasa.selectedIndex]?.getAttribute('data-has-skema') === '1';
 
             if (!jasaId) {
                 alert('Silakan pilih jasa terlebih dahulu');
@@ -237,7 +262,7 @@
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <i class="fas fa-times-circle"></i>
             <strong>Perhatian!</strong> Ada {{ $jumlahSudahExpired }} sertifikat klien yang sudah expired.
-            <a href="{{ route('klien.notifikasi') }}" class="alert-link">Lihat detail</a>
+            <a href="{{ route('klien.notifikasi') }}#sudah-expired" class="alert-link">Lihat detail</a>
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>

@@ -213,7 +213,7 @@
     </div>
 
     <div class="col-xl-3 col-md-6 col-6 mb-4">
-        <a href="{{ route('klien.status', 'ongoing-proses-deal') }}" style="text-decoration: none;">
+        <a href="{{ route('klien-tidak-aktif.index', ['status' => 'ongoing proses deal', 'from' => 'dashboard']) }}" style="text-decoration: none;">
             <div class="card border-left-warning shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
@@ -232,7 +232,7 @@
     </div>
 
     <div class="col-xl-3 col-md-6 col-6 mb-4">
-        <a href="{{ route('klien.status', 'belum-jelas') }}" style="text-decoration: none;">
+        <a href="{{ route('klien-tidak-aktif.index', ['status' => 'belum jelas', 'from' => 'dashboard']) }}" style="text-decoration: none;">
             <div class="card border-left-secondary shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
@@ -251,7 +251,7 @@
     </div>
 
     <div class="col-xl-3 col-md-6 col-6 mb-4">
-        <a href="{{ route('klien.status', 'follow-up') }}" style="text-decoration: none;">
+        <a href="{{ route('klien-tidak-aktif.index', ['status' => 'follow up', 'from' => 'dashboard']) }}" style="text-decoration: none;">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">

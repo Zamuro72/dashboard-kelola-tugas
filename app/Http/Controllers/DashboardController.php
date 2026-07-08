@@ -38,14 +38,14 @@ class DashboardController extends Controller
                 ? Klien::prosesTerbit()->count()
                 : Klien::where('user_id', $user->id)->prosesTerbit()->count(),
             "jumlahKlienOngoingProsesDeal" => $user->jabatan == 'Admin'
-                ? Klien::ongoingProsesDeal()->count()
-                : Klien::where('user_id', $user->id)->ongoingProsesDeal()->count(),
+                ? \App\Models\KlienTidakAktif::where('status', 'ongoing proses deal')->count()
+                : \App\Models\KlienTidakAktif::where('user_id', $user->id)->where('status', 'ongoing proses deal')->count(),
             "jumlahKlienBelumJelas" => $user->jabatan == 'Admin'
-                ? Klien::belumJelas()->count()
-                : Klien::where('user_id', $user->id)->belumJelas()->count(),
+                ? \App\Models\KlienTidakAktif::where('status', 'belum jelas')->count()
+                : \App\Models\KlienTidakAktif::where('user_id', $user->id)->where('status', 'belum jelas')->count(),
             "jumlahKlienFollowUp" => $user->jabatan == 'Admin'
-                ? Klien::followUp()->count()
-                : Klien::where('user_id', $user->id)->followUp()->count(),
+                ? \App\Models\KlienTidakAktif::where('status', 'follow up')->count()
+                : \App\Models\KlienTidakAktif::where('user_id', $user->id)->where('status', 'follow up')->count(),
         );
         return view('dashboard', $data);
     }

@@ -253,7 +253,7 @@ class KlienController extends Controller
             'email' => 'nullable|email',
             'no_whatsapp' => 'nullable',
             'sertifikat_terbit' => 'nullable|date',
-            'status_manual' => 'nullable|in:ongoing proses deal,belum jelas,proses terbit,follow up',
+            'status_manual' => 'nullable|in:proses terbit',
             'catatan' => 'nullable|string',
         ];
 
@@ -352,7 +352,7 @@ class KlienController extends Controller
             'email' => 'nullable|email',
             'no_whatsapp' => 'nullable',
             'sertifikat_terbit' => 'nullable|date',
-            'status_manual' => 'nullable|in:ongoing proses deal,belum jelas,proses terbit,follow up',
+            'status_manual' => 'nullable|in:proses terbit',
             'catatan' => 'nullable|string',
         ];
 

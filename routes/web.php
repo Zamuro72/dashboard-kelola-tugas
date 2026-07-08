@@ -189,6 +189,9 @@ route::middleware('checkLogin')->group(function () {
         Route::get('/klien/import', [KlienController::class, 'importForm'])->name('klien.import.form');
         Route::post('/klien/import', [KlienController::class, 'import'])->name('klien.import');
 
+        // Klien Tidak Aktif
+        Route::resource('klien-tidak-aktif', App\Http\Controllers\KlienTidakAktifController::class);
+
         // Delete Data by Year
         Route::post('/klien/delete-year', [KlienController::class, 'deleteByYear'])->name('klien.deleteYear');
     });
