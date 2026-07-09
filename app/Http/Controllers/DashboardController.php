@@ -46,6 +46,21 @@ class DashboardController extends Controller
             "jumlahKlienFollowUp" => $user->jabatan == 'Admin'
                 ? \App\Models\KlienTidakAktif::where('status', 'follow up')->count()
                 : \App\Models\KlienTidakAktif::where('user_id', $user->id)->where('status', 'follow up')->count(),
+            "jumlahKlienBelumDihubungi" => $user->jabatan == 'Admin'
+                ? \App\Models\KlienTidakAktif::where('status', 'belum dihubungi')->count()
+                : \App\Models\KlienTidakAktif::where('user_id', $user->id)->where('status', 'belum dihubungi')->count(),
+            "jumlahKlienSudahDiblasting" => $user->jabatan == 'Admin'
+                ? \App\Models\KlienTidakAktif::where('status', 'sudah diblasting')->count()
+                : \App\Models\KlienTidakAktif::where('user_id', $user->id)->where('status', 'sudah diblasting')->count(),
+            "jumlahKlienMenungguRespon" => $user->jabatan == 'Admin'
+                ? \App\Models\KlienTidakAktif::where('status', 'menunggu respon')->count()
+                : \App\Models\KlienTidakAktif::where('user_id', $user->id)->where('status', 'menunggu respon')->count(),
+            "jumlahKlienDeal" => $user->jabatan == 'Admin'
+                ? \App\Models\KlienTidakAktif::where('status', 'deal')->count()
+                : \App\Models\KlienTidakAktif::where('user_id', $user->id)->where('status', 'deal')->count(),
+            "jumlahKlienTidakBerminat" => $user->jabatan == 'Admin'
+                ? \App\Models\KlienTidakAktif::where('status', 'tidak berminat')->count()
+                : \App\Models\KlienTidakAktif::where('user_id', $user->id)->where('status', 'tidak berminat')->count(),
         );
         return view('dashboard', $data);
     }

@@ -40,7 +40,12 @@
                     <div class="col-md-3">
                         <select name="status" class="form-control" onchange="this.form.submit()">
                             <option value="">Semua Status</option>
+                            <option value="belum dihubungi" {{ request('status') == 'belum dihubungi' ? 'selected' : '' }}>Belum Dihubungi</option>
+                            <option value="sudah diblasting" {{ request('status') == 'sudah diblasting' ? 'selected' : '' }}>Sudah Diblasting</option>
+                            <option value="menunggu respon" {{ request('status') == 'menunggu respon' ? 'selected' : '' }}>Menunggu Respon</option>
                             <option value="ongoing proses deal" {{ request('status') == 'ongoing proses deal' ? 'selected' : '' }}>Ongoing Proses Deal</option>
+                            <option value="deal" {{ request('status') == 'deal' ? 'selected' : '' }}>Deal</option>
+                            <option value="tidak berminat" {{ request('status') == 'tidak berminat' ? 'selected' : '' }}>Tidak Berminat</option>
                             <option value="belum jelas" {{ request('status') == 'belum jelas' ? 'selected' : '' }}>Belum Jelas</option>
                             <option value="follow up" {{ request('status') == 'follow up' ? 'selected' : '' }}>Follow Up</option>
                         </select>
@@ -63,11 +68,16 @@
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Tipe</th>
-                            <th>Nama</th>
                             <th>Tahun</th>
+                            <th>Nama Klien</th>
+                            <th>Perusahaan</th>
+                            <th>Bidang Usaha</th>
+                            <th>Kota</th>
                             <th>Email</th>
                             <th>WhatsApp</th>
+                            <th>Produk Minat</th>
+                            <th>PIC Sales</th>
+                            <th>Keterangan Blasting</th>
                             <th>Status</th>
                             <th>Aksi</th>
                         </tr>
@@ -76,22 +86,11 @@
                         @forelse($kliens as $index => $klien)
                             <tr>
                                 <td>{{ ($kliens->currentPage() - 1) * $kliens->perPage() + $index + 1 }}</td>
-                                <td>
-                                    @if($klien->tipe_klien == 'Personal')
-                                        <span class="badge badge-info">Personal</span>
-                                    @else
-                                        <span class="badge badge-secondary">Perusahaan</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    @if($klien->tipe_klien == 'Personal')
-                                        {{ $klien->nama_klien }}
-                                    @else
-                                        {{ $klien->nama_perusahaan }}
-                                        <br><small class="text-muted">PJ: {{ $klien->nama_penanggung_jawab }}</small>
-                                    @endif
-                                </td>
                                 <td>{{ $klien->tahun }}</td>
+                                <td>{{ $klien->nama_klien ?? '-' }}</td>
+                                <td>{{ $klien->nama_perusahaan ?? '-' }}</td>
+                                <td>{{ $klien->bidang_usaha ?? '-' }}</td>
+                                <td>{{ $klien->kota ?? '-' }}</td>
                                 <td>{{ $klien->email ?? '-' }}</td>
                                 <td>
                                     @if($klien->no_whatsapp)
@@ -102,20 +101,46 @@
                                         -
                                     @endif
                                 </td>
+                                <td>{{ $klien->produk_minat ?? '-' }}</td>
+                                <td>{{ $klien->pic_sales ?? '-' }}</td>
                                 <td>
-                                    @if($klien->status == 'ongoing proses deal')
-                                        <span class="badge badge-warning">Ongoing Proses Deal</span>
-                                    @elseif($klien->status == 'belum jelas')
-                                        <span class="badge badge-secondary">Belum Jelas</span>
-                                    @elseif($klien->status == 'follow up')
-                                        <span class="badge badge-primary">Follow Up</span>
+                                    @if($klien->terakhir_blasting_wa)
+                                        <span class="badge badge-success d-block mb-1">WA: {{ $klien->terakhir_blasting_wa->format('d M Y, H:i') }}</span>
+                                    @endif
+                                    @if($klien->terakhir_blasting_email)
+                                        <span class="badge badge-info d-block">Email: {{ $klien->terakhir_blasting_email->format('d M Y, H:i') }}</span>
                                     @endif
                                 </td>
                                 <td>
-                                    <a href="{{ route('klien-tidak-aktif.edit', $klien->id) }}" class="btn btn-sm btn-primary">
+                                    <span class="badge badge-secondary">{{ ucwords($klien->status) }}</span>
+                                </td>
+                                <td>
+                                    <!-- Edit Status Button -->
+                                    <button type="button" class="btn btn-sm btn-warning mb-1" data-toggle="modal" data-target="#editStatusModal{{ $klien->id }}">
+                                        <i class="fas fa-tasks"></i> Edit Status
+                                    </button>
+
+                                    <!-- Blasting WA Button -->
+                                    <form action="{{ route('klien-tidak-aktif.blastingWa', $klien->id) }}" method="POST" class="d-inline mb-1" target="_blank">
+                                        @csrf
+                                        <button class="btn btn-sm btn-success" {{ !$klien->no_whatsapp ? 'disabled' : '' }}>
+                                            <i class="fab fa-whatsapp"></i> WA
+                                        </button>
+                                    </form>
+
+                                    <!-- Blasting Email Button -->
+                                    <form action="{{ route('klien-tidak-aktif.blastingEmail', $klien->id) }}" method="POST" class="d-inline mb-1">
+                                        @csrf
+                                        <button class="btn btn-sm btn-info" {{ !$klien->email ? 'disabled' : '' }}>
+                                            <i class="fas fa-envelope"></i> Email
+                                        </button>
+                                    </form>
+
+                                    <!-- Edit & Delete Buttons -->
+                                    <a href="{{ route('klien-tidak-aktif.edit', $klien->id) }}" class="btn btn-sm btn-primary mb-1">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form action="{{ route('klien-tidak-aktif.destroy', $klien->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin hapus data ini?')">
+                                    <form action="{{ route('klien-tidak-aktif.destroy', $klien->id) }}" method="POST" class="d-inline mb-1" onsubmit="return confirm('Yakin hapus data ini?')">
                                         @csrf
                                         @method('DELETE')
                                         <button class="btn btn-sm btn-danger">
@@ -124,9 +149,46 @@
                                     </form>
                                 </td>
                             </tr>
+
+                            <!-- Modal Edit Status -->
+                            <div class="modal fade" id="editStatusModal{{ $klien->id }}" tabindex="-1" role="dialog" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <form action="{{ route('klien-tidak-aktif.updateStatus', $klien->id) }}" method="POST">
+                                            @csrf
+                                            @method('PATCH')
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Edit Status Klien</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <label>Status</label>
+                                                    <select name="status" class="form-control" required>
+                                                        <option value="belum dihubungi" {{ $klien->status == 'belum dihubungi' ? 'selected' : '' }}>Belum Dihubungi</option>
+                                                        <option value="sudah diblasting" {{ $klien->status == 'sudah diblasting' ? 'selected' : '' }}>Sudah Diblasting</option>
+                                                        <option value="menunggu respon" {{ $klien->status == 'menunggu respon' ? 'selected' : '' }}>Menunggu Respon</option>
+                                                        <option value="ongoing proses deal" {{ $klien->status == 'ongoing proses deal' ? 'selected' : '' }}>Ongoing Proses Deal</option>
+                                                        <option value="deal" {{ $klien->status == 'deal' ? 'selected' : '' }}>Deal</option>
+                                                        <option value="tidak berminat" {{ $klien->status == 'tidak berminat' ? 'selected' : '' }}>Tidak Berminat</option>
+                                                        <option value="belum jelas" {{ $klien->status == 'belum jelas' ? 'selected' : '' }}>Belum Jelas</option>
+                                                        <option value="follow up" {{ $klien->status == 'follow up' ? 'selected' : '' }}>Follow Up</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                                                <button type="submit" class="btn btn-primary">Simpan</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
                         @empty
                             <tr>
-                                <td colspan="8" class="text-center">Data tidak ditemukan</td>
+                                <td colspan="13" class="text-center">Data tidak ditemukan</td>
                             </tr>
                         @endforelse
                     </tbody>

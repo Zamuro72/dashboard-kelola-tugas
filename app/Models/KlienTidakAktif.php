@@ -13,19 +13,23 @@ class KlienTidakAktif extends Model
 
     protected $fillable = [
         'user_id',
-        'tipe_klien',
         'tahun',
         'nama_klien',
-        'tanggal_lahir',
         'nama_perusahaan',
-        'nama_penanggung_jawab',
+        'bidang_usaha',
+        'kota',
         'email',
         'no_whatsapp',
+        'produk_minat',
+        'pic_sales',
         'status',
+        'terakhir_blasting_wa',
+        'terakhir_blasting_email',
     ];
 
     protected $casts = [
-        'tanggal_lahir' => 'date',
+        'terakhir_blasting_wa' => 'datetime',
+        'terakhir_blasting_email' => 'datetime',
     ];
 
     public function user()
