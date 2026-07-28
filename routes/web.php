@@ -32,6 +32,8 @@ route::middleware('checkLogin')->group(function () {
     Route::get('dashboard/chart-data-v2', [DashboardController::class, 'getChartData'])->name('dashboard.chartData');
     Route::get('dashboard/chart-details-v2', [DashboardController::class, 'getChartDetails'])->name('dashboard.chartDetails');
     Route::get('dashboard/pie-chart-data-v2', [DashboardController::class, 'getPieChartData'])->name('dashboard.pieChartData');
+    Route::get('dashboard/klien-tidak-aktif-chart-data', [DashboardController::class, 'getKlienTidakAktifChartData'])->name('dashboard.klienTidakAktifChartData');
+    Route::get('dashboard/klien-tidak-aktif-chart-details', [DashboardController::class, 'getKlienTidakAktifChartDetails'])->name('dashboard.klienTidakAktifChartDetails');
 
     Route::get('tugas', [TugasController::class, 'index'])->name('tugas');
     Route::get('tugas/pdf', [TugasController::class, 'pdf'])->name('tugasPdf');

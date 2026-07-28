@@ -23,6 +23,7 @@ class KlienTidakAktif extends Model
         'produk_minat',
         'pic_sales',
         'status',
+        'harga',
         'terakhir_blasting_wa',
         'terakhir_blasting_email',
     ];

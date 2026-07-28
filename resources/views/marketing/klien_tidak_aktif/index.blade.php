@@ -78,6 +78,7 @@
                             <th>Produk Minat</th>
                             <th>PIC Sales</th>
                             <th>Keterangan Blasting</th>
+                            <th>Harga</th>
                             <th>Status</th>
                             <th>Aksi</th>
                         </tr>
@@ -109,6 +110,11 @@
                                     @endif
                                     @if($klien->terakhir_blasting_email)
                                         <span class="badge badge-info d-block">Email: {{ $klien->terakhir_blasting_email->format('d M Y, H:i') }}</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($klien->harga)
+                                        Rp. {{ number_format($klien->harga, 0, ',', '.') }}
                                     @endif
                                 </td>
                                 <td>

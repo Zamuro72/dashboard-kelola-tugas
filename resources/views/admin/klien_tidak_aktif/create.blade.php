@@ -93,6 +93,14 @@
                         </div>
 
                         <div class="form-group">
+                            <label>Harga (Rp)</label>
+                            <input type="number" name="harga" class="form-control @error('harga') is-invalid @enderror" value="{{ old('harga') }}" placeholder="Contoh: 1000000">
+                            @error('harga')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
                             <label>Status <span class="text-danger">*</span></label>
                             <select name="status" class="form-control @error('status') is-invalid @enderror" required>
                                 <option value="" disabled selected>-- Pilih Status --</option>

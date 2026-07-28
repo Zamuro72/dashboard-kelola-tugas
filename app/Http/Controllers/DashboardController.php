@@ -337,4 +337,130 @@ class DashboardController extends Controller
             'years' => $availableYears
         ])->header('Cache-Control', 'no-cache, no-store, must-revalidate');
     }
+
+    public function getKlienTidakAktifChartData(Request $request)
+    {
+        $year = $request->input('year', date('Y'));
+        $period = $request->input('period', 'monthly');
+
+        $user = Auth::user();
+
+        $query = \App\Models\KlienTidakAktif::where('tahun', $year);
+
+        if ($user->jabatan === 'Marketing') {
+            $query->where('user_id', $user->id);
+        }
+
+        $data = $query->get();
+
+        $statuses = [
+            'belum dihubungi', 'sudah diblasting', 'menunggu respon', 
+            'ongoing proses deal', 'deal', 'tidak berminat', 'belum jelas', 'follow up'
+        ];
+
+        $series = [];
+        $colors = [
+            '#858796', // belum dihubungi
+            '#36b9cc', // sudah diblasting
+            '#f6c23e', // menunggu respon
+            '#f6c23e', // ongoing proses deal
+            '#1cc88a', // deal
+            '#e74a3b', // tidak berminat
+            '#858796', // belum jelas
+            '#4e73df'  // follow up
+        ];
+
+        $categories = [];
+        if ($period === 'monthly') {
+            $categories = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        } else {
+            for ($i = 1; $i <= 52; $i++) {
+                $categories[] = 'W' . $i;
+            }
+        }
+
+        foreach ($statuses as $index => $status) {
+            $statusData = [];
+
+            if ($period === 'monthly') {
+                for ($m = 1; $m <= 12; $m++) {
+                    $count = $data->filter(function ($item) use ($status, $m) {
+                        return strtolower($item->status) == strtolower($status) && Carbon::parse($item->created_at)->month == $m;
+                    })->count();
+                    $statusData[] = $count;
+                }
+            } else {
+                for ($w = 1; $w <= 52; $w++) {
+                    $count = $data->filter(function ($item) use ($status, $w) {
+                        return strtolower($item->status) == strtolower($status) && Carbon::parse($item->created_at)->weekOfYear == $w;
+                    })->count();
+                    $statusData[] = $count;
+                }
+            }
+
+            $series[] = [
+                'name' => ucwords($status),
+                'data' => $statusData,
+                'color' => $colors[$index]
+            ];
+        }
+
+        $yearsQuery = \App\Models\KlienTidakAktif::select('tahun')->distinct()->orderBy('tahun', 'desc');
+        if ($user->jabatan === 'Marketing') {
+            $yearsQuery->where('user_id', $user->id);
+        }
+
+        return response()->json([
+            'series' => $series,
+            'xaxis' => [
+                'categories' => $categories
+            ],
+            'years' => $yearsQuery->pluck('tahun'),
+        ])->header('Cache-Control', 'no-cache, no-store, must-revalidate');
+    }
+
+    public function getKlienTidakAktifChartDetails(Request $request)
+    {
+        $year = $request->input('year');
+        $statusName = strtolower($request->input('status')); 
+        $period = $request->input('period'); 
+        $index = $request->input('index'); 
+
+        $user = Auth::user();
+
+        $query = \App\Models\KlienTidakAktif::with(['user'])->where('tahun', $year);
+
+        if ($user->jabatan === 'Marketing') {
+            $query->where('user_id', $user->id);
+        }
+
+        $query->where('status', $statusName);
+
+        if ($period === 'monthly') {
+            $month = $index + 1;
+            $query->whereMonth('created_at', $month);
+        } else {
+            $week = $index + 1;
+            $query->whereRaw('WEEKOFYEAR(created_at) = ?', [$week]);
+        }
+
+        $klien = $query->orderBy('created_at', 'desc')->get();
+
+        $formattedData = $klien->map(function ($k) use ($user) {
+            $pemilikData = '-';
+            if ($user->jabatan === 'Admin') {
+                $pemilikData = $k->user ? $k->user->name : '-';
+            }
+
+            return [
+                'nama' => $k->nama_klien ?: ($k->nama_perusahaan ?: '-'),
+                'tipe' => $k->bidang_usaha ?: '-',
+                'pemilik' => $pemilikData,
+                'tanggal_terbit' => Carbon::parse($k->created_at)->format('d M Y'),
+                'status_label' => ucwords($k->status),
+            ];
+        });
+
+        return response()->json($formattedData);
+    }
 }

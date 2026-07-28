@@ -87,6 +87,7 @@ class KlienTidakAktifController extends Controller
             'no_whatsapp' => 'nullable|string|max:20',
             'produk_minat' => 'nullable|string|max:255',
             'pic_sales' => 'nullable|string|max:255',
+            'harga' => 'nullable|numeric',
         ]);
 
         KlienTidakAktif::create([
@@ -100,6 +101,7 @@ class KlienTidakAktifController extends Controller
             'no_whatsapp' => $request->no_whatsapp,
             'produk_minat' => $request->produk_minat,
             'pic_sales' => $request->pic_sales,
+            'harga' => $request->harga,
             'status' => $request->status,
         ]);
 
@@ -154,6 +156,7 @@ class KlienTidakAktifController extends Controller
             'no_whatsapp' => 'nullable|string|max:20',
             'produk_minat' => 'nullable|string|max:255',
             'pic_sales' => 'nullable|string|max:255',
+            'harga' => 'nullable|numeric',
         ]);
 
         $klien->update([
@@ -166,6 +169,7 @@ class KlienTidakAktifController extends Controller
             'no_whatsapp' => $request->no_whatsapp,
             'produk_minat' => $request->produk_minat,
             'pic_sales' => $request->pic_sales,
+            'harga' => $request->harga,
             'status' => $request->status,
         ]);
 

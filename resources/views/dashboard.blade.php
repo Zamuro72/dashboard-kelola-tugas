@@ -449,6 +449,61 @@
     @endif
 
 
+    @if(in_array(auth()->user()->jabatan, ['Admin', 'Marketing']))
+    <!-- New Chart Section: Database Klien (Klien Tidak Aktif) -->
+    <div class="col-xl-12 col-lg-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Database Klien (Tidak Aktif)</h6>
+                <div class="d-flex align-items-center">
+                    <select id="ktaYearFilter" class="form-control form-control-sm mr-2" style="width: auto;">
+                        <!-- Options populated by JS -->
+                    </select>
+                    <div class="btn-group btn-group-sm btn-group-toggle" data-toggle="buttons">
+                        <label class="btn btn-primary active">
+                            <input type="radio" name="ktaPeriodOptions" id="ktaOptionMonthly" autocomplete="off" checked value="monthly"> Bulanan
+                        </label>
+                        <label class="btn btn-primary">
+                            <input type="radio" name="ktaPeriodOptions" id="ktaOptionWeekly" autocomplete="off" value="weekly"> Mingguan
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="ktaChart"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Details Section KTA (Hidden by default) -->
+    <div class="col-xl-12 col-lg-12" id="ktaDetailsCard" style="display: none;">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary" id="ktaDetailsTitle">Detail Data Database Klien</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="ktaDetailsTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Nama Klien/Perusahaan</th>
+                                <th>Bidang Usaha</th>
+                                @if(auth()->user()->jabatan == 'Admin')
+                                    <th>Pemilik Data</th>
+                                @endif
+                                <th>Tanggal Dibuat</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
 </div>
 
 @push('scripts')
@@ -850,9 +905,163 @@
             loadPieChart(selectedYear);
         });
 
+        // Setup variables for KTA
+        var ktaChart;
+        var ktaCurrentYear = new Date().getFullYear();
+        var ktaCurrentPeriod = 'monthly';
+
+        function initKtaChart(data) {
+            var options = {
+                series: data.series,
+                chart: {
+                    type: 'bar',
+                    height: 400,
+                    events: {
+                        dataPointSelection: function(event, chartContext, config) {
+                            var dataPointIndex = config.dataPointIndex;
+                            var seriesIndex = config.seriesIndex;
+                            var statusName = config.w.config.series[seriesIndex].name;
+                            
+                            fetchKtaDetails(ktaCurrentYear, ktaCurrentPeriod, statusName, dataPointIndex);
+                        }
+                    }
+                },
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        columnWidth: '70%',
+                        endingShape: 'flat',
+                        borderRadius: 0
+                    },
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    show: true,
+                    width: 2,
+                    colors: ['transparent']
+                },
+                xaxis: {
+                    categories: data.xaxis.categories,
+                },
+                yaxis: {
+                    title: {
+                        text: 'Jumlah Klien'
+                    }
+                },
+                fill: {
+                    opacity: 1
+                },
+                colors: data.series.map(s => s.color),
+                legend: {
+                    position: 'bottom',
+                    fontSize: '12px'
+                },
+                tooltip: {
+                    y: {
+                        formatter: function (val) {
+                            return val + " klien"
+                        }
+                    }
+                }
+            };
+
+            if(ktaChart) {
+                ktaChart.destroy();
+            }
+
+            ktaChart = new ApexCharts(document.querySelector("#ktaChart"), options);
+            ktaChart.render();
+        }
+
+        function loadKtaChartData(year, period) {
+            $.ajax({
+                url: "/dashboard/klien-tidak-aktif-chart-data?_cb=" + new Date().getTime(),
+                type: "GET",
+                cache: false,
+                data: { year: year, period: period },
+                success: function(response) {
+                    if ($('#ktaYearFilter option').length === 0) {
+                        response.years.forEach(function(y) {
+                            $('#ktaYearFilter').append(new Option(y, y));
+                        });
+                        $('#ktaYearFilter').val(year);
+                    } else {
+                        response.years.forEach(function(y) {
+                            if ($('#ktaYearFilter option[value="' + y + '"]').length === 0) {
+                                $('#ktaYearFilter').prepend(new Option(y, y));
+                            }
+                        });
+                    }
+                    initKtaChart(response);
+                },
+                error: function(xhr) {
+                    console.error("Error fetching KTA chart data", xhr);
+                }
+            });
+        }
+
+        function fetchKtaDetails(year, period, statusName, index) {
+            var colCount = isAdmin ? 5 : 4;
+            
+            $('#ktaDetailsCard').show();
+            $('#ktaDetailsTitle').text('Detail Data: ' + statusName + ' (' + (period === 'monthly' ? 'Bulan ke-' + (index+1) : 'Minggu ke-' + (index+1)) + ')');
+            
+            $('html, body').animate({
+                scrollTop: $("#ktaDetailsCard").offset().top
+            }, 500);
+
+            $('#ktaDetailsTable tbody').html('<tr><td colspan="' + colCount + '" class="text-center">Loading...</td></tr>');
+
+            $.ajax({
+                url: "/dashboard/klien-tidak-aktif-chart-details?_cb=" + new Date().getTime(),
+                type: "GET",
+                data: { 
+                    year: year, 
+                    period: period, 
+                    status: statusName, 
+                    index: index 
+                },
+                success: function(response) {
+                    var rows = '';
+                    if(response.length > 0) {
+                        response.forEach(function(item) {
+                            rows += '<tr>';
+                            rows += '<td>' + item.nama + '</td>';
+                            rows += '<td>' + item.tipe + '</td>';
+                            if (isAdmin) {
+                                rows += '<td>' + item.pemilik + '</td>';
+                            }
+                            rows += '<td>' + item.tanggal_terbit + '</td>';
+                            rows += '<td>' + getStatusBadge(item.status_label) + '</td>';
+                            rows += '</tr>';
+                        });
+                    } else {
+                        rows = '<tr><td colspan="' + colCount + '" class="text-center">Tidak ada data detail</td></tr>';
+                    }
+                    $('#ktaDetailsTable tbody').html(rows);
+                },
+                error: function(xhr) {
+                    $('#ktaDetailsTable tbody').html('<tr><td colspan="' + colCount + '" class="text-center text-danger">Gagal memuat data</td></tr>');
+                }
+            });
+        }
+
+        $('#ktaYearFilter').change(function() {
+            ktaCurrentYear = $(this).val();
+            loadKtaChartData(ktaCurrentYear, ktaCurrentPeriod);
+        });
+
+        $('input[name="ktaPeriodOptions"]').change(function() {
+            ktaCurrentPeriod = $(this).val();
+            loadKtaChartData(ktaCurrentYear, ktaCurrentPeriod);
+        });
+
         // Initial Load
         loadChartData(currentYear, currentPeriod);
         loadPieChart('all');
+        loadKtaChartData(ktaCurrentYear, ktaCurrentPeriod);
     });
 </script>
 @endpush
