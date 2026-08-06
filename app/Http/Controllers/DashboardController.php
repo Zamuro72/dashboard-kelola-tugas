@@ -62,6 +62,32 @@ class DashboardController extends Controller
                 ? \App\Models\KlienTidakAktif::where('status', 'tidak berminat')->count()
                 : \App\Models\KlienTidakAktif::where('user_id', $user->id)->where('status', 'tidak berminat')->count(),
         );
+
+        $duplicateKliensQuery = \App\Models\KlienTidakAktif::select('nama_klien', \Illuminate\Support\Facades\DB::raw('COUNT(id) as total'))
+            ->whereNotNull('nama_klien')
+            ->where('nama_klien', '!=', '')
+            ->groupBy('nama_klien')
+            ->havingRaw('COUNT(id) > 1');
+
+        if ($user->jabatan === 'Marketing') {
+            $duplicateKliensQuery->where('user_id', $user->id);
+        }
+
+        $duplicateKliensData = $duplicateKliensQuery->get();
+        $hasDuplicateKliens = $duplicateKliensData->count() > 0;
+        
+        $duplicateHtmlList = '';
+        if ($hasDuplicateKliens) {
+            $duplicateHtmlList = '<div style="text-align: left; max-height: 150px; overflow-y: auto; margin-top: 10px; background: #f8f9fc; padding: 10px; border-radius: 5px;"><ul>';
+            foreach ($duplicateKliensData as $dup) {
+                $duplicateHtmlList .= '<li><b>' . htmlspecialchars($dup->nama_klien) . '</b> (' . $dup->total . ' data)</li>';
+            }
+            $duplicateHtmlList .= '</ul></div>';
+        }
+
+        $data['hasDuplicateKliens'] = $hasDuplicateKliens;
+        $data['duplicateHtmlList'] = $duplicateHtmlList;
+
         return view('dashboard', $data);
     }
     public function getChartData(Request $request)

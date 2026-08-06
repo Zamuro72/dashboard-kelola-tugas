@@ -195,6 +195,7 @@ route::middleware('checkLogin')->group(function () {
         Route::patch('klien-tidak-aktif/{id}/status', [App\Http\Controllers\KlienTidakAktifController::class, 'updateStatus'])->name('klien-tidak-aktif.updateStatus');
         Route::post('klien-tidak-aktif/{id}/blasting-wa', [App\Http\Controllers\KlienTidakAktifController::class, 'blastingWa'])->name('klien-tidak-aktif.blastingWa');
         Route::post('klien-tidak-aktif/{id}/blasting-email', [App\Http\Controllers\KlienTidakAktifController::class, 'blastingEmail'])->name('klien-tidak-aktif.blastingEmail');
+        Route::post('klien-tidak-aktif/{id}/convert-to-aktif', [App\Http\Controllers\KlienTidakAktifController::class, 'convertToAktif'])->name('klien-tidak-aktif.convertToAktif');
 
         // Klien Tidak Aktif
         Route::resource('klien-tidak-aktif', App\Http\Controllers\KlienTidakAktifController::class);

@@ -1062,6 +1062,17 @@
         loadChartData(currentYear, currentPeriod);
         loadPieChart('all');
         loadKtaChartData(ktaCurrentYear, ktaCurrentPeriod);
+
+        @if(isset($hasDuplicateKliens) && $hasDuplicateKliens)
+        setTimeout(function() {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Perhatian!',
+                html: 'Terdapat <b>Data Klien Tidak Aktif</b> dengan nama yang sama/duplikat.<br>Mohon periksa kembali data Anda: {!! addslashes($duplicateHtmlList) !!}',
+                confirmButtonText: 'Tutup'
+            });
+        }, 1000);
+        @endif
     });
 </script>
 @endpush

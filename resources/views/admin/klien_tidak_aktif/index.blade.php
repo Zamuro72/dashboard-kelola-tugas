@@ -146,6 +146,13 @@
                                     <a href="{{ route('klien-tidak-aktif.edit', $klien->id) }}" class="btn btn-sm btn-primary mb-1">
                                         <i class="fas fa-edit"></i>
                                     </a>
+                                    
+                                    <!-- Convert to Aktif Button -->
+                                    @if(strtolower($klien->status) == 'deal')
+                                    <button type="button" class="btn btn-sm btn-dark mb-1" data-toggle="modal" data-target="#convertToAktifModal{{ $klien->id }}">
+                                        <i class="fas fa-check-circle"></i> Jadi Aktif
+                                    </button>
+                                    @endif
                                     <form action="{{ route('klien-tidak-aktif.destroy', $klien->id) }}" method="POST" class="d-inline mb-1" onsubmit="return confirm('Yakin hapus data ini?')">
                                         @csrf
                                         @method('DELETE')
@@ -155,6 +162,53 @@
                                     </form>
                                 </td>
                             </tr>
+
+                            <!-- Modal Convert to Aktif -->
+                            <div class="modal fade" id="convertToAktifModal{{ $klien->id }}" tabindex="-1" role="dialog" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <form action="{{ route('klien-tidak-aktif.convertToAktif', $klien->id) }}" method="POST">
+                                            @csrf
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Ubah Jadi Klien Aktif</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <label>Jasa <span class="text-danger">*</span></label>
+                                                    <select name="jasa_id" class="form-control jasa-select" data-target="#skemaSelect{{ $klien->id }}" required>
+                                                        <option value="">-- Pilih Jasa --</option>
+                                                        @foreach($jasas as $jasa)
+                                                            <option value="{{ $jasa->id }}" data-has-skema="{{ $jasa->has_skema }}">{{ $jasa->nama_jasa }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <div class="form-group skema-group" style="display:none;">
+                                                    <label>Skema</label>
+                                                    <select name="skema_id" id="skemaSelect{{ $klien->id }}" class="form-control">
+                                                        <option value="">-- Pilih Skema --</option>
+                                                        @foreach($jasas as $jasa)
+                                                            @foreach($jasa->skema as $skema)
+                                                                <option value="{{ $skema->id }}" data-jasa-id="{{ $jasa->id }}" style="display:none;">{{ $skema->nama_skema }}</option>
+                                                            @endforeach
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Tanggal Sertifikat Terbit <span class="text-muted">(Opsional)</span></label>
+                                                    <input type="date" name="sertifikat_terbit" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                                                <button type="submit" class="btn btn-success">Simpan & Aktifkan</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
 
                             <!-- Modal Edit Status -->
                             <div class="modal fade" id="editStatusModal{{ $klien->id }}" tabindex="-1" role="dialog" aria-hidden="true">
@@ -207,4 +261,32 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        $('.jasa-select').change(function() {
+            var selectedOption = $(this).find('option:selected');
+            var targetSkema = $(this).data('target');
+            var hasSkema = selectedOption.data('has-skema');
+            var jasaId = selectedOption.val();
+            
+            if (hasSkema == 1) {
+                $(this).closest('.modal-body').find('.skema-group').show();
+                $(targetSkema).attr('required', true);
+                
+                // Show only relevant skemas
+                $(targetSkema + ' option').hide();
+                $(targetSkema + ' option[value=""]').show();
+                $(targetSkema + ' option[data-jasa-id="'+jasaId+'"]').show();
+                $(targetSkema).val('');
+            } else {
+                $(this).closest('.modal-body').find('.skema-group').hide();
+                $(targetSkema).removeAttr('required');
+                $(targetSkema).val('');
+            }
+        });
+    });
+</script>
+@endpush
 @endsection

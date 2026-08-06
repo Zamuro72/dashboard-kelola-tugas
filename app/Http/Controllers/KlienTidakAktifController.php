@@ -42,11 +42,14 @@ class KlienTidakAktifController extends Controller
 
         $kliens = $query->orderBy('created_at', 'desc')->paginate(30)->withQueryString();
 
+        $jasas = \App\Models\Jasa::with('skema')->get();
+
         $data = [
             'title' => 'Data Klien Tidak Aktif',
             'menuAdminKlien' => 'active',
             'menuMarketingKlien' => 'active',
             'kliens' => $kliens,
+            'jasas' => $jasas,
         ];
 
         if ($isAdmin) {
@@ -234,6 +237,44 @@ class KlienTidakAktifController extends Controller
         $klien->update(['terakhir_blasting_email' => now()]);
 
         return redirect()->back()->with('success', 'Waktu blasting Email berhasil dicatat.');
+    }
+
+    public function convertToAktif(Request $request, $id)
+    {
+        $user = Auth::user();
+        $isAdmin = $user->jabatan == 'Admin';
+        $klien = KlienTidakAktif::findOrFail($id);
+
+        if (!$isAdmin && $klien->user_id != $user->id) {
+            abort(403);
+        }
+
+        $request->validate([
+            'jasa_id' => 'required|exists:jasa,id',
+            'skema_id' => 'nullable|exists:skema,id',
+            'sertifikat_terbit' => 'nullable|date',
+        ]);
+
+        $tipeKlien = $klien->nama_perusahaan ? 'Perusahaan' : 'Personal';
+
+        \App\Models\Klien::create([
+            'user_id' => $klien->user_id,
+            'jasa_id' => $request->jasa_id,
+            'skema_id' => $request->skema_id,
+            'tahun' => $klien->tahun,
+            'tipe_klien' => $tipeKlien,
+            'nama_klien' => $tipeKlien === 'Personal' ? ($klien->nama_klien ?? '-') : null,
+            'nama_perusahaan' => $klien->nama_perusahaan,
+            'nama_penanggung_jawab' => $tipeKlien === 'Perusahaan' ? ($klien->nama_klien ?? '-') : null,
+            'email' => $klien->email,
+            'no_whatsapp' => $klien->no_whatsapp,
+            'sertifikat_terbit' => $request->sertifikat_terbit,
+            'status_manual' => 'proses terbit',
+        ]);
+
+        $klien->delete();
+
+        return redirect()->back()->with('success', 'Data Klien Tidak Aktif berhasil diubah menjadi Klien Aktif.');
     }
 
     public function destroy($id)
