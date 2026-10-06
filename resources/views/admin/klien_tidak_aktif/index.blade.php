@@ -52,7 +52,7 @@
                     </div>
                     <div class="col-md-4">
                         <div class="input-group">
-                            <input type="text" name="search" class="form-control" placeholder="Cari nama, email, wa..." value="{{ request('search') }}">
+                            <input type="text" name="search" class="form-control" placeholder="Cari nama, email, wa, PIC Sales..." value="{{ request('search') }}">
                             <div class="input-group-append">
                                 <button class="btn btn-primary" type="submit">
                                     <i class="fas fa-search fa-sm"></i>

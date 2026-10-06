@@ -18,6 +18,30 @@
             <h6 class="m-0 font-weight-bold text-primary">Daftar Klien - {{ ucfirst($status) }}</h6>
         </div>
         <div class="card-body">
+            <!-- Form Search -->
+            <form method="GET" action="{{ route('klien.status', $status) }}" class="mb-3">
+                <div class="row align-items-end">
+                    <div class="col-12 col-sm-8 col-md-6 mb-2">
+                        <label class="small font-weight-bold text-gray-700 mb-1">Cari Nama / Penanggung Jawab</label>
+                        <div class="input-group input-group-sm">
+                            <input type="text" name="search_nama" class="form-control"
+                                   placeholder="Nama klien, perusahaan, atau penanggung jawab..."
+                                   value="{{ request('search_nama') }}">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                                @if(request('search_nama'))
+                                    <a href="{{ route('klien.status', $status) }}" class="btn btn-secondary">
+                                        <i class="fas fa-times"></i>
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
             @if($kliens->count() > 0)
 
                 {{-- ========== MOBILE CARD VIEW (< 768px) ========== --}}

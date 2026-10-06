@@ -54,9 +54,9 @@
                             </select>
                         </div>
                         <div class="col-12 col-sm-6 col-md-3 mb-2">
-                            <label class="small font-weight-bold text-gray-700 mb-1">Cari Nama Klien</label>
+                            <label class="small font-weight-bold text-gray-700 mb-1">Cari Nama / Penanggung Jawab</label>
                             <input type="text" name="search_nama" class="form-control form-control-sm"
-                                   placeholder="Ketik nama klien/perusahaan..."
+                                   placeholder="Nama klien, perusahaan, atau PJ..."
                                    value="{{ request('search_nama') }}">
                         </div>
                         <div class="col-12 col-sm-6 col-md-3 mb-2">

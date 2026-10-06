@@ -775,18 +775,29 @@ class KlienController extends Controller
                 $query->where('kliens.jasa_id', $request->filter_jasa);
             }
 
-            // Search by nama klien
+            // Search by nama klien / perusahaan / penanggung jawab
             if ($request->filled('search_nama')) {
                 $search = $request->search_nama;
                 $query->where(function ($q) use ($search) {
                     $q->where('kliens.nama_klien', 'like', '%' . $search . '%')
-                      ->orWhere('kliens.nama_perusahaan', 'like', '%' . $search . '%');
+                      ->orWhere('kliens.nama_perusahaan', 'like', '%' . $search . '%')
+                      ->orWhere('kliens.nama_penanggung_jawab', 'like', '%' . $search . '%');
                 });
             }
 
             // Data for filter dropdowns
             $users = User::where('jabatan', 'Marketing')->orWhere('jabatan', 'Admin')->orderBy('nama')->get();
             $jasaList = Jasa::orderBy('nama_jasa')->get();
+        } else {
+            // Search for marketing role
+            if ($request->filled('search_nama')) {
+                $search = $request->search_nama;
+                $query->where(function ($q) use ($search) {
+                    $q->where('kliens.nama_klien', 'like', '%' . $search . '%')
+                      ->orWhere('kliens.nama_perusahaan', 'like', '%' . $search . '%')
+                      ->orWhere('kliens.nama_penanggung_jawab', 'like', '%' . $search . '%');
+                });
+            }
         }
 
         $kliens = $query->orderBy('kliens.created_at', 'desc')->paginate(30)->withQueryString();
