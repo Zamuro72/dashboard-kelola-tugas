@@ -115,6 +115,12 @@
                                            class="btn btn-sm btn-primary" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
+                                        <button type="button" class="btn btn-sm btn-danger" 
+                                            data-toggle="modal" 
+                                            data-target="#modalTidakAktifAkan{{ $klien->id }}" 
+                                            title="Jadikan Klien Tidak Aktif">
+                                            <i class="fas fa-user-slash"></i>
+                                        </button>
                                     </td>
                                 </tr>
                             @endforeach
@@ -220,6 +226,12 @@
                                        class="btn btn-sm btn-primary" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
+                                    <button type="button" class="btn btn-sm btn-danger" 
+                                        data-toggle="modal" 
+                                        data-target="#modalTidakAktifAkan{{ $klien->id }}" 
+                                        title="Jadikan Klien Tidak Aktif">
+                                        <i class="fas fa-user-slash"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -247,6 +259,46 @@
                         @endif
                     @endforeach
                 </div>
+
+                {{-- Modals Pindah Tidak Aktif - Akan Expired --}}
+                @foreach($klienAkanExpired as $index => $klien)
+                    <div class="modal fade text-left" id="modalTidakAktifAkan{{ $klien->id }}" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header bg-danger text-white">
+                                    <h5 class="modal-title"><i class="fas fa-user-slash"></i> Pindahkan ke Klien Tidak Aktif</h5>
+                                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <form action="{{ route('klien.notifikasi.pindahTidakAktif', $klien->id) }}" method="POST">
+                                    @csrf
+                                    <div class="modal-body">
+                                        <p>Pindahkan <strong>{{ $klien->nama_klien ?? $klien->nama_perusahaan }}</strong> ke Klien Tidak Aktif?</p>
+                                        <div class="form-group">
+                                            <label for="status_tidak_aktif_akan_{{ $klien->id }}">Status</label>
+                                            <select name="status_tidak_aktif" id="status_tidak_aktif_akan_{{ $klien->id }}" class="form-control" required>
+                                                <option value="">-- Pilih Status --</option>
+                                                <option value="follow up">Follow Up</option>
+                                                <option value="ongoing proses deal">Ongoing Proses Deal</option>
+                                                <option value="belum jelas">Belum Jelas</option>
+                                                <option value="belum dihubungi">Belum Dihubungi</option>
+                                                <option value="sudah diblasting">Sudah Diblasting</option>
+                                                <option value="menunggu respon">Menunggu Respon</option>
+                                                <option value="deal">Deal</option>
+                                                <option value="tidak berminat">Tidak Berminat</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                                        <button type="submit" class="btn btn-danger"><i class="fas fa-user-slash"></i> Pindahkan</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
 
                 {{-- Desktop Modals --}}
                 @foreach($klienAkanExpired as $index => $klien)
@@ -380,6 +432,12 @@
                                            class="btn btn-sm btn-primary" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
+                                        <button type="button" class="btn btn-sm btn-danger" 
+                                            data-toggle="modal" 
+                                            data-target="#modalTidakAktifSudah{{ $klien->id }}" 
+                                            title="Jadikan Klien Tidak Aktif">
+                                            <i class="fas fa-user-slash"></i>
+                                        </button>
                                     </td>
                                 </tr>
                             @endforeach
@@ -485,6 +543,12 @@
                                        class="btn btn-sm btn-primary" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
+                                    <button type="button" class="btn btn-sm btn-danger" 
+                                        data-toggle="modal" 
+                                        data-target="#modalTidakAktifSudah{{ $klien->id }}" 
+                                        title="Jadikan Klien Tidak Aktif">
+                                        <i class="fas fa-user-slash"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -512,6 +576,46 @@
                         @endif
                     @endforeach
                 </div>
+
+                {{-- Modals Pindah Tidak Aktif - Sudah Expired --}}
+                @foreach($klienSudahExpired as $index => $klien)
+                    <div class="modal fade text-left" id="modalTidakAktifSudah{{ $klien->id }}" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header bg-danger text-white">
+                                    <h5 class="modal-title"><i class="fas fa-user-slash"></i> Pindahkan ke Klien Tidak Aktif</h5>
+                                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <form action="{{ route('klien.notifikasi.pindahTidakAktif', $klien->id) }}" method="POST">
+                                    @csrf
+                                    <div class="modal-body">
+                                        <p>Pindahkan <strong>{{ $klien->nama_klien ?? $klien->nama_perusahaan }}</strong> ke Klien Tidak Aktif?</p>
+                                        <div class="form-group">
+                                            <label for="status_tidak_aktif_sudah_{{ $klien->id }}">Status</label>
+                                            <select name="status_tidak_aktif" id="status_tidak_aktif_sudah_{{ $klien->id }}" class="form-control" required>
+                                                <option value="">-- Pilih Status --</option>
+                                                <option value="follow up">Follow Up</option>
+                                                <option value="ongoing proses deal">Ongoing Proses Deal</option>
+                                                <option value="belum jelas">Belum Jelas</option>
+                                                <option value="belum dihubungi">Belum Dihubungi</option>
+                                                <option value="sudah diblasting">Sudah Diblasting</option>
+                                                <option value="menunggu respon">Menunggu Respon</option>
+                                                <option value="deal">Deal</option>
+                                                <option value="tidak berminat">Tidak Berminat</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                                        <button type="submit" class="btn btn-danger"><i class="fas fa-user-slash"></i> Pindahkan</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
 
                 {{-- Desktop Modals --}}
                 @foreach($klienSudahExpired as $index => $klien)

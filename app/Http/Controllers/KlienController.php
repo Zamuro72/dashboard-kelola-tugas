@@ -719,6 +719,47 @@ class KlienController extends Controller
     }
 
     /**
+     * Pindahkan klien aktif/akan expired/sudah expired ke Klien Tidak Aktif dari halaman notifikasi
+     */
+    public function notifikasiPindahTidakAktif(Request $request, $id)
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        $isAdmin = $user->jabatan == 'Admin';
+
+        if ($isAdmin) {
+            $klien = Klien::findOrFail($id);
+        } else {
+            $klien = Klien::where('user_id', Auth::id())->findOrFail($id);
+        }
+
+        $request->validate([
+            'status_tidak_aktif' => 'required|in:ongoing proses deal,belum jelas,follow up,belum dihubungi,sudah diblasting,menunggu respon,deal,tidak berminat',
+        ]);
+
+        // Tentukan nama untuk KlienTidakAktif
+        $namaKlien = $klien->tipe_klien == 'Personal' ? $klien->nama_klien : $klien->nama_penanggung_jawab;
+        $namaPerusahaan = $klien->nama_perusahaan;
+
+        // Buat entri di klien_tidak_aktifs
+        \App\Models\KlienTidakAktif::create([
+            'user_id'        => $klien->user_id,
+            'tahun'          => $klien->tahun,
+            'nama_klien'     => $namaKlien,
+            'nama_perusahaan'=> $namaPerusahaan,
+            'email'          => $klien->email,
+            'no_whatsapp'    => $klien->no_whatsapp,
+            'status'         => $request->status_tidak_aktif,
+        ]);
+
+        // Hapus dari tabel kliens (aktif)
+        $klien->delete();
+
+        return redirect()->route('klien.notifikasi')
+            ->with('success', 'Klien berhasil dipindahkan ke Klien Tidak Aktif.');
+    }
+
+    /**
      * Filter Klien by Status
      */
     public function filterByStatus(Request $request, $status)

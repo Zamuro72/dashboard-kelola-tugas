@@ -166,6 +166,8 @@ route::middleware('checkLogin')->group(function () {
 
         // Notifikasi expired
         Route::get('/klien/notifikasi', [KlienController::class, 'notifikasi'])->name('klien.notifikasi');
+        // Pindah klien ke tidak aktif dari halaman notifikasi
+        Route::post('/klien/{id}/notifikasi-pindah-tidak-aktif', [KlienController::class, 'notifikasiPindahTidakAktif'])->name('klien.notifikasi.pindahTidakAktif');
 
         // Export Notifikasi - Akan Expired
         Route::get('/klien/notifikasi/akan-expired/pdf', [KlienController::class, 'notifikasiAkanExpiredPdf'])->name('klien.notifikasi.akan_expired.pdf');

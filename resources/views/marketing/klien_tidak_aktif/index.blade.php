@@ -104,12 +104,21 @@
                                 </td>
                                 <td>{{ $klien->produk_minat ?? '-' }}</td>
                                 <td>{{ $klien->pic_sales ?? '-' }}</td>
-                                <td>
+                                <td style="min-width:160px;">
                                     @if($klien->terakhir_blasting_wa)
-                                        <span class="badge badge-success d-block mb-1">WA: {{ $klien->terakhir_blasting_wa->format('d M Y, H:i') }}</span>
+                                        <div class="mb-1">
+                                            <span class="badge badge-success"><i class="fab fa-whatsapp"></i> Via WA</span>
+                                            <br><small class="text-muted">{{ $klien->terakhir_blasting_wa->format('d M Y, H:i') }}</small>
+                                        </div>
                                     @endif
                                     @if($klien->terakhir_blasting_email)
-                                        <span class="badge badge-info d-block">Email: {{ $klien->terakhir_blasting_email->format('d M Y, H:i') }}</span>
+                                        <div class="mb-1">
+                                            <span class="badge badge-info"><i class="fas fa-envelope"></i> Via Email</span>
+                                            <br><small class="text-muted">{{ $klien->terakhir_blasting_email->format('d M Y, H:i') }}</small>
+                                        </div>
+                                    @endif
+                                    @if(!$klien->terakhir_blasting_wa && !$klien->terakhir_blasting_email)
+                                        <span class="text-muted small">Belum diblasting</span>
                                     @endif
                                 </td>
                                 <td>

@@ -210,7 +210,10 @@ class KlienTidakAktifController extends Controller
             abort(403);
         }
 
-        $klien->update(['terakhir_blasting_wa' => now()]);
+        $klien->update([
+            'terakhir_blasting_wa' => now(),
+            'status' => 'sudah diblasting',
+        ]);
 
         if ($klien->no_whatsapp) {
             $phone = preg_replace('/[^0-9]/', '', $klien->no_whatsapp);
@@ -234,7 +237,10 @@ class KlienTidakAktifController extends Controller
             abort(403);
         }
 
-        $klien->update(['terakhir_blasting_email' => now()]);
+        $klien->update([
+            'terakhir_blasting_email' => now(),
+            'status' => 'sudah diblasting',
+        ]);
 
         return redirect()->back()->with('success', 'Waktu blasting Email berhasil dicatat.');
     }
