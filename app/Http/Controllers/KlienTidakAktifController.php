@@ -149,32 +149,42 @@ class KlienTidakAktifController extends Controller
         }
 
         $request->validate([
-            'tahun' => 'required|digits:4',
-            'status' => 'required|in:ongoing proses deal,belum jelas,follow up,belum dihubungi,sudah diblasting,menunggu respon,deal,tidak berminat',
-            'nama_klien' => 'nullable|string|max:255',
-            'nama_perusahaan' => 'nullable|string|max:255',
-            'bidang_usaha' => 'nullable|string|max:255',
-            'kota' => 'nullable|string|max:255',
-            'email' => 'nullable|email',
-            'no_whatsapp' => 'nullable|string|max:20',
-            'produk_minat' => 'nullable|string|max:255',
-            'pic_sales' => 'nullable|string|max:255',
-            'harga' => 'nullable|numeric',
+            'tahun'                   => 'required|digits:4',
+            'status'                  => 'required|in:ongoing proses deal,belum jelas,follow up,belum dihubungi,sudah diblasting,menunggu respon,deal,tidak berminat',
+            'nama_klien'              => 'nullable|string|max:255',
+            'nama_perusahaan'         => 'nullable|string|max:255',
+            'bidang_usaha'            => 'nullable|string|max:255',
+            'kota'                    => 'nullable|string|max:255',
+            'email'                   => 'nullable|email',
+            'no_whatsapp'             => 'nullable|string|max:20',
+            'produk_minat'            => 'nullable|string|max:255',
+            'pic_sales'               => 'nullable|string|max:255',
+            'harga'                   => 'nullable|numeric',
+            'terakhir_blasting_wa'    => 'nullable|date',
+            'terakhir_blasting_email' => 'nullable|date',
         ]);
 
-        $klien->update([
-            'tahun' => $request->tahun,
-            'nama_klien' => $request->nama_klien,
+        $updateData = [
+            'tahun'           => $request->tahun,
+            'nama_klien'      => $request->nama_klien,
             'nama_perusahaan' => $request->nama_perusahaan,
-            'bidang_usaha' => $request->bidang_usaha,
-            'kota' => $request->kota,
-            'email' => $request->email,
-            'no_whatsapp' => $request->no_whatsapp,
-            'produk_minat' => $request->produk_minat,
-            'pic_sales' => $request->pic_sales,
-            'harga' => $request->harga,
-            'status' => $request->status,
-        ]);
+            'bidang_usaha'    => $request->bidang_usaha,
+            'kota'            => $request->kota,
+            'email'           => $request->email,
+            'no_whatsapp'     => $request->no_whatsapp,
+            'produk_minat'    => $request->produk_minat,
+            'pic_sales'       => $request->pic_sales,
+            'harga'           => $request->harga,
+            'status'          => $request->status,
+        ];
+
+        // Simpan keterangan blasting hanya jika status sudah diblasting
+        if ($request->status === 'sudah diblasting') {
+            $updateData['terakhir_blasting_wa']    = $request->terakhir_blasting_wa ?: null;
+            $updateData['terakhir_blasting_email'] = $request->terakhir_blasting_email ?: null;
+        }
+
+        $klien->update($updateData);
 
         return redirect()->route('klien-tidak-aktif.index')->with('success', 'Data klien tidak aktif berhasil diperbarui.');
     }

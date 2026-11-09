@@ -17,7 +17,7 @@
             <form action="{{ route('klien-tidak-aktif.update', $klien->id) }}" method="POST">
                 @csrf
                 @method('PUT')
-                
+
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
@@ -103,16 +103,16 @@
 
                         <div class="form-group">
                             <label>Status <span class="text-danger">*</span></label>
-                            <select name="status" class="form-control @error('status') is-invalid @enderror" required>
-                                <option value="" disabled selected>-- Pilih Status --</option>
-                                <option value="belum dihubungi" {{ old('status', $klien->status) == 'belum dihubungi' ? 'selected' : '' }}>Belum Dihubungi</option>
-                                <option value="sudah diblasting" {{ old('status', $klien->status) == 'sudah diblasting' ? 'selected' : '' }}>Sudah Diblasting</option>
-                                <option value="menunggu respon" {{ old('status', $klien->status) == 'menunggu respon' ? 'selected' : '' }}>Menunggu Respon</option>
+                            <select name="status" id="statusSelect" class="form-control @error('status') is-invalid @enderror" required>
+                                <option value="" disabled>-- Pilih Status --</option>
+                                <option value="belum dihubungi"   {{ old('status', $klien->status) == 'belum dihubungi'   ? 'selected' : '' }}>Belum Dihubungi</option>
+                                <option value="sudah diblasting"  {{ old('status', $klien->status) == 'sudah diblasting'  ? 'selected' : '' }}>Sudah Diblasting</option>
+                                <option value="menunggu respon"   {{ old('status', $klien->status) == 'menunggu respon'   ? 'selected' : '' }}>Menunggu Respon</option>
                                 <option value="ongoing proses deal" {{ old('status', $klien->status) == 'ongoing proses deal' ? 'selected' : '' }}>Ongoing Proses Deal</option>
-                                <option value="deal" {{ old('status', $klien->status) == 'deal' ? 'selected' : '' }}>Deal</option>
-                                <option value="tidak berminat" {{ old('status', $klien->status) == 'tidak berminat' ? 'selected' : '' }}>Tidak Berminat</option>
-                                <option value="belum jelas" {{ old('status', $klien->status) == 'belum jelas' ? 'selected' : '' }}>Belum Jelas</option>
-                                <option value="follow up" {{ old('status', $klien->status) == 'follow up' ? 'selected' : '' }}>Follow Up</option>
+                                <option value="deal"              {{ old('status', $klien->status) == 'deal'              ? 'selected' : '' }}>Deal</option>
+                                <option value="tidak berminat"    {{ old('status', $klien->status) == 'tidak berminat'    ? 'selected' : '' }}>Tidak Berminat</option>
+                                <option value="belum jelas"       {{ old('status', $klien->status) == 'belum jelas'       ? 'selected' : '' }}>Belum Jelas</option>
+                                <option value="follow up"         {{ old('status', $klien->status) == 'follow up'         ? 'selected' : '' }}>Follow Up</option>
                             </select>
                             @error('status')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -121,7 +121,110 @@
                     </div>
                 </div>
 
-                <div class="form-group mt-4">
+                {{-- ===== SECTION KETERANGAN BLASTING ===== --}}
+                <div id="blastingSection" style="{{ old('status', $klien->status) == 'sudah diblasting' ? '' : 'display:none;' }}">
+                    <hr>
+                    <div class="card border-left-info shadow mb-3">
+                        <div class="card-header bg-gradient-info text-white py-2 d-flex align-items-center">
+                            <i class="fas fa-broadcast-tower mr-2"></i>
+                            <h6 class="m-0 font-weight-bold">Keterangan Blasting</h6>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted small mb-3">
+                                Edit waktu blasting sesuai channel yang digunakan. Kosongkan jika belum pernah diblasting via channel tersebut.
+                            </p>
+                            <div class="row">
+                                {{-- Blasting via WhatsApp --}}
+                                <div class="col-md-6">
+                                    <div class="card border-success mb-3">
+                                        <div class="card-header py-2 bg-success text-white">
+                                            <span class="font-weight-bold"><i class="fab fa-whatsapp"></i> Via WhatsApp</span>
+                                        </div>
+                                        <div class="card-body py-3">
+                                            <div class="form-group mb-0">
+                                                <label class="small text-muted mb-1">Waktu Blasting WA</label>
+                                                <div class="input-group">
+                                                    <input type="datetime-local"
+                                                        id="inputBlastingWa"
+                                                        name="terakhir_blasting_wa"
+                                                        class="form-control @error('terakhir_blasting_wa') is-invalid @enderror"
+                                                        value="{{ old('terakhir_blasting_wa', $klien->terakhir_blasting_wa ? $klien->terakhir_blasting_wa->format('Y-m-d\TH:i') : '') }}">
+                                                    <div class="input-group-append">
+                                                        <button type="button"
+                                                            class="btn btn-outline-danger btn-hapus-blasting"
+                                                            data-target="inputBlastingWa"
+                                                            title="Hapus keterangan blasting WA"
+                                                            {{ !$klien->terakhir_blasting_wa ? 'style=display:none;' : '' }}>
+                                                            <i class="fas fa-times"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                @error('terakhir_blasting_wa')
+                                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                @enderror
+                                                @if($klien->terakhir_blasting_wa)
+                                                    <small class="text-success mt-1 d-block" id="infoBlastingWa">
+                                                        <i class="fas fa-check-circle"></i>
+                                                        Terakhir: {{ $klien->terakhir_blasting_wa->format('d M Y, H:i') }}
+                                                    </small>
+                                                @else
+                                                    <small class="text-muted mt-1 d-block" id="infoBlastingWa">
+                                                        <i class="fas fa-info-circle"></i> Belum pernah diblasting via WA
+                                                    </small>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Blasting via Email --}}
+                                <div class="col-md-6">
+                                    <div class="card border-info mb-3">
+                                        <div class="card-header py-2 bg-info text-white">
+                                            <span class="font-weight-bold"><i class="fas fa-envelope"></i> Via Email</span>
+                                        </div>
+                                        <div class="card-body py-3">
+                                            <div class="form-group mb-0">
+                                                <label class="small text-muted mb-1">Waktu Blasting Email</label>
+                                                <div class="input-group">
+                                                    <input type="datetime-local"
+                                                        id="inputBlastingEmail"
+                                                        name="terakhir_blasting_email"
+                                                        class="form-control @error('terakhir_blasting_email') is-invalid @enderror"
+                                                        value="{{ old('terakhir_blasting_email', $klien->terakhir_blasting_email ? $klien->terakhir_blasting_email->format('Y-m-d\TH:i') : '') }}">
+                                                    <div class="input-group-append">
+                                                        <button type="button"
+                                                            class="btn btn-outline-danger btn-hapus-blasting"
+                                                            data-target="inputBlastingEmail"
+                                                            title="Hapus keterangan blasting Email"
+                                                            {{ !$klien->terakhir_blasting_email ? 'style=display:none;' : '' }}>
+                                                            <i class="fas fa-times"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                @error('terakhir_blasting_email')
+                                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                @enderror
+                                                @if($klien->terakhir_blasting_email)
+                                                    <small class="text-info mt-1 d-block" id="infoBlastingEmail">
+                                                        <i class="fas fa-check-circle"></i>
+                                                        Terakhir: {{ $klien->terakhir_blasting_email->format('d M Y, H:i') }}
+                                                    </small>
+                                                @else
+                                                    <small class="text-muted mt-1 d-block" id="infoBlastingEmail">
+                                                        <i class="fas fa-info-circle"></i> Belum pernah diblasting via Email
+                                                    </small>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group mt-3">
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i> Perbarui
                     </button>
@@ -133,4 +236,45 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    $(document).ready(function () {
+        function toggleBlasting() {
+            if ($('#statusSelect').val() === 'sudah diblasting') {
+                $('#blastingSection').slideDown(200);
+            } else {
+                $('#blastingSection').slideUp(200);
+            }
+        }
+        // Run on page load
+        toggleBlasting();
+        // Run on change
+        $('#statusSelect').on('change', toggleBlasting);
+
+        // Tombol hapus keterangan blasting
+        $(document).on('click', '.btn-hapus-blasting', function () {
+            var targetId = $(this).data('target');
+            $('#' + targetId).val('');
+            $(this).hide();
+        });
+
+        // Tampilkan tombol hapus jika input diisi manual
+        $('#inputBlastingWa').on('change', function () {
+            if ($(this).val()) {
+                $(this).closest('.input-group').find('.btn-hapus-blasting').show();
+            } else {
+                $(this).closest('.input-group').find('.btn-hapus-blasting').hide();
+            }
+        });
+        $('#inputBlastingEmail').on('change', function () {
+            if ($(this).val()) {
+                $(this).closest('.input-group').find('.btn-hapus-blasting').show();
+            } else {
+                $(this).closest('.input-group').find('.btn-hapus-blasting').hide();
+            }
+        });
+    });
+</script>
+@endpush
 @endsection
