@@ -16,6 +16,17 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         
+        // Satu query GROUP BY untuk semua status KlienTidakAktif (mengurangi jumlah koneksi DB)
+        $statusCounts = \App\Models\KlienTidakAktif::query()
+            ->when($user->jabatan !== 'Admin', fn($q) => $q->where('user_id', $user->id))
+            ->selectRaw('status, COUNT(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
+        // Satu query GROUP BY untuk Klien counts
+        $klienQuery = \App\Models\KlienTidakAktif::query()
+            ->when($user->jabatan !== 'Admin', fn($q) => $q->where('user_id', $user->id));
+
         $data = array(
             "title"                 => "Dashboard",
             "menuDashboard"         => "active",
@@ -37,30 +48,15 @@ class DashboardController extends Controller
             "jumlahKlienProses"     => $user->jabatan == 'Admin'
                 ? Klien::prosesTerbit()->count()
                 : Klien::where('user_id', $user->id)->prosesTerbit()->count(),
-            "jumlahKlienOngoingProsesDeal" => $user->jabatan == 'Admin'
-                ? \App\Models\KlienTidakAktif::where('status', 'ongoing proses deal')->count()
-                : \App\Models\KlienTidakAktif::where('user_id', $user->id)->where('status', 'ongoing proses deal')->count(),
-            "jumlahKlienBelumJelas" => $user->jabatan == 'Admin'
-                ? \App\Models\KlienTidakAktif::where('status', 'belum jelas')->count()
-                : \App\Models\KlienTidakAktif::where('user_id', $user->id)->where('status', 'belum jelas')->count(),
-            "jumlahKlienFollowUp" => $user->jabatan == 'Admin'
-                ? \App\Models\KlienTidakAktif::where('status', 'follow up')->count()
-                : \App\Models\KlienTidakAktif::where('user_id', $user->id)->where('status', 'follow up')->count(),
-            "jumlahKlienBelumDihubungi" => $user->jabatan == 'Admin'
-                ? \App\Models\KlienTidakAktif::where('status', 'belum dihubungi')->count()
-                : \App\Models\KlienTidakAktif::where('user_id', $user->id)->where('status', 'belum dihubungi')->count(),
-            "jumlahKlienSudahDiblasting" => $user->jabatan == 'Admin'
-                ? \App\Models\KlienTidakAktif::where('status', 'sudah diblasting')->count()
-                : \App\Models\KlienTidakAktif::where('user_id', $user->id)->where('status', 'sudah diblasting')->count(),
-            "jumlahKlienMenungguRespon" => $user->jabatan == 'Admin'
-                ? \App\Models\KlienTidakAktif::where('status', 'menunggu respon')->count()
-                : \App\Models\KlienTidakAktif::where('user_id', $user->id)->where('status', 'menunggu respon')->count(),
-            "jumlahKlienDeal" => $user->jabatan == 'Admin'
-                ? \App\Models\KlienTidakAktif::where('status', 'deal')->count()
-                : \App\Models\KlienTidakAktif::where('user_id', $user->id)->where('status', 'deal')->count(),
-            "jumlahKlienTidakBerminat" => $user->jabatan == 'Admin'
-                ? \App\Models\KlienTidakAktif::where('status', 'tidak berminat')->count()
-                : \App\Models\KlienTidakAktif::where('user_id', $user->id)->where('status', 'tidak berminat')->count(),
+            // Ambil semua status dari satu query GROUP BY di atas
+            "jumlahKlienOngoingProsesDeal" => $statusCounts->get('ongoing proses deal', 0),
+            "jumlahKlienBelumJelas"        => $statusCounts->get('belum jelas', 0),
+            "jumlahKlienFollowUp"          => $statusCounts->get('follow up', 0),
+            "jumlahKlienBelumDihubungi"    => $statusCounts->get('belum dihubungi', 0),
+            "jumlahKlienSudahDiblasting"   => $statusCounts->get('sudah diblasting', 0),
+            "jumlahKlienMenungguRespon"    => $statusCounts->get('menunggu respon', 0),
+            "jumlahKlienDeal"              => $statusCounts->get('deal', 0),
+            "jumlahKlienTidakBerminat"     => $statusCounts->get('tidak berminat', 0),
         );
 
         $duplicateKliensQuery = \App\Models\KlienTidakAktif::select('nama_klien', \Illuminate\Support\Facades\DB::raw('COUNT(id) as total'))
